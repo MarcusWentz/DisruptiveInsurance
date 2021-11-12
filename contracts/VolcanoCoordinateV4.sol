@@ -8,7 +8,8 @@ contract VolcanoInsurance is ChainlinkClient {
   
     uint public Latitude;
     uint public Longitude;
-    bytes32 public Time;
+    uint public Year;
+    uint public Month;
     uint private fee;
     address private oracle;
     bytes32 private jobId;
@@ -46,16 +47,29 @@ contract VolcanoInsurance is ChainlinkClient {
         Longitude = _Longitude;
     }
     
-    function request_Time_Year_Month() public returns (bytes32 requestId) 
+    function request_Year() public returns (bytes32 requestId) 
     {
-        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Time_Year_Month.selector);
-        request.add("get", "http://worldclockapi.com/api/json/est/now");
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Year.selector);
+        request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
         request.addInt("times", 10**18);
-        request.add("path", "currentFileTime");
+        request.add("path", "year");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
-    function fulfill_request_Time_Year_Month(bytes32 _requestId,bytes32 _Time) public recordChainlinkFulfillment(_requestId)
+    function fulfill_request_Year(bytes32 _requestId,uint _Year) public recordChainlinkFulfillment(_requestId)
     {
-        Time = _Time; //https://www.epochconverter.com/ldap
+        Year = _Year; //https://www.epochconverter.com/ldap
+    }
+    
+    function request_Month() public returns (bytes32 requestId) 
+    {
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Month.selector);
+        request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        request.addInt("times", 10**18);
+        request.add("path", "month");
+        return sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Month(bytes32 _requestId,uint _Month) public recordChainlinkFulfillment(_requestId)
+    {
+        Month = _Month; //https://www.epochconverter.com/ldap
     }
  }
