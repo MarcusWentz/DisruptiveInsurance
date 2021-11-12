@@ -57,7 +57,7 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     function fulfill_request_Year(bytes32 _requestId,uint _Year) public recordChainlinkFulfillment(_requestId)
     {
-        Year = _Year; //https://www.epochconverter.com/ldap
+        Year = _Year; 
     }
     
     function request_Month() public returns (bytes32 requestId) 
@@ -70,6 +70,6 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     function fulfill_request_Month(bytes32 _requestId,uint _Month) public recordChainlinkFulfillment(_requestId)
     {
-        Month = _Month; //https://www.epochconverter.com/ldap
+        Month = _Month; 
     }
  }
