@@ -2,12 +2,13 @@ pragma solidity ^0.6.0;
 
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 
-contract APIConsumer is ChainlinkClient {
+contract VolcanoInsurance is ChainlinkClient {
     
     using Chainlink for Chainlink.Request;
   
     uint public Latitude;
     uint public Longitude;
+    bytes32 public Time;
     uint private fee;
     address private oracle;
     bytes32 private jobId;
@@ -43,5 +44,18 @@ contract APIConsumer is ChainlinkClient {
     function fulfill_request_Longitude(bytes32 _requestId, uint _Longitude) public recordChainlinkFulfillment(_requestId)
     {
         Longitude = _Longitude;
+    }
+    
+    function request_Time_Year_Month() public returns (bytes32 requestId) 
+    {
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Time_Year_Month.selector);
+        request.add("get", "http://worldclockapi.com/api/json/est/now");
+        request.addInt("times", 10**18);
+        request.add("path", "currentFileTime");
+        return sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Time_Year_Month(bytes32 _requestId,bytes32 _Time) public recordChainlinkFulfillment(_requestId)
+    {
+        Time = _Time; //https://www.epochconverter.com/ldap
     }
  }
