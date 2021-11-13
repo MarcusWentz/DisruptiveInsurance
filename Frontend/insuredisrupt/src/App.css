@@ -4,49 +4,10 @@
 
 .App-background {
 	background-color: #2b2633;
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	font-size: calc(10px + 2vmin);
+
 	color: white;
 }
 
 body {
-	background: #9f7b7b;
-}
-
-/*TODO: move this into its own css file*/
-ul {
-	background: #1f1d24;
-	display: table;
-	margin: 50px auto;
-	padding: 8px;
-	border-radius: 15px;
-	width: 30%;
-}
-ul li {
-	list-style: none;
-	display: inline-block;
-	margin-left: 10px;
-}
-ul li a {
-	font-family: arial;
-	color: white;
-	text-decoration: none;
-	position: relative;
-	padding: 15px 15px;
-	font-size: 18px;
-	display: block;
-	background: #3c3a48;
-	border-radius: 15px;
-}
-
-ul a:hover {
-	background-color: #2b2633;
-}
-
-ul a:active {
-	background-color: blue;
+	background: #2b2633;
 }

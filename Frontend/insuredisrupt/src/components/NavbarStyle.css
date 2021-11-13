@@ -1,0 +1,28 @@
+.nav-container {
+	background: #1f1d24;
+	display: table;
+	margin: 50px auto;
+	padding: 8px;
+	border-radius: 15px;
+	width: 30%;
+}
+.nav-container .nav-txt {
+	list-style: none;
+	display: inline-block;
+	margin-left: 10px;
+}
+.nav-container .nav-txt .nav-link {
+	font-family: arial;
+	color: white;
+	text-decoration: none;
+	position: relative;
+	padding: 15px 15px;
+	font-size: 18px;
+	display: block;
+	background: #3c3a48;
+	border-radius: 15px;
+}
+
+.nav-container a:hover {
+	background-color: #2b2633;
+}

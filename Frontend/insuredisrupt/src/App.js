@@ -1,5 +1,6 @@
 import "./App.css";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 import React, { Component } from "react";
 
@@ -15,6 +16,11 @@ class App extends Component {
 					🌋
 				</span>
 				<Navbar />
+				<Navbar />
+				<Navbar />
+				<Navbar />
+				<Navbar />
+				<Footer />
 			</div>
 		);
 	}
