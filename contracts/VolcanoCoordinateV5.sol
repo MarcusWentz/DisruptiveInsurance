@@ -6,6 +6,7 @@ contract VolcanoInsurance is ChainlinkClient {
     
     using Chainlink for Chainlink.Request;
   
+    uint public numberOfHits;
     uint public Latitude;
     uint public Longitude;
     uint public Year;
@@ -21,10 +22,23 @@ contract VolcanoInsurance is ChainlinkClient {
         fee = 0.1 * 10 ** 18; // (Varies by network and job)
     }
     
+    function request_numberOfHits() public returns (bytes32 requestId) 
+    {
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_numberOfHits.selector);
+        request.add("get", "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=2018&refine.location=Italy");
+        request.add("path", "nhits");
+        request.addInt("times", 10**18);
+        return sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_numberOfHits(bytes32 _requestId, uint _numberOfHits) public recordChainlinkFulfillment(_requestId)
+    {
+        numberOfHits = _numberOfHits;
+    }
+    
     function request_Latitude() public returns (bytes32 requestId) 
     {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Latitude.selector);
-        request.add("get", "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=2018&refine.location=Italy");
+        request.add("get", "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=2018&refine.location=Italy");        
         request.add("path", "records.0.fields.coordinates.0");
         request.addInt("times", 10**18);
         return sendChainlinkRequestTo(oracle, request, fee);
@@ -57,7 +71,7 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     function fulfill_request_Year(bytes32 _requestId,uint _Year) public recordChainlinkFulfillment(_requestId)
     {
-        Year = _Year; 
+        Year = _Year; //https://www.epochconverter.com/ldap
     }
     
     function request_Month() public returns (bytes32 requestId) 
@@ -70,6 +84,6 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     function fulfill_request_Month(bytes32 _requestId,uint _Month) public recordChainlinkFulfillment(_requestId)
     {
-        Month = _Month; 
+        Month = _Month; //https://www.epochconverter.com/ldap
     }
  }
