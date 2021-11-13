@@ -8,18 +8,14 @@ class App extends Component {
 	render() {
 		return (
 			<div className="App-background">
-				<span
-					role="img"
-					aria-label="volcano"
-					style={{ size: 30, display: "flex" }}
-				>
-					🌋
-				</span>
 				<Navbar />
-				<Navbar />
-				<Navbar />
-				<Navbar />
-				<Navbar />
+				<div className="center-container ">
+					<div class="circle">V</div>
+
+					<h3 className="v-txt">Welcome</h3>
+					<p className="v-txt">This site is under construction.</p>
+				</div>
+
 				<Footer />
 			</div>
 		);

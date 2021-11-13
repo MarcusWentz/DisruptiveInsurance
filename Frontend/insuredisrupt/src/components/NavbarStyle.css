@@ -1,9 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
 
 .nav-container {
-	background: #1f1d24;
+	background: rgba(29, 29, 36, 1);
 	display: table;
-	margin: 50px auto;
+	margin: 50px 50px;
 	padding: 2px;
 	border-radius: 10px;
 }
@@ -25,7 +25,7 @@
 }
 
 .nav-container a:hover {
-	background-color: #3c3a48;
+	background-color: rgba(60, 60, 72, 1);
 	color: black;
 }
 

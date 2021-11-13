@@ -3,11 +3,29 @@
 }
 
 .App-background {
-	background-color: #2b2633;
+	background-color: rgba(42, 41, 50, 1);
 
 	color: white;
 }
 
 body {
-	background: #2b2633;
+	background: rgba(42, 41, 50, 1);
+}
+
+.center-container {
+	display: table;
+	margin: 50px auto;
+	padding: 2px;
+	border-radius: 10px;
+}
+
+.circle {
+	width: 500px;
+	height: 500px;
+	line-height: 500px;
+	border-radius: 50%;
+	font-size: 400px;
+	color: rgba(228, 149, 57, 1);
+	text-align: center;
+	background: rgba(60, 60, 72, 1);
 }
