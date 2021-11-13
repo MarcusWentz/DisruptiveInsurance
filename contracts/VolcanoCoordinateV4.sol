@@ -2,12 +2,14 @@ pragma solidity ^0.6.0;
 
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 
-contract APIConsumer is ChainlinkClient {
+contract VolcanoInsurance is ChainlinkClient {
     
     using Chainlink for Chainlink.Request;
   
     uint public Latitude;
     uint public Longitude;
+    uint public Year;
+    uint public Month;
     uint private fee;
     address private oracle;
     bytes32 private jobId;
@@ -43,5 +45,31 @@ contract APIConsumer is ChainlinkClient {
     function fulfill_request_Longitude(bytes32 _requestId, uint _Longitude) public recordChainlinkFulfillment(_requestId)
     {
         Longitude = _Longitude;
+    }
+    
+    function request_Year() public returns (bytes32 requestId) 
+    {
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Year.selector);
+        request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        request.addInt("times", 10**18);
+        request.add("path", "year");
+        return sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Year(bytes32 _requestId,uint _Year) public recordChainlinkFulfillment(_requestId)
+    {
+        Year = _Year; 
+    }
+    
+    function request_Month() public returns (bytes32 requestId) 
+    {
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Month.selector);
+        request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        request.addInt("times", 10**18);
+        request.add("path", "month");
+        return sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Month(bytes32 _requestId,uint _Month) public recordChainlinkFulfillment(_requestId)
+    {
+        Month = _Month; 
     }
  }
