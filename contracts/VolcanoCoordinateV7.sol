@@ -11,6 +11,7 @@ contract VolcanoInsurance is ChainlinkClient {
     int public Longitude;
     int public Year;
     int public Month;
+    int public Day;
     uint private fee;
     address private oracle;
     bytes32 private jobId;
@@ -89,4 +90,20 @@ contract VolcanoInsurance is ChainlinkClient {
     {
         Month = _Month; //https://www.epochconverter.com/ldap
     }
+    
+    function request_Day() public returns (bytes32 requestId) 
+    {
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Day.selector);
+        request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        request.addInt("times", 10**18);
+        request.add("path", "day");
+        return sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Day(bytes32 _requestId,int _Day) public recordChainlinkFulfillment(_requestId)
+    {
+        Day = _Day; //https://www.epochconverter.com/ldap
+    }
+    
  }
+ 
+ 
