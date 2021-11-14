@@ -9,7 +9,7 @@ class Home extends Component {
 		this.state = {
 			account: "default",
 			userGetData: {},
-			userSetData: {},
+			userSetData: "",
 		};
 	}
 
@@ -25,18 +25,50 @@ class Home extends Component {
 		console.log(accountFromMetaMask, "whats acc????");
 		//Load the smart contract
 		const todoList = new web3.eth.Contract(ABI, ADDRESS);
-		this.setState({ todoList });
+
+		todoList.methods.storedData().call((err, result) => {
+			if (result === undefined) {
+				console.log(err, "ERR");
+			} else {
+				console.log(result, "result returned storedData()");
+				//state here to result variable
+			}
+		});
+
 		console.log("The contract we connected to:", todoList);
 		//Read the taskcount from the smart contract method
-		const userSetData = await todoList.methods.set(5).call();
-		this.setState({ userSetData });
-		const userGetData = await todoList.methods.storedData().call();
-		this.setState({ userGetData });
+		//const userSetData = await todoList.methods.set(5).call();
+		//this.setState({ userSetData });
+
 		console.log(
 			this.state.userSetData,
 			"<-- userSetData and userGetData ->",
-			this.state.userGetData
+			typeof this.state.userGetData,
+			this.state.userGetData,
+			Object.values(this.state.userGetData)
 		);
+
+		///----Event will automatically read data
+		todoList.events
+			.setValueUpdatedViaWebjs(
+				{
+					fromBlock: "latest",
+				},
+				function (error, eventResult) {}
+			)
+			.on("data", function (eventResult) {
+				console.log(eventResult);
+				//Call the get function to get the most accurate present state for the value.
+
+				todoList.methods.storedData().call((err, balance) => {
+					this.setSet({ todoList });
+				});
+			})
+			.on("changed", function (eventResult) {
+				// remove event from local database
+			})
+			.on("error", console.error);
+		///-----
 	}
 
 	componentDidMount() {
@@ -51,7 +83,7 @@ class Home extends Component {
 				<h3 className="v-txt">Welcome address: {this.state.account}</h3>
 
 				<p className="v-txt">
-					This site is under construction. TaskCount:{" "}
+					This site is under construction. storedData :{" "}
 				</p>
 			</div>
 		);
