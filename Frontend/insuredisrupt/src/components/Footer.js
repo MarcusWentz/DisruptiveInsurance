@@ -9,9 +9,7 @@ class Footer extends Component {
 				<div class="content">
 					<div class="link-boxes">
 						<ul class="box">
-							<div class="logo-details">
-								<span class="logo_name">InsureDisruption</span>
-							</div>
+							<li class="link_name">InsureDisruption</li>
 							<li>
 								<span
 									className="our-logo"

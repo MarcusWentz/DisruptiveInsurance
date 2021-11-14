@@ -1,4 +1,5 @@
 import "./NavbarStyle.css";
+import { Link } from "react-router-dom";
 
 import React, { Component } from "react";
 
@@ -7,19 +8,19 @@ class Navbar extends Component {
 		return (
 			<ul className="nav-container">
 				<li className="nav-txt">
-					<a className="nav-link" href="#">
+					<Link to="/" className="nav-link">
 						Home
-					</a>
+					</Link>
 				</li>
 				<li className="nav-txt">
-					<a className="nav-link" href="#">
+					<Link to="/about" className="nav-link">
 						About
-					</a>
+					</Link>
 				</li>
 				<li className="nav-txt">
-					<a className="nav-link" href="#">
+					<Link to="/service" className="nav-link">
 						Service
-					</a>
+					</Link>
 				</li>
 			</ul>
 		);

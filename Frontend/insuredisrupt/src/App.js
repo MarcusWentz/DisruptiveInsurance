@@ -1,22 +1,34 @@
 import "./App.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import About from "./pages/About";
+import Home from "./pages/Home";
+import Service from "./pages/Service";
 
 import React, { Component } from "react";
 
 class App extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			account: "default",
+		};
+	}
+
 	render() {
 		return (
 			<div className="App-background">
-				<Navbar />
-				<div className="center-container ">
-					<div class="circle">V</div>
+				<Router>
+					<Navbar />
+					<Switch>
+						<Route exact path="/" component={Home} />
+						<Route path="/about" component={About} />
+						<Route path="/service" component={Service} />
+					</Switch>
 
-					<h3 className="v-txt">Welcome</h3>
-					<p className="v-txt">This site is under construction.</p>
-				</div>
-
-				<Footer />
+					<Footer />
+				</Router>
 			</div>
 		);
 	}
