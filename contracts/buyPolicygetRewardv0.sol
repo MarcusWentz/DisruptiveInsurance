@@ -1,6 +1,3 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
-
 contract disruptiveInsurance {
     address public immutable owner;
     uint public ownerAmount;
@@ -19,7 +16,7 @@ contract disruptiveInsurance {
 //        int Month;
 //        int Day;
         bool bought;
-        uint AwardAmount;
+        uint awardAmount;
     }
     
     mapping(address => policy) public policies;
@@ -29,7 +26,7 @@ contract disruptiveInsurance {
         require(owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
         require(address(this).balance > 0, 'Error: Owner insufficient funds'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
         require(msg.value == (10 ** 18), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
-        require(!policies[msg.sender].bought,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance.  
+        require(!policies[msg.sender].bought,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
         
         policySigner = msg.sender;
         policies[policySigner] = policy(Latitude, Longitude, true, ownerAmount);
@@ -39,9 +36,16 @@ contract disruptiveInsurance {
         
         }
         
-        function getRewardAsPolicyBuyer() public payable {
-        policySigner = msg.sender;
+        function getRewardAsPolicyBuyer() public payable returns (uint contractBalance) {
+        require(policies[msg.sender].bought == true,"Error: You don't have a policy"); // Checks if this address has a policy or not.
+        // require coordinates == eruptionLocation [oracle] [min_max]
+        // require datePolicySigned < present
+        // might be unneeded: policySigner = msg.sender;
         
+        payable(msg.sender).transfer(policies[msg.sender].awardAmount);
+        // PolicySigner + Year + Month + Day = 0?
+        
+        return address(this).balance;
         
         }
         
