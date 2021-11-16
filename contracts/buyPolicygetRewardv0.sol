@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.10;
+
 contract disruptiveInsurance {
     address public immutable owner;
     uint public ownerAmount;
@@ -36,7 +39,7 @@ contract disruptiveInsurance {
         
         }
         
-        function getRewardAsPolicyBuyer() public payable returns (uint contractBalance) {
+    function getRewardAsPolicyBuyer() public payable returns (uint contractBalance) {
         require(policies[msg.sender].bought == true,"Error: You don't have a policy"); // Checks if this address has a policy or not.
         // require coordinates == eruptionLocation [oracle] [min_max]
         // require datePolicySigned < present
