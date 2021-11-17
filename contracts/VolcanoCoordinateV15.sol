@@ -67,7 +67,7 @@ contract VolcanoInsurance is ChainlinkClient {
         require(Month > 0);
         require(Latitude != 0 && Longitude != 0);
         require(policies[policyHolder].CompressedTimeValueMapped > 0, "Policy has not yet expired");
-        require( ((Year<<9)+ (Month<<5) + Day)+512 > policies[policyHolder].CompressedTimeValueMapped, "Policy has not yet expired");
+        require( ((Year<<9)+ (Month<<5) + Day) > policies[policyHolder].CompressedTimeValueMapped+512, "Policy has not yet expired");
         policies[policyHolder] = policy(0, 0, 0);
         payable(msg.sender).transfer(address(this).balance);
         Day = 0;
