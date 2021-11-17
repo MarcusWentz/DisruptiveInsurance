@@ -49,12 +49,13 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     
     function getAllDataConfiredTimeBuyPolicy(int inputLat, int inputLong) public {
-        require(Day > 0);
-        require(Month > 0);
+        require(Day > 0, "Day not recorded yet by oracle.");
+        require(Month > 0, "Month not recorded yet by oracle.");
+        require(Year > 0, "Year not recorded yet by oracle.");
         // require(owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
-        require(address(this).balance > 0, 'Error: Owner insufficient funds'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
+        // require(address(this).balance > 0, 'Error: Owner insufficient funds'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
         // require(msg.value == (10 ** 18), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
-        require(policies[msg.sender].CompressedTimeValueMapped > 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
+        require(policies[msg.sender].CompressedTimeValueMapped == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
         CompressedTimeValue = (Year<<9)+ (Month<<5) + Day; //Compressed to make easy to compare with other dates. Do not need to decompress. 
         policies[msg.sender] = policy(inputLat, inputLong, CompressedTimeValue );
         Day = 0;
@@ -63,11 +64,12 @@ contract VolcanoInsurance is ChainlinkClient {
     }
 
     function getAllDataConfirmedCoordinatesExpiredContract(address policyHolder) public {
-        require(Day > 0);
-        require(Month > 0);
-        require(Latitude != 0 && Longitude != 0);
-        require(policies[policyHolder].CompressedTimeValueMapped > 0, "Policy has not yet expired");
-        require( ((Year<<9)+ (Month<<5) + Day) > policies[policyHolder].CompressedTimeValueMapped+512, "Policy has not yet expired");
+        require(Day > 0, "Day not recorded yet by oracle.");
+        require(Month > 0, "Month not recorded yet by oracle.");
+        require(Year > 0, "Year not recorded yet by oracle.");
+        require(Latitude != 0 && Longitude != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
+        require(policies[policyHolder].CompressedTimeValueMapped > 0, "Policy does not exist.");
+        // require( ((Year<<9)+ (Month<<5) + Day) > policies[policyHolder].CompressedTimeValueMapped+512, "Policy has not yet expired");
         policies[policyHolder] = policy(0, 0, 0);
         payable(msg.sender).transfer(address(this).balance);
         Day = 0;
@@ -77,7 +79,7 @@ contract VolcanoInsurance is ChainlinkClient {
         Longitude = 0;
     }
     
-    function inputValues(string memory year, string memory month, string memory day, string memory country) public
+    function urlRebuiltJSONUpdate(string memory year, string memory month, string memory day, string memory country) public
     {
         require(bytes(month).length == 2, "JSON must have month as 2 characters at all times!");
         require(bytes(day).length == 2, "JSON must have day as 2 characters at all times!");
@@ -90,7 +92,7 @@ contract VolcanoInsurance is ChainlinkClient {
         request.add("get", urlRebuiltJSON);
         request.add("path", "records.0.fields.coordinates.0");
         request.addInt("add", 180);
-        request.addInt("times", 10**18);
+        request.addInt("times", 10**2);
         return sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_Latitude(bytes32 _requestId, int _Latitude) public recordChainlinkFulfillment(_requestId){
@@ -101,7 +103,7 @@ contract VolcanoInsurance is ChainlinkClient {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Longitude.selector);
         request.add("get", urlRebuiltJSON);
         request.add("path", "records.0.fields.coordinates.1");
-        request.addInt("times", 10**18);
+        request.addInt("times", 10**2);
         return sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_Longitude(bytes32 _requestId, int _Longitude) public recordChainlinkFulfillment(_requestId)
@@ -112,7 +114,6 @@ contract VolcanoInsurance is ChainlinkClient {
     function request_Year() private returns (bytes32 requestId) {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Year.selector);
         request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        request.addInt("times", 10**18);
         request.add("path", "year");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
@@ -123,7 +124,6 @@ contract VolcanoInsurance is ChainlinkClient {
     function request_Month() private returns (bytes32 requestId) {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Month.selector);
         request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        request.addInt("times", 10**18);
         request.add("path", "month");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
@@ -134,7 +134,6 @@ contract VolcanoInsurance is ChainlinkClient {
     function request_Day() private returns (bytes32 requestId)  {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Day.selector);
         request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        request.addInt("times", 10**18);
         request.add("path", "day");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
