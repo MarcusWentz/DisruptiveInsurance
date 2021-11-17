@@ -4,7 +4,6 @@
 
 .App-background {
 	background-color: rgba(42, 41, 50, 1);
-
 	color: white;
 }
 
@@ -20,16 +19,37 @@ body {
 }
 
 .circle {
-	width: 500px;
-	height: 500px;
-	line-height: 500px;
+	width: 200px;
+	height: 200px;
+	line-height: 200px;
 	border-radius: 50%;
-	font-size: 400px;
+	font-size: 100px;
 	color: rgba(205, 82, 0, 1);
 	text-align: center;
 	background: rgba(60, 60, 72, 1);
 }
 
 .btn.btn-dark {
-	background-color: #cd5200;
+	background-color: #22212a;
+	width: 100%;
+	margin: 10px;
+	border-radius: 15px;
+}
+
+.btn.btn-dark:hover {
+	background-color: #1a1a21;
+}
+
+.form-control {
+	background-color: #22212a !important;
+	width: 100%;
+	margin: 10px;
+	border-radius: 15px;
+	color: white !important;
+}
+
+.form-container {
+	background-color: rgba(60, 60, 72, 1);
+	border-radius: 15px;
+	padding: 30px;
 }

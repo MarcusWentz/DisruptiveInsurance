@@ -9,7 +9,7 @@ class Service extends Component {
 	}
 
 	render() {
-		return <div className="App-background">Service Component</div>;
+		return <div className="App-background">Service component! :)</div>;
 	}
 }
 
