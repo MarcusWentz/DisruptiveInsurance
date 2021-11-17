@@ -30,8 +30,7 @@ contract disruptiveInsurance {
         require(msg.value == (10 ** 18), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
         require(!policies[msg.sender].bought,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
         
-        policySigner = msg.sender;
-        policies[policySigner] = policy(Latitude, Longitude, 1, 1, 1, true, ownerAmount);
+        policies[msg.sender] = policy(Latitude, Longitude, 1, 1, 1, true, ownerAmount);
         
         }
         
