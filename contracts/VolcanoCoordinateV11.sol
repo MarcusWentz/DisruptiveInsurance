@@ -16,6 +16,7 @@ contract VolcanoInsurance is ChainlinkClient {
     int public Month;
     int public Day;
     int public CompressedTimeValue;
+    string public urlRebuiltJSON;
     uint private immutable fee = 1*10**16;
     bytes32 private immutable jobId ="e5b0e6aeab36405ba33aea12c6988ed6";  //WORKING INT FOR NEGATIVE VALUES          // jobId = "3b7ca0d48c7a4b2da9268456665d11ae"; //WORKING UINT
     address private immutable oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; //WORKING INT FOR NEGATIVE VALUES         //oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; //WORKING UINT    
@@ -50,6 +51,14 @@ contract VolcanoInsurance is ChainlinkClient {
         require(Latitude != 0 && Longitude != 0);
         //Reward policy buyer
         payable(msg.sender).transfer(address(this).balance);
+    }
+    
+    function inputValues(string memory year, string memory month, string memory day, string memory country) public
+    {
+        require(bytes(month).length == 2, "JSON must have month as 2 characters at all times!");
+        require(bytes(day).length == 2, "JSON must have day as 2 characters at all times!");
+        urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",year,
+        "&refine.month=",month,"&refine.day=",day,"&refine.country=",country) );
     }
     
     function request_Latitude() private returns (bytes32 requestId) {
