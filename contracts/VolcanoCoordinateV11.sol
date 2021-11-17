@@ -15,6 +15,7 @@ contract VolcanoInsurance is ChainlinkClient {
     int public Year;
     int public Month;
     int public Day;
+    int public CompressedTimeValue;
     uint private immutable fee = 1*10**16;
     bytes32 private immutable jobId ="e5b0e6aeab36405ba33aea12c6988ed6";  //WORKING INT FOR NEGATIVE VALUES          // jobId = "3b7ca0d48c7a4b2da9268456665d11ae"; //WORKING UINT
     address private immutable oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; //WORKING INT FOR NEGATIVE VALUES         //oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; //WORKING UINT    
@@ -36,6 +37,19 @@ contract VolcanoInsurance is ChainlinkClient {
         request_Year();
         request_Month();
         request_Day();
+    }
+    
+    function getAllDataConfiredTime() public {
+        require(Day > 0);
+        require(Month > 0);
+        //Buy policy logic
+        CompressedTimeValue = (Year<<9)+ (Month<<5) + Day; //Compressed to make easy to compare with other dates. Do not need to decompress. 
+    }
+
+    function getAllDataConfirmedCoordinates() public {
+        require(Latitude != 0 && Longitude != 0);
+        //Reward policy buyer
+        payable(msg.sender).transfer(address(this).balance);
     }
     
     function request_Latitude() private returns (bytes32 requestId) {
@@ -96,5 +110,3 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     
  }
- 
- 
