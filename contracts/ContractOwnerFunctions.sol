@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
 contract ContractOwnerFunctions {
@@ -31,7 +32,7 @@ contract ContractOwnerFunctions {
 
     function claimEverythingInsuranceBusiness() public contractOwnerCheck {
         // Check that policy is expired - full spec will include current date 
-        require(currentYear > psYear), "Policy has not yet expired")
+        require(currentYear > psYear, "Policy has not yet expired");
         payable(msg.sender).transfer(address(this).balance);
 
         // Reset hardcode policy values to 0 - full spec will deal with actual policy details
