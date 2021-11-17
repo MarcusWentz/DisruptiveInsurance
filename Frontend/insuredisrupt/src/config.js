@@ -1,5 +1,5 @@
 //THis is the contract address as deployed on rinkeby
-export const ADDRESS = "0x135aaCB165Ff9100D268d3aa2E1c7bBEFc8b9086";
+export const CONTRACT_ADDRESS = "0x135aaCB165Ff9100D268d3aa2E1c7bBEFc8b9086";
 
 export const ABI = [
 	{

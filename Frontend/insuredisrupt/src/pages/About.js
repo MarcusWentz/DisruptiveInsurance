@@ -16,7 +16,6 @@ class About extends Component {
 						width="300"
 						height="400"
 						src="https://cryptologos.cc/logos/chainlink-link-logo.svg?v=014"
-						alt="My Happy SVG"
 					/>
 					<h2 style={{ textAlign: "center" }}>About this project</h2>
 				</div>
