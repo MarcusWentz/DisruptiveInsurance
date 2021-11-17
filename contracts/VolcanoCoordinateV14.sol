@@ -48,7 +48,7 @@ contract VolcanoInsurance is ChainlinkClient {
         request_Day();
     }
     
-    function getAllDataConfiredTime() public {
+    function getAllDataConfiredTimeBuyPolicy(int inputLat, int inputLong) public {
         require(Day > 0);
         require(Month > 0);
         // require(owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
@@ -56,14 +56,25 @@ contract VolcanoInsurance is ChainlinkClient {
         // require(msg.value == (10 ** 18), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
         require(policies[msg.sender].CompressedTimeValueMapped > 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
         CompressedTimeValue = (Year<<9)+ (Month<<5) + Day; //Compressed to make easy to compare with other dates. Do not need to decompress. 
-        policies[msg.sender] = policy(Latitude, Longitude, CompressedTimeValue );
-        
+        policies[msg.sender] = policy(inputLat, inputLong, CompressedTimeValue );
+        Day = 0;
+        Month = 0;
+        Year = 0;
     }
 
-    function getAllDataConfirmedCoordinates() public {
+    function getAllDataConfirmedCoordinatesExpiredContract(address policyHolder) public {
+        require(Day > 0);
+        require(Month > 0);
         require(Latitude != 0 && Longitude != 0);
-        //Reward policy buyer
+        require(policies[policyHolder].CompressedTimeValueMapped > 0, "Policy has not yet expired");
+        require( ((Year<<9)+ (Month<<5) + Day)+512 > policies[policyHolder].CompressedTimeValueMapped, "Policy has not yet expired");
+        policies[policyHolder] = policy(0, 0, 0);
         payable(msg.sender).transfer(address(this).balance);
+        Day = 0;
+        Month = 0;
+        Year = 0;
+        Latitude = 0;
+        Longitude = 0;
     }
     
     function inputValues(string memory year, string memory month, string memory day, string memory country) public
