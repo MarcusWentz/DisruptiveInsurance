@@ -16,6 +16,26 @@ contract buildStringOnContract {
         urlRebuiltJSON= string( abi.encodePacked(askYear,year,askMonth,month,askDay,day,askCountry,country) );
     }
 
+    int public YearS = 2021;
+    int public MonthS = 11;
+    int public DayS = 16;
+    int public YearRed;
+    int public MonthRed;
+    int public DayRed;
+    int public CompressedValue;
+    
+    function TimeCompressed() public
+    {
+        CompressedValue = (YearS<<9)+ (MonthS<<5) + DayS;
+    }
+
+    function TimeDecompressed() public
+    {
+        YearRed = (CompressedValue>>9);
+        MonthRed = (CompressedValue>>5)&15;
+        DayRed = CompressedValue&31;
+
+    }
 
 }
 
