@@ -29,3 +29,19 @@ body {
 	text-align: center;
 	background: rgba(60, 60, 72, 1);
 }
+
+.button-dark {
+	text-decoration: none;
+	color: rgba(29, 29, 36, 1);
+	font-family: "Open Sans", sans-serif;
+	padding: 10px 20px;
+	transition: all 0.2s ease-in-out;
+	background-color: rgba(60, 60, 72, 1);
+	margin: 15px;
+}
+.button-dark:hover {
+	background-color: rgba(60, 60, 72, 1);
+}
+.button-dark:active {
+	background-color: black;
+}

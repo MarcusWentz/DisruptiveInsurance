@@ -1,6 +1,7 @@
 import "./FooterStyle.css";
 
 import React, { Component } from "react";
+import logo8 from "../Images/LOGO_8_TRANSPARENT.png";
 
 class Footer extends Component {
 	render() {
@@ -11,14 +12,7 @@ class Footer extends Component {
 						<ul class="box">
 							<li class="link_name">InsureDisruption</li>
 							<li>
-								<span
-									className="our-logo"
-									role="img"
-									aria-label="volcano"
-									style={{ size: 30, display: "flex" }}
-								>
-									🌋
-								</span>
+								<img width="50%" src={logo8} />
 							</li>
 						</ul>
 						<ul class="box">

@@ -9,8 +9,7 @@ class About extends Component {
 			account: "default",
 		};
 	}
-	//Frontend/insuredisrupt/src/Images/logo7transparent.png
-	///home/johanna/InsureDisruption/Frontend/insuredisrupt/src/Images
+
 	render() {
 		return (
 			<div className="App-background">
