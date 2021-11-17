@@ -32,3 +32,7 @@
 .navbar-container a:active {
 	background-color: blue;
 }
+.navbar-logo {
+	margin-top: 58px;
+	margin-left: 30px;
+}

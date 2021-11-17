@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import logo7 from "../Images/logo7transparent.png";
+import logo8 from "../Images/LOGO_8_TRANSPARENT.png";
 
 class About extends Component {
 	constructor(props) {
@@ -7,16 +9,13 @@ class About extends Component {
 			account: "default",
 		};
 	}
-
+	//Frontend/insuredisrupt/src/Images/logo7transparent.png
+	///home/johanna/InsureDisruption/Frontend/insuredisrupt/src/Images
 	render() {
 		return (
 			<div className="App-background">
 				<div className="center-container ">
-					<img
-						width="300"
-						height="400"
-						src="https://cryptologos.cc/logos/chainlink-link-logo.svg?v=014"
-					/>
+					<img src={logo8} />
 					<h2 style={{ textAlign: "center" }}>About this project</h2>
 				</div>
 			</div>
