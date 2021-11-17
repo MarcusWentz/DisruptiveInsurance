@@ -1,6 +1,6 @@
 pragma solidity ^0.8.10;
 
-contract ContractOwnerFunctions is Ownable {
+contract ContractOwnerFunctions {
 
     address public immutable owner;
     int public psYear;
