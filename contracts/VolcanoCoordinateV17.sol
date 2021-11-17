@@ -84,6 +84,8 @@ contract VolcanoInsurance is ChainlinkClient {
         require(policies[msg.sender].LongitudeMapped >=  (Longitude-100) && policies[msg.sender].LongitudeMapped <=  (Longitude+100) , "Must be within 1 long coordinate point." );
         require(policies[msg.sender].LatitudeMapped >=  (Latitude-100) && policies[msg.sender].LatitudeMapped <=  (Latitude+100) , "Must be within 1 lat coordinate point." );
         payable(msg.sender).transfer(1*(10**18));
+        Latitude = 0;
+        Longitude = 0;
         }
     
     function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
