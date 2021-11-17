@@ -113,15 +113,29 @@ class Home extends Component {
 					This site is under construction. storedData :
 					{this.state.storedDataResult}
 				</p>
-				<button className="button-dark" onClick={this.handleSendEth}>
-					Send eth
+
+				<button
+					type="button"
+					class="btn btn-dark"
+					onClick={this.handleSendEth}
+				>
+					Send Eth
 				</button>
 
-				<button onClick={this.handleSetContract}>
+				<button
+					type="button"
+					class="btn btn-dark"
+					onClick={this.handleSetContract}
+				>
 					Set contract state
 				</button>
 
-				<input type="text" placeholder="Value: 10" value="60"></input>
+				<input
+					class="form-control"
+					type="text"
+					placeholder="Value: 10"
+					value="60"
+				></input>
 			</div>
 		);
 	}
