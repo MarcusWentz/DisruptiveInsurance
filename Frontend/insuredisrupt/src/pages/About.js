@@ -156,7 +156,9 @@ class About extends Component {
 									{" " + this.state.storedDataResult}
 								</h4>
 							</p>
-							{this._whenToRenderSpinner}
+							<div style={{ textAlign: "center" }}>
+								{this._whenToRenderSpinner()}
+							</div>
 						</div>
 					</div>
 				</div>
