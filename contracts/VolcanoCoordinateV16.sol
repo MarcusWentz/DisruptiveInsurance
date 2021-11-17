@@ -67,7 +67,7 @@ contract VolcanoInsurance is ChainlinkClient {
         require(Day > 0, "Day not recorded yet by oracle.");
         require(Month > 0, "Month not recorded yet by oracle.");
         require(Year > 0, "Year not recorded yet by oracle.");
-        require(Latitude != 0 && Longitude != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
+        require(Latitude != 0 || Longitude != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[policyHolder].CompressedTimeValueMapped > 0, "Policy does not exist.");
         // require( ((Year<<9)+ (Month<<5) + Day) > policies[policyHolder].CompressedTimeValueMapped+512, "Policy has not yet expired");
         policies[policyHolder] = policy(0, 0, 0);
