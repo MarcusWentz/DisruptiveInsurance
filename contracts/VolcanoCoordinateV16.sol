@@ -20,6 +20,7 @@ contract VolcanoInsurance is ChainlinkClient {
     string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
     bytes32 private immutable jobId ="e5b0e6aeab36405ba33aea12c6988ed6";  //WORKING INT FOR NEGATIVE VALUES          // jobId = "3b7ca0d48c7a4b2da9268456665d11ae"; //WORKING UINT
     address private immutable oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; //WORKING INT FOR NEGATIVE VALUES         //oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; //WORKING UINT    
+    address public immutable Owner;
     address private ChainlinkTokenAddressRinkeby = 0x01BE23585060835E02B77ef475b0Cc51aA1e0709;
     ERC20TokenContract tokenObject = ERC20TokenContract(ChainlinkTokenAddressRinkeby);
     
@@ -32,7 +33,20 @@ contract VolcanoInsurance is ChainlinkClient {
     mapping(address => policy) public policies;
 
     constructor() {
+        Owner = msg.sender;
         setPublicChainlinkToken();
+    }
+    
+    modifier contractOwnerCheck() {
+        require(msg.sender == Owner, "Only contract owner can interact with this contract");
+        _;
+    }
+    
+    function urlRebuiltJSONUpdate(string memory year, string memory month, string memory day, string memory country) public {
+        require(bytes(month).length == 2, "JSON must have month as 2 characters at all times!");
+        require(bytes(day).length == 2, "JSON must have day as 2 characters at all times!");
+        urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",year,
+        "&refine.month=",month,"&refine.day=",day,"&refine.country=",country) );
     }
     
     function request_All_Coordinate_Data() public {
@@ -48,13 +62,13 @@ contract VolcanoInsurance is ChainlinkClient {
         request_Day();
     }
     
-    function getAllDataConfiredTimeBuyPolicy(int inputLat, int inputLong) public {
+    function BuyerCreatePolicy(int inputLat, int inputLong) public payable {
         require(Day > 0, "Day not recorded yet by oracle.");
         require(Month > 0, "Month not recorded yet by oracle.");
         require(Year > 0, "Year not recorded yet by oracle.");
-        // require(owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
-        // require(address(this).balance > 0, 'Error: Owner insufficient funds'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
-        // require(msg.value == (10 ** 18), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
+        require(Owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
+        require(address(this).balance > 0, 'Error: Contract has insufficient funds to insure you.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
+        require(msg.value == (10 ** 18), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
         require(policies[msg.sender].CompressedTimeValueMapped == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
         CompressedTimeValue = (Year<<9)+ (Month<<5) + Day; //Compressed to make easy to compare with other dates. Do not need to decompress. 
         policies[msg.sender] = policy(inputLat, inputLong, CompressedTimeValue );
@@ -62,14 +76,27 @@ contract VolcanoInsurance is ChainlinkClient {
         Month = 0;
         Year = 0;
     }
+    
+    function BuyerClaimReward() public {
+        require(Latitude != 0 || Longitude != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
+        require(policies[msg.sender].CompressedTimeValueMapped > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
+        //!!!!!!!!!!!!!!Check JSON dates or record strings to compare erutption date? I think the contact might be exploited by just changing the string after data is on chain.!!!!!!!!!
+        require(policies[msg.sender].LongitudeMapped >=  (Longitude-100) && policies[msg.sender].LongitudeMapped <=  (Longitude+100) , "Must be within 1 long coordinate point." );
+        require(policies[msg.sender].LatitudeMapped >=  (Latitude-100) && policies[msg.sender].LatitudeMapped <=  (Latitude+100) , "Must be within 1 lat coordinate point." );
+        payable(msg.sender).transfer(1*(10**18));
+        }
+    
+    function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
+        require(msg.value == 1*(10**18), "Value sent must equal 1 ETH");
+    }
 
-    function getAllDataConfirmedCoordinatesExpiredContract(address policyHolder) public {
+    function OwnerClaimExpiredPolicyETH (address policyHolder) public contractOwnerCheck { 
         require(Day > 0, "Day not recorded yet by oracle.");
         require(Month > 0, "Month not recorded yet by oracle.");
         require(Year > 0, "Year not recorded yet by oracle.");
         require(Latitude != 0 || Longitude != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[policyHolder].CompressedTimeValueMapped > 0, "Policy does not exist.");
-        // require( ((Year<<9)+ (Month<<5) + Day) > policies[policyHolder].CompressedTimeValueMapped+512, "Policy has not yet expired");
+        require( ((Year<<9)+ (Month<<5) + Day) > policies[policyHolder].CompressedTimeValueMapped+512, "Policy has not yet expired");
         policies[policyHolder] = policy(0, 0, 0);
         payable(msg.sender).transfer(address(this).balance);
         Day = 0;
@@ -79,12 +106,8 @@ contract VolcanoInsurance is ChainlinkClient {
         Longitude = 0;
     }
     
-    function urlRebuiltJSONUpdate(string memory year, string memory month, string memory day, string memory country) public
-    {
-        require(bytes(month).length == 2, "JSON must have month as 2 characters at all times!");
-        require(bytes(day).length == 2, "JSON must have day as 2 characters at all times!");
-        urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",year,
-        "&refine.month=",month,"&refine.day=",day,"&refine.country=",country) );
+    function ZDEBUGOwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
+        payable(msg.sender).transfer(address(this).balance);
     }
     
     function request_Latitude() private returns (bytes32 requestId) {
