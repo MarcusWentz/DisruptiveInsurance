@@ -127,7 +127,6 @@ contract VolcanoInsurance is ChainlinkClient {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Latitude.selector);
         request.add("get", urlRebuiltJSON);
         request.add("path", "records.0.fields.coordinates.0");
-        request.addInt("add", 180);
         request.addInt("times", 10**2);
         return sendChainlinkRequestTo(oracle, request, fee);
     }
