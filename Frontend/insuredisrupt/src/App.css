@@ -32,7 +32,7 @@ body {
 .btn.btn-dark {
 	background-color: #22212a;
 	width: 100%;
-	margin: 10px;
+	margin-bottom: 20px;
 	border-radius: 15px;
 }
 
@@ -43,13 +43,87 @@ body {
 .form-control {
 	background-color: #22212a !important;
 	width: 100%;
-	margin: 10px;
+	margin-bottom: 20px;
 	border-radius: 15px;
 	color: white !important;
+	outline: none !important;
 }
 
 .form-container {
 	background-color: rgba(60, 60, 72, 1);
 	border-radius: 15px;
 	padding: 30px;
+	outline: none !important;
+}
+
+/*Styles for Buy.js is defined below*/
+
+.center-container-buy {
+	display: table;
+	margin: 50px auto;
+	padding: 2px;
+	width: 80%;
+
+	border-radius: 10px;
+}
+
+.form-container-buy {
+	background-color: rgba(60, 60, 72, 1);
+	border-radius: 15px;
+	width: 100%;
+	text-align: center;
+	padding: 30px;
+	outline: none !important;
+}
+
+.form-control-buy {
+	background-color: #22212a !important;
+	width: 48%;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	padding: 5px;
+	text-align: center;
+	color: white !important;
+	outline: none !important;
+}
+
+.btn.btn-dark-buy {
+	background-color: #22212a;
+	width: 90%;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	color: white;
+}
+
+.lat-long-container {
+	display: flex;
+	text-align: center;
+}
+
+.form-control-buy {
+	background-color: #22212a !important;
+	width: 42%;
+	margin-left: 40px;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	padding: 5px;
+
+	text-align: center;
+	color: white !important;
+	outline: none !important;
+}
+
+label {
+	font-weight: 400;
+	text-transform: uppercase;
+	font-size: 13px;
+	padding-left: 15px;
+	padding-bottom: 10px;
+	color: rgba(255, 255, 255, 0.7);
+	display: block;
+}
+
+.label-container {
+	display: flex;
+	flex-direction: column;
 }
