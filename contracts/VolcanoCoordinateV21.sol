@@ -73,6 +73,7 @@ contract VolcanoInsurance is ChainlinkClient {
         require(msg.value == (10 ** 18), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
         require(policies[msg.sender].EthereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
         policies[msg.sender] = policy(inputLat, inputLong,YearPresent,MonthPresent,DayPresent,1);
+        payable(Owner).transfer(1*(10**18));
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
