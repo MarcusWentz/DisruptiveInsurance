@@ -9,12 +9,14 @@ contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 contract VolcanoInsurance is ChainlinkClient {
     
     using Chainlink for Chainlink.Request;
-
+    
     int public LatitudeEruption;
     int public LongitudeEruption;
     int public YearPresent;
     int public MonthPresent;
     int public DayPresent;
+    uint public OpenETHtoEnsure;
+    uint public AccountsInsured;
     uint private immutable fee = 1*10**16;
     string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.YearPresent=1727&refine.MonthPresent=08&refine.DayPresent=03&refine.country=Iceland";
     bytes32 private immutable jobId ="e5b0e6aeab36405ba33aea12c6988ed6";  //WORKING INT FOR NEGATIVE VALUES          // jobId = "3b7ca0d48c7a4b2da9268456665d11ae"; //WORKING UINT
@@ -69,9 +71,11 @@ contract VolcanoInsurance is ChainlinkClient {
         require(MonthPresent > 0, "MonthPresent not recorded yet by oracle.");
         require(YearPresent > 0, "YearPresent not recorded yet by oracle.");
         require(Owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
-        require(address(this).balance > 0, 'Error: Contract has insufficient funds to insure you.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
+        require(OpenETHtoEnsure > 0, 'There is no open ETH in the contract currently.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
         require(msg.value == (10 ** 18), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
         require(policies[msg.sender].EthereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
+        OpenETHtoEnsure -= 1;
+        AccountsInsured += 1;
         policies[msg.sender] = policy(inputLat, inputLong,YearPresent,MonthPresent,DayPresent,1);
         payable(Owner).transfer(1*(10**18));
         DayPresent = 0;
@@ -85,6 +89,7 @@ contract VolcanoInsurance is ChainlinkClient {
         //!!!!!!!!!!!!!!Check JSON dates or record strings to compare erutption date? I think the contact might be exploited by just changing the string after data is on chain.!!!!!!!!!
         require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
         require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
+        AccountsInsured -= 1;
         payable(msg.sender).transfer(1*(10**18));
         LatitudeEruption = 0;
         LongitudeEruption = 0;
@@ -92,15 +97,17 @@ contract VolcanoInsurance is ChainlinkClient {
     
     function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
         require(msg.value == 1*(10**18), "Value sent must equal 1 ETH");
+        OpenETHtoEnsure += 1;
     }
 
-    function OwnerClaimExpiredPolicyETH (address policyHolder) public contractOwnerCheck { 
+    function OwnerClaimExpiredPolicyETH(address policyHolder) public contractOwnerCheck { 
         require(DayPresent > 0, "DayPresent not recorded yet by oracle.");
         require(MonthPresent > 0, "MonthPresent not recorded yet by oracle.");
         require(YearPresent > 0, "YearPresent not recorded yet by oracle.");
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[policyHolder].EthereumAwardTiedToAddress > 0, "Policy does not exist.");
         require( ((YearPresent<<9)+ (MonthPresent<<5) + DayPresent) > ( (policies[policyHolder].YearSigned<<9) + (policies[policyHolder].MonthSigned<<5) + (policies[policyHolder].DaySigned)+512) , "Policy has not yet expired");
+        AccountsInsured -=1;
         policies[policyHolder] = policy(0, 0, 0, 0, 0, 0);
         payable(msg.sender).transfer(address(this).balance);
         DayPresent = 0;
@@ -110,15 +117,16 @@ contract VolcanoInsurance is ChainlinkClient {
         LongitudeEruption = 0;
     }
     
-    function ZDEBUGOwnerSendOneEthToContractFromInsuranceBusiness() public contractOwnerCheck {
-        payable(msg.sender).transfer(address(this).balance);
+    function OwnerLiquidtoOpenETHToWithdraw() public contractOwnerCheck {
+        require(OpenETHtoEnsure > 0, 'There is no open ETH in the contract currently.'); 
+        OpenETHtoEnsure -= 1;
+        payable(msg.sender).transfer(1*(10**18));
     }
     
     function request_Latitude() private returns (bytes32 requestId) {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Latitude.selector);
         request.add("get", urlRebuiltJSON);
         request.add("path", "records.0.fields.coordinates.0");
-        request.addInt("add", 180);
         request.addInt("times", 10**2);
         return sendChainlinkRequestTo(oracle, request, fee);
     }
