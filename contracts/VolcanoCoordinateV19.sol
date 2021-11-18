@@ -29,7 +29,7 @@ contract VolcanoInsurance is ChainlinkClient {
         int YearSigned;
         int MonthSigned;
         int DaySigned;
-        int EthereumAwardTiedToCAddress;
+        int EthereumAwardTiedToAddress;
     }
     
     mapping(address => policy) public policies;
