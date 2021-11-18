@@ -173,7 +173,7 @@ contract VolcanoInsurance is ChainlinkClient {
     function request_Month_Eruption() private returns (bytes32 requestId) {
         Chainlink.Request memory request = buildChainlinkRequest(jobIdGetBytes32, address(this), this.fulfill_request_Month_Eruption.selector);
         request.add("get", urlRebuiltJSON);
-        request.add("path", "records.0.fields.coordinates.1");
+        request.add("path", "records.0.fields.month");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_Month_Eruption(bytes32 _requestId, bytes32 _MonthEruption) public recordChainlinkFulfillment(_requestId)
@@ -184,7 +184,7 @@ contract VolcanoInsurance is ChainlinkClient {
     function request_Day_Eruption() private returns (bytes32 requestId) {
         Chainlink.Request memory request = buildChainlinkRequest(jobIdGetBytes32, address(this), this.fulfill_request_Day_Eruption.selector);
         request.add("get", urlRebuiltJSON);
-        request.add("path", "records.0.fields.coordinates.1");
+        request.add("path", "records.0.fields.day");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 _DayEruption) public recordChainlinkFulfillment(_requestId)
