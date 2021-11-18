@@ -87,7 +87,7 @@ contract VolcanoInsurance is ChainlinkClient {
         payable(msg.sender).transfer(1*(10**18));
         LatitudeEruption = 0;
         LongitudeEruption = 0;
-        }
+    }
     
     function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
         require(msg.value == 1*(10**18), "Value sent must equal 1 ETH");
@@ -140,7 +140,7 @@ contract VolcanoInsurance is ChainlinkClient {
     function request_YearPresent() private returns (bytes32 requestId) {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_YearPresent.selector);
         request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        request.add("path", "YearPresent");
+        request.add("path", "year");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_YearPresent(bytes32 _requestId,int _YearPresent) public recordChainlinkFulfillment(_requestId) {
@@ -150,7 +150,7 @@ contract VolcanoInsurance is ChainlinkClient {
     function request_MonthPresent() private returns (bytes32 requestId) {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_MonthPresent.selector);
         request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        request.add("path", "MonthPresent");
+        request.add("path", "month");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_MonthPresent(bytes32 _requestId,int _MonthPresent) public recordChainlinkFulfillment(_requestId) {
@@ -160,7 +160,7 @@ contract VolcanoInsurance is ChainlinkClient {
     function request_DayPresent() private returns (bytes32 requestId)  {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_DayPresent.selector);
         request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        request.add("path", "DayPresent");
+        request.add("path", "day");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_DayPresent(bytes32 _requestId,int _DayPresent) public recordChainlinkFulfillment(_requestId) {
