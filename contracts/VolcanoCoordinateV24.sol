@@ -10,15 +10,18 @@ contract VolcanoInsurance is ChainlinkClient {
     
     using Chainlink for Chainlink.Request;
     
-    int public LatitudeEruption;
+    int public LatitudeEruption; 
     int public LongitudeEruption;
+    int public YearEruption;
+    int public MonthEruption;
+    int public DayEruption;
     int public YearPresent;
     int public MonthPresent;
     int public DayPresent;
     uint public OpenETHtoEnsure;
     uint public AccountsInsured;
     uint private immutable fee = 1*10**16;
-    string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.YearPresent=1727&refine.MonthPresent=08&refine.DayPresent=03&refine.country=Iceland";
+    string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
     bytes32 private immutable jobId ="e5b0e6aeab36405ba33aea12c6988ed6";  //WORKING INT FOR NEGATIVE VALUES          // jobId = "3b7ca0d48c7a4b2da9268456665d11ae"; //WORKING UINT
     address private immutable oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; //WORKING INT FOR NEGATIVE VALUES         //oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; //WORKING UINT    
     address public immutable Owner;
@@ -49,14 +52,17 @@ contract VolcanoInsurance is ChainlinkClient {
     function urlRebuiltJSONUpdate(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
         require(bytes(filterMonth).length == 2, "JSON must have MonthPresent as 2 characters at all times!");
         require(bytes(filterDay).length == 2, "JSON must have DayPresent as 2 characters at all times!");
-        urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.YearPresent=",filterYear,
-        "&refine.MonthPresent=",filterMonth,"&refine.DayPresent=",filterDay,"&refine.country=",filterCountry) );
-    }
+        urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",filterYear,
+        "&refine.month=",filterMonth,"&refine.day=",filterDay,"&refine.country=",filterCountry) );
+    }    
     
     function request_All_Coordinate_Data() public {
         require(tokenObject.balanceOf(address(this)) >= 2*(10*16), "CONTRACT NEEDS 0.02 LINK TO DO THIS! PLEASE SEND LINK!");
         request_Latitude();
         request_Longitude();
+        //GOOD IDEA request_Year_Eruption();
+        //GOOD IDEA request_Month_Eruption();
+        //GOOD IDEA request_Day_Eruption();
     }
     
     function request_All_Time_Data() public {
@@ -149,6 +155,42 @@ contract VolcanoInsurance is ChainlinkClient {
     function fulfill_request_Longitude(bytes32 _requestId, int _LongitudeEruption) public recordChainlinkFulfillment(_requestId)
     {
         LongitudeEruption = _LongitudeEruption;
+    }
+    
+    function request_Year_Eruption() private returns (bytes32 requestId) {
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Year_Eruption.selector);
+        request.add("get", urlRebuiltJSON);
+        request.add("path", "records.0.fields.year");
+        request.addInt("times", 10**2);
+        return sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Year_Eruption(bytes32 _requestId, int _YearEruption) public recordChainlinkFulfillment(_requestId)
+    {
+        YearEruption = _YearEruption;
+    }
+    
+    function request_Month_Eruption() private returns (bytes32 requestId) {
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Month_Eruption.selector);
+        request.add("get", urlRebuiltJSON);
+        request.add("path", "records.0.fields.coordinates.1");
+        request.addInt("times", 10**2);
+        return sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Month_Eruption(bytes32 _requestId, int _MonthEruption) public recordChainlinkFulfillment(_requestId)
+    {
+        MonthEruption = _MonthEruption;
+    }
+    
+    function request_Day_Eruption() private returns (bytes32 requestId) {
+        Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Year_Eruption.selector);
+        request.add("get", urlRebuiltJSON);
+        request.add("path", "records.0.fields.coordinates.1");
+        request.addInt("times", 10**2);
+        return sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Day_Eruption(bytes32 _requestId, int _DayEruption) public recordChainlinkFulfillment(_requestId)
+    {
+        DayEruption = _DayEruption;
     }
     
     function request_YearPresent() private returns (bytes32 requestId) {
