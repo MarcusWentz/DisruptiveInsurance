@@ -123,6 +123,11 @@ contract VolcanoInsurance is ChainlinkClient {
         payable(msg.sender).transfer(1*(10**18));
     }
     
+    function OwnerSelfDestructClaimETH() public contractOwnerCheck {
+        require(address(this).balance > (AccountsInsured+OpenETHtoEnsure), 'There is no open ETH in the contract currently.'); 
+        payable(msg.sender).transfer((address(this).balance)-(AccountsInsured+OpenETHtoEnsure));
+    }
+    
     function request_Latitude() private returns (bytes32 requestId) {
         Chainlink.Request memory request = buildChainlinkRequest(jobId, address(this), this.fulfill_request_Latitude.selector);
         request.add("get", urlRebuiltJSON);
