@@ -109,7 +109,7 @@ contract VolcanoInsurance is ChainlinkClient {
         LongitudeEruption = 0;
     }
     
-    function ZDEBUGOwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
+    function ZDEBUGOwnerSendOneEthToContractFromInsuranceBusiness() public contractOwnerCheck {
         payable(msg.sender).transfer(address(this).balance);
     }
     
