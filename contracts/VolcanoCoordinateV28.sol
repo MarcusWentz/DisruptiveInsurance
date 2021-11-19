@@ -86,10 +86,16 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     
     function OracleVolcanoUrlRebuiltJSONUpdate(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
+        LatitudeEruption = 0;
+        LongitudeEruption = 0;  
+        YearEruption = 0;
+        MonthEruption = 0;
+        DayEruption = 0;
         require(bytes(filterMonth).length == 2, "JSON must have MonthPresent as 2 characters at all times!");
         require(bytes(filterDay).length == 2, "JSON must have DayPresent as 2 characters at all times!");
         urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",filterYear,
         "&refine.month=",filterMonth,"&refine.day=",filterDay,"&refine.country=",filterCountry) );
+        //OracleRequestVolcanoEruptionData();
     }    
     
     function OracleRequestVolcanoEruptionData() public {
