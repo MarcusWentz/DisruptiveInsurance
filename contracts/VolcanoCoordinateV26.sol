@@ -118,13 +118,13 @@ contract VolcanoInsurance is ChainlinkClient {
         YearPresent = 0;
     }
     
-    function BuyerClaimReward() public {
+    function BuyerClaimReward(address policyHolder) public {
         require(DayEruption > 0, "DayPresent not recorded yet by oracle.");
         require(MonthEruption > 0, "MonthPresent not recorded yet by oracle.");
         require(YearEruption > 0, "YearPresent not recorded yet by oracle.");        
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
-        //
+        require( ( (policies[policyHolder].YearSigned<<9) + (policies[policyHolder].MonthSigned<<5) + (policies[policyHolder].DaySigned) ) < ((YearEruption<<9)+ (MonthEruption<<5) + DayEruption) , "Policy was signed after eruption");
         require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
         require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
         AccountsInsured -= 1;
@@ -143,7 +143,7 @@ contract VolcanoInsurance is ChainlinkClient {
         require(MonthPresent > 0, "MonthPresent not recorded yet by oracle.");
         require(YearPresent > 0, "YearPresent not recorded yet by oracle.");
         require(policies[policyHolder].EthereumAwardTiedToAddress > 0, "Policy does not exist.");
-        require( ((YearPresent<<9)+ (MonthPresent<<5) + DayPresent) > ( (policies[policyHolder].YearSigned<<9) + (policies[policyHolder].MonthSigned<<5) + (policies[policyHolder].DaySigned)+512) , "Policy has not yet expired");
+        require( ((YearPresent<<9)+ (MonthPresent<<5) + DayPresent) > ( ((policies[policyHolder].YearSigned<<9) + (policies[policyHolder].MonthSigned<<5) + (policies[policyHolder].DaySigned))+512) , "Policy has not yet expired");
         AccountsInsured -=1;
         policies[policyHolder] = policy(0, 0, 0, 0, 0, 0);
         payable(msg.sender).transfer(address(this).balance);
