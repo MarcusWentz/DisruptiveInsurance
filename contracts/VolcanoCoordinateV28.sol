@@ -22,10 +22,10 @@ contract VolcanoInsurance is ChainlinkClient {
     uint public AccountsInsured;
     uint private immutable fee = 1*10**16;
     string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
-    bytes32 private immutable jobIdGetInt ="e5b0e6aeab36405ba33aea12c6988ed6";  //WORKING INT FOR NEGATIVE VALUES          // jobId = "3b7ca0d48c7a4b2da9268456665d11ae"; //WORKING UINT
-    bytes32 private immutable jobIdGetUint ="3b7ca0d48c7a4b2da9268456665d11ae";  //WORKING INT FOR NEGATIVE VALUES          // jobId = "3b7ca0d48c7a4b2da9268456665d11ae"; //WORKING UINT
+    bytes32 private immutable jobIdGetInt ="e5b0e6aeab36405ba33aea12c6988ed6"; 
+    bytes32 private immutable jobIdGetUint ="3b7ca0d48c7a4b2da9268456665d11ae";  
     bytes32 private immutable jobIdGetBytes32 = "187bb80e5ee74a139734cac7475f3c6e";
-    address private immutable oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; //WORKING INT FOR NEGATIVE VALUES         //oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; //WORKING UINT    
+    address private immutable oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; 
     address public immutable Owner;
     address private ChainlinkTokenAddressRinkeby = 0x01BE23585060835E02B77ef475b0Cc51aA1e0709;
     ERC20TokenContract tokenObject = ERC20TokenContract(ChainlinkTokenAddressRinkeby);
@@ -63,7 +63,6 @@ contract VolcanoInsurance is ChainlinkClient {
         return string(bytesArray);
     }
     
-    
     function stringToUint(string memory numString) public pure returns(uint) { //CREDIT: https://stackoverflow.com/questions/68976364/solidity-converting-number-strings-to-numbers
         uint  val=0;
         bytes   memory stringBytes = bytes(numString);
@@ -76,6 +75,14 @@ contract VolcanoInsurance is ChainlinkClient {
            val +=  (uint(jval) * (10**(exp-1))); 
         }
       return val;
+    }
+    
+    function bytes32ToUint(bytes32 oracleBytes32Convert) public pure returns(uint){
+        return stringToUint(bytes32ToString(oracleBytes32Convert));
+    }
+    
+    function DateCompareForm(uint YearInput, uint MonthInput, uint DayInput) public pure returns(uint){
+        return ( (YearInput<<9) + (MonthInput<<5) + DayInput ) ;
     }
     
     function OracleVolcanoUrlRebuiltJSONUpdate(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
@@ -120,11 +127,11 @@ contract VolcanoInsurance is ChainlinkClient {
     
     function BuyerClaimReward(address policyHolder) public {
         require(DayEruption > 0, "DayPresent not recorded yet by oracle.");
-        require(MonthEruption > 0, "MonthPresent not recorded yet by oracle.");
+        require(MonthEruption > 0, "MonthPresent not recorded yet by oracle.");                                                                                                         
         require(YearEruption > 0, "YearPresent not recorded yet by oracle.");        
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
-        require( ( (policies[policyHolder].YearSigned<<9) + (policies[policyHolder].MonthSigned<<5) + (policies[policyHolder].DaySigned) ) < ((YearEruption<<9)+ (MonthEruption<<5) + DayEruption) , "Policy was signed after eruption");
+        require(DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) < DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
         require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
         require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
         AccountsInsured -= 1;
@@ -143,7 +150,7 @@ contract VolcanoInsurance is ChainlinkClient {
         require(MonthPresent > 0, "MonthPresent not recorded yet by oracle.");
         require(YearPresent > 0, "YearPresent not recorded yet by oracle.");
         require(policies[policyHolder].EthereumAwardTiedToAddress > 0, "Policy does not exist.");
-        require( ((YearPresent<<9)+ (MonthPresent<<5) + DayPresent) > ( ((policies[policyHolder].YearSigned<<9) + (policies[policyHolder].MonthSigned<<5) + (policies[policyHolder].DaySigned))+512) , "Policy has not yet expired");
+        require(DateCompareForm(YearPresent,MonthPresent,DayPresent) > (DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) + 512) , "Policy has not yet expired");
         AccountsInsured -=1;
         policies[policyHolder] = policy(0, 0, 0, 0, 0, 0);
         payable(msg.sender).transfer(address(this).balance);
@@ -172,8 +179,8 @@ contract VolcanoInsurance is ChainlinkClient {
         request.addInt("times", 10**2);
         return sendChainlinkRequestTo(oracle, request, fee);
     }
-    function fulfill_request_Latitude(bytes32 _requestId, int _LatitudeEruption) public recordChainlinkFulfillment(_requestId){
-        LatitudeEruption = _LatitudeEruption;
+    function fulfill_request_Latitude(bytes32 _requestId, int oracleLatitudeEruption) public recordChainlinkFulfillment(_requestId){
+        LatitudeEruption = oracleLatitudeEruption;
     }
     
     function request_Longitude() private returns (bytes32 requestId) {
@@ -183,9 +190,9 @@ contract VolcanoInsurance is ChainlinkClient {
         request.addInt("times", 10**2);
         return sendChainlinkRequestTo(oracle, request, fee);
     }
-    function fulfill_request_Longitude(bytes32 _requestId, int _LongitudeEruption) public recordChainlinkFulfillment(_requestId)
+    function fulfill_request_Longitude(bytes32 _requestId, int oracleLongitudeEruption) public recordChainlinkFulfillment(_requestId)
     {
-        LongitudeEruption = _LongitudeEruption;
+        LongitudeEruption = oracleLongitudeEruption;
     }
     
     function request_Year_Eruption() private returns (bytes32 requestId) {
@@ -194,9 +201,9 @@ contract VolcanoInsurance is ChainlinkClient {
         request.add("path", "records.0.fields.year");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
-    function fulfill_request_Year_Eruption(bytes32 _requestId, uint _YearEruption) public recordChainlinkFulfillment(_requestId)
+    function fulfill_request_Year_Eruption(bytes32 _requestId, uint oracleYearEruption) public recordChainlinkFulfillment(_requestId)
     {
-        YearEruption = _YearEruption;
+        YearEruption = oracleYearEruption;
     }
     
     function request_Month_Eruption() private returns (bytes32 requestId) {
@@ -205,9 +212,9 @@ contract VolcanoInsurance is ChainlinkClient {
         request.add("path", "records.0.fields.month");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
-    function fulfill_request_Month_Eruption(bytes32 _requestId, bytes32 _MonthEruption) public recordChainlinkFulfillment(_requestId)
+    function fulfill_request_Month_Eruption(bytes32 _requestId, bytes32 oracleMonthEruption) public recordChainlinkFulfillment(_requestId)
     {
-        MonthEruption = stringToUint(bytes32ToString(_MonthEruption));
+        MonthEruption = bytes32ToUint(oracleMonthEruption);
     }
     
     function request_Day_Eruption() private returns (bytes32 requestId) {
@@ -216,9 +223,9 @@ contract VolcanoInsurance is ChainlinkClient {
         request.add("path", "records.0.fields.day");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
-    function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 _DayEruption) public recordChainlinkFulfillment(_requestId)
+    function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 oracleDayEruption) public recordChainlinkFulfillment(_requestId)
     {
-        DayEruption = stringToUint(bytes32ToString(_DayEruption));
+        DayEruption = bytes32ToUint(oracleDayEruption);
     }
     
     function request_YearPresent() private returns (bytes32 requestId) {
@@ -227,8 +234,8 @@ contract VolcanoInsurance is ChainlinkClient {
         request.add("path", "year");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
-    function fulfill_request_YearPresent(bytes32 _requestId,uint _YearPresent) public recordChainlinkFulfillment(_requestId) {
-        YearPresent = _YearPresent; 
+    function fulfill_request_YearPresent(bytes32 _requestId,uint oracleYearPresent) public recordChainlinkFulfillment(_requestId) {
+        YearPresent = oracleYearPresent; 
     }
     
     function request_MonthPresent() private returns (bytes32 requestId) {
@@ -237,8 +244,8 @@ contract VolcanoInsurance is ChainlinkClient {
         request.add("path", "month");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
-    function fulfill_request_MonthPresent(bytes32 _requestId,uint _MonthPresent) public recordChainlinkFulfillment(_requestId) {
-        MonthPresent = _MonthPresent; 
+    function fulfill_request_MonthPresent(bytes32 _requestId,uint oracleMonthPresent) public recordChainlinkFulfillment(_requestId) {
+        MonthPresent = oracleMonthPresent; 
     }
     
     function request_DayPresent() private returns (bytes32 requestId)  {
@@ -247,8 +254,8 @@ contract VolcanoInsurance is ChainlinkClient {
         request.add("path", "day");
         return sendChainlinkRequestTo(oracle, request, fee);
     }
-    function fulfill_request_DayPresent(bytes32 _requestId,uint _DayPresent) public recordChainlinkFulfillment(_requestId) {
-        DayPresent = _DayPresent; 
+    function fulfill_request_DayPresent(bytes32 _requestId,uint oracleDayPresent) public recordChainlinkFulfillment(_requestId) {
+        DayPresent = oracleDayPresent; 
     }
     
  }
