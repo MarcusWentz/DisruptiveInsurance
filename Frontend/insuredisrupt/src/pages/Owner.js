@@ -33,6 +33,13 @@ class Owner extends Component {
 						<p style={{ textAlign: "center" }} className="v-txt">
 							1
 						</p>
+						<button
+							type="button"
+							class="btn btn-dark"
+							onClick={this.handleSetContract}
+						>
+							Claim ETH from expired policy
+						</button>
 
 						<div>
 							<input
@@ -43,12 +50,21 @@ class Owner extends Component {
 								value={this.state.userInput}
 								style={{ textAlign: "center" }}
 							></input>
+
 							<button
 								type="button"
 								class="btn btn-dark"
 								onClick={this.handleSetContract}
 							>
-								Claim ETH from expired policy
+								Claim 1 ETH not connected to a Policy
+							</button>
+
+							<button
+								type="button"
+								class="btn btn-dark"
+								onClick={this.handleSetContract}
+							>
+								Claim all ETH from a self destruct attack
 							</button>
 
 							<p

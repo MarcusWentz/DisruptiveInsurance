@@ -1,5 +1,5 @@
 //THis is the contract address as deployed on rinkeby
-export const CONTRACT_ADDRESS = "0x135aaCB165Ff9100D268d3aa2E1c7bBEFc8b9086";
+export const CONTRACT_ADDRESS = "0xF8AdBA305aB76386Fd91d4A3f2014a443BEe5433";
 
 export const ABI = [
 	{
@@ -7,36 +7,363 @@ export const ABI = [
 		inputs: [
 			{
 				indexed: true,
-				internalType: "uint256",
-				name: "date",
-				type: "uint256",
-			},
-			{
-				indexed: true,
-				internalType: "address",
-				name: "from",
-				type: "address",
-			},
-			{
-				indexed: false,
-				internalType: "uint256",
-				name: "valueChangeEventWenjs",
-				type: "uint256",
+				internalType: "bytes32",
+				name: "id",
+				type: "bytes32",
 			},
 		],
-		name: "setValueUpdatedViaWebjs",
+		name: "ChainlinkCancelled",
 		type: "event",
 	},
 	{
-		inputs: [{ internalType: "uint256", name: "x", type: "uint256" }],
-		name: "set",
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: "bytes32",
+				name: "id",
+				type: "bytes32",
+			},
+		],
+		name: "ChainlinkFulfilled",
+		type: "event",
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				internalType: "bytes32",
+				name: "id",
+				type: "bytes32",
+			},
+		],
+		name: "ChainlinkRequested",
+		type: "event",
+	},
+	{
+		inputs: [
+			{ internalType: "address", name: "policyHolder", type: "address" },
+		],
+		name: "BuyerClaimReward",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "int256", name: "inputLat", type: "int256" },
+			{ internalType: "int256", name: "inputLong", type: "int256" },
+		],
+		name: "BuyerCreatePolicy",
+		outputs: [],
+		stateMutability: "payable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "bytes32", name: "_requestId", type: "bytes32" },
+			{
+				internalType: "bytes32",
+				name: "oracleDayEruption",
+				type: "bytes32",
+			},
+		],
+		name: "fulfill_request_Day_Eruption",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "bytes32", name: "_requestId", type: "bytes32" },
+			{
+				internalType: "uint256",
+				name: "oracleDayPresent",
+				type: "uint256",
+			},
+		],
+		name: "fulfill_request_DayPresent",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "bytes32", name: "_requestId", type: "bytes32" },
+			{
+				internalType: "int256",
+				name: "oracleLatitudeEruption",
+				type: "int256",
+			},
+		],
+		name: "fulfill_request_Latitude",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "bytes32", name: "_requestId", type: "bytes32" },
+			{
+				internalType: "int256",
+				name: "oracleLongitudeEruption",
+				type: "int256",
+			},
+		],
+		name: "fulfill_request_Longitude",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "bytes32", name: "_requestId", type: "bytes32" },
+			{
+				internalType: "bytes32",
+				name: "oracleMonthEruption",
+				type: "bytes32",
+			},
+		],
+		name: "fulfill_request_Month_Eruption",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "bytes32", name: "_requestId", type: "bytes32" },
+			{
+				internalType: "uint256",
+				name: "oracleMonthPresent",
+				type: "uint256",
+			},
+		],
+		name: "fulfill_request_MonthPresent",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "bytes32", name: "_requestId", type: "bytes32" },
+			{
+				internalType: "uint256",
+				name: "oracleYearEruption",
+				type: "uint256",
+			},
+		],
+		name: "fulfill_request_Year_Eruption",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "bytes32", name: "_requestId", type: "bytes32" },
+			{
+				internalType: "uint256",
+				name: "oracleYearPresent",
+				type: "uint256",
+			},
+		],
+		name: "fulfill_request_YearPresent",
 		outputs: [],
 		stateMutability: "nonpayable",
 		type: "function",
 	},
 	{
 		inputs: [],
-		name: "storedData",
+		name: "OracleRequestPresentTime",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "string", name: "filterYear", type: "string" },
+			{ internalType: "string", name: "filterMonth", type: "string" },
+			{ internalType: "string", name: "filterDay", type: "string" },
+			{ internalType: "string", name: "filterCountry", type: "string" },
+		],
+		name: "OracleRequestVolcanoEruptionData",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "address", name: "policyHolder", type: "address" },
+		],
+		name: "OwnerClaimExpiredPolicyETH",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "OwnerLiquidtoOpenETHToWithdraw",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "OwnerSelfDestructClaimETH",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "OwnerSendOneEthToContractFromInsuranceBusiness",
+		outputs: [],
+		stateMutability: "payable",
+		type: "function",
+	},
+	{ inputs: [], stateMutability: "nonpayable", type: "constructor" },
+	{
+		inputs: [],
+		name: "AccountsInsured",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "bytes32", name: "_bytes32", type: "bytes32" },
+		],
+		name: "bytes32ToString",
+		outputs: [{ internalType: "string", name: "", type: "string" }],
+		stateMutability: "pure",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "bytes32",
+				name: "oracleBytes32Convert",
+				type: "bytes32",
+			},
+		],
+		name: "bytes32ToUint",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "pure",
+		type: "function",
+	},
+	{
+		inputs: [
+			{ internalType: "uint256", name: "YearInput", type: "uint256" },
+			{ internalType: "uint256", name: "MonthInput", type: "uint256" },
+			{ internalType: "uint256", name: "DayInput", type: "uint256" },
+		],
+		name: "DateCompareForm",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "pure",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "DayEruption",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "DayPresent",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "LatitudeEruption",
+		outputs: [{ internalType: "int256", name: "", type: "int256" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "LongitudeEruption",
+		outputs: [{ internalType: "int256", name: "", type: "int256" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "MonthEruption",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "MonthPresent",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "OpenETHtoEnsure",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "Owner",
+		outputs: [{ internalType: "address", name: "", type: "address" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [{ internalType: "address", name: "", type: "address" }],
+		name: "policies",
+		outputs: [
+			{ internalType: "int256", name: "LatitudeInsured", type: "int256" },
+			{
+				internalType: "int256",
+				name: "LongitudeInsured",
+				type: "int256",
+			},
+			{ internalType: "uint256", name: "YearSigned", type: "uint256" },
+			{ internalType: "uint256", name: "MonthSigned", type: "uint256" },
+			{ internalType: "uint256", name: "DaySigned", type: "uint256" },
+			{
+				internalType: "uint256",
+				name: "EthereumAwardTiedToAddress",
+				type: "uint256",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [{ internalType: "string", name: "numString", type: "string" }],
+		name: "stringToUint",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "pure",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "urlRebuiltJSON",
+		outputs: [{ internalType: "string", name: "", type: "string" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "YearEruption",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "YearPresent",
 		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
 		stateMutability: "view",
 		type: "function",
