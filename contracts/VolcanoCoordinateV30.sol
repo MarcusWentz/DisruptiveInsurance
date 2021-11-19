@@ -85,27 +85,18 @@ contract VolcanoInsurance is ChainlinkClient {
         return ( (YearInput<<9) + (MonthInput<<5) + DayInput ) ;
     }
     
-    function OracleVolcanoUrlRebuiltJSONUpdate(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
-        //require(tokenObject.balanceOf(address(this)) >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
+    function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
+        require(tokenObject.balanceOf(address(this)) >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
         require(bytes(filterMonth).length == 2, "JSON must have MonthPresent as 2 characters at all times!");
         require(bytes(filterDay).length == 2, "JSON must have DayPresent as 2 characters at all times!");
         urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",filterYear,
         "&refine.month=",filterMonth,"&refine.day=",filterDay,"&refine.country=",filterCountry) );
-        // request_Latitude();
-        // request_Longitude();
-        // request_Year_Eruption();
-        // request_Month_Eruption();
-        // request_Day_Eruption();
-    }    
-    
-    function OracleRequestVolcanoEruptionData() public {
-        require(tokenObject.balanceOf(address(this)) >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
         request_Latitude();
         request_Longitude();
         request_Year_Eruption();
         request_Month_Eruption();
         request_Day_Eruption();
-    }
+    }    
     
     function OracleRequestPresentTime() public {
         require(tokenObject.balanceOf(address(this)) >= 3*(10*16), "CONTRACT NEEDS 0.03 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!!");
@@ -144,6 +135,9 @@ contract VolcanoInsurance is ChainlinkClient {
         payable(msg.sender).transfer(1*(10**18));
         LatitudeEruption = 0;
         LongitudeEruption = 0;
+        YearEruption = 0;
+        MonthEruption = 0;
+        DayEruption = 0;
     }
     
     function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
@@ -163,8 +157,6 @@ contract VolcanoInsurance is ChainlinkClient {
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
-        LatitudeEruption = 0;
-        LongitudeEruption = 0;
     }
     
     function OwnerLiquidtoOpenETHToWithdraw() public contractOwnerCheck {
