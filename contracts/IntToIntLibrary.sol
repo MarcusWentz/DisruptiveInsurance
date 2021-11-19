@@ -12,7 +12,7 @@ pragma solidity ^0.8.10;
  * @author James Lockhart <james@n3tw0rk.co.uk>
  */
 library Integers {
-    /**
+    /*
      * Parse Int
      * 
      * Converts an ASCII string value into an uint as long as the string 
@@ -34,67 +34,4 @@ library Integers {
         }
     }
 
-    /**
-     * To String
-     * 
-     * Converts an unsigned integer to the ASCII string equivalent value
-     * 
-     * @param _base The unsigned integer to be converted to a string
-     * @return string The resulting ASCII string value
-     */
-    function toString(uint _base)
-        internal
-        pure
-        returns (string memory) {
-        bytes memory _tmp = new bytes(32);
-        uint i;
-        for(i = 0;_base > 0;i++) {
-            _tmp[i] = byte(uint8((_base % 10) + 48));
-            _base /= 10;
-        }
-        bytes memory _real = new bytes(i--);
-        for(uint j = 0; j < _real.length; j++) {
-            _real[j] = _tmp[i--];
-        }
-        return string(_real);
-    }
-
-    /**
-     * To Byte
-     *
-     * Convert an 8 bit unsigned integer to a byte
-     *
-     * @param _base The 8 bit unsigned integer
-     * @return byte The byte equivalent
-     */
-    function toByte(uint8 _base)
-        public
-        pure
-        returns (byte _ret) {
-        assembly {
-            let m_alloc := add(msize(),0x1)
-            mstore8(m_alloc, _base)
-            _ret := mload(m_alloc)
-        }
-    }
-
-    /**
-     * To Bytes
-     *
-     * Converts an unsigned integer to bytes
-     *
-     * @param _base The integer to be converted to bytes
-     * @return bytes The bytes equivalent 
-     */
-    function toBytes(uint _base)
-        internal
-        pure
-        returns (bytes memory _ret) {
-        assembly {
-            let m_alloc := add(msize(),0x1)
-            _ret := mload(m_alloc)
-            mstore(_ret, 0x20)
-            mstore(add(_ret, 0x20), _base)
-        }
-    }
 }
