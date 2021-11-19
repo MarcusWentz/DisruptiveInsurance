@@ -14,7 +14,7 @@ class Oracle extends Component {
 		return (
 			<div className="App-background">
 				<div className="center-container-buy ">
-					<h2 style={{ textAlign: "center" }}>Buy Insurance</h2>
+					<h2 style={{ textAlign: "center" }}>Set Oracle Data</h2>
 
 					<div class="form-container-buy">
 						<button
@@ -25,7 +25,7 @@ class Oracle extends Component {
 							Request Time Now
 						</button>
 						<p style={{ textAlign: "center" }} className="v-txt">
-							Get: Year Month Date
+							WAIT 30s Get: Year Month Date
 						</p>
 
 						<button
@@ -35,20 +35,6 @@ class Oracle extends Component {
 						>
 							Request Eruption Coordinates
 						</button>
-						<p style={{ textAlign: "center" }} className="v-txt">
-							get: Lat/Long
-						</p>
-
-						<button
-							type="button"
-							class="btn btn-dark-buy"
-							onClick={this.handleSendEth}
-						>
-							Update URL for JSON data
-						</button>
-						<p style={{ textAlign: "center" }} className="v-txt">
-							get: urlRebuilt
-						</p>
 
 						<div className="lat-long-container">
 							<input
@@ -84,17 +70,12 @@ class Oracle extends Component {
 						</div>
 
 						<div>
-							<button
-								type="button"
-								class="btn btn-dark-buy"
-								onClick={this.handleSetContract}
-							>
-								Claim Reward
-							</button>
-
 							<h4 style={{ textAlign: "center" }}>
-								display success msg here
+								(30s) LatEruption, LongEruption,
 							</h4>
+							<p>urlRebuiltJSON</p>
+
+							<p>Year/Month/Day of Eruption</p>
 
 							<div style={{ textAlign: "center" }}></div>
 						</div>
