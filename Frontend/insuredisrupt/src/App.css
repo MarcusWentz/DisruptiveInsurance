@@ -62,7 +62,7 @@ body {
 	display: table;
 	margin: 50px auto;
 	padding: 2px;
-	width: 80%;
+	width: 50%;
 
 	border-radius: 10px;
 }
@@ -72,7 +72,8 @@ body {
 	border-radius: 15px;
 	width: 100%;
 	text-align: center;
-	padding: 30px;
+	padding: 20px;
+	padding-top: 40px;
 	outline: none !important;
 }
 
@@ -84,6 +85,10 @@ body {
 	color: white;
 }
 
+.btn.btn-dark-buy:hover {
+	background-color: #1a1a21;
+}
+
 .lat-long-container {
 	display: flex;
 	text-align: center;
@@ -92,7 +97,7 @@ body {
 .form-control-buy {
 	background-color: #22212a !important;
 	width: 42%;
-	margin-left: 40px;
+	margin-left: 35px;
 	margin-bottom: 20px;
 	border-radius: 15px;
 	padding: 5px;
@@ -115,4 +120,17 @@ label {
 .label-container {
 	display: flex;
 	flex-direction: column;
+}
+
+/*Oracle page styling*/
+.form-control-oracle {
+	background-color: #22212a !important;
+	width: 19%;
+	margin-left: 30px;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	padding: 5px;
+	text-align: center;
+	color: white !important;
+	display: block;
 }

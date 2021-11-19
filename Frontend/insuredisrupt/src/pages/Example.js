@@ -5,7 +5,7 @@ import Web3 from "web3";
 import logo7 from "../Images/logo7transparent.png";
 import logo8 from "../Images/LOGO_8_TRANSPARENT.png";
 
-class About extends Component {
+class Example extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -167,4 +167,4 @@ class About extends Component {
 	}
 }
 
-export default About;
+export default Example;

@@ -2,9 +2,11 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import About from "./pages/About";
+import Owner from "./pages/Owner";
 import Home from "./pages/Home";
-import Service from "./pages/Service";
+import Buy from "./pages/Buy";
+import Oracle from "./pages/Oracle";
+import Example from "./pages/Example";
 
 import React, { Component } from "react";
 
@@ -23,8 +25,10 @@ class App extends Component {
 					<Navbar />
 					<Switch>
 						<Route exact path="/" component={Home} />
-						<Route path="/about" component={About} />
-						<Route path="/service" component={Service} />
+						<Route path="/owner" component={Owner} />
+						<Route path="/buy" component={Buy} />
+						<Route path="/oracle" component={Oracle} />
+						<Route path="/example" component={Example} />
 					</Switch>
 					<Footer />
 				</Router>

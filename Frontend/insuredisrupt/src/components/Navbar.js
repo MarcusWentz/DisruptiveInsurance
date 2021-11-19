@@ -22,13 +22,23 @@ class Navbar extends Component {
 						</Link>
 					</li>
 					<li className="nav-txt">
-						<Link to="/about" className="nav-link">
-							About
+						<Link to="/owner" className="nav-link">
+							Owner
 						</Link>
 					</li>
 					<li className="nav-txt">
-						<Link to="/service" className="nav-link">
-							Service
+						<Link to="/buy" className="nav-link">
+							Buy
+						</Link>
+					</li>
+					<li className="nav-txt">
+						<Link to="/oracle" className="nav-link">
+							Oracle
+						</Link>
+					</li>
+					<li className="nav-txt">
+						<Link to="/example" className="nav-link">
+							Example
 						</Link>
 					</li>
 				</ul>

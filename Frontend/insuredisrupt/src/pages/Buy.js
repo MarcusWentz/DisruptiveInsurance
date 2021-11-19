@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 
-class Service extends Component {
+class Buy extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			account: "default",
+			successMsg: "",
+			availableEth: "",
 		};
 	}
 
@@ -30,7 +32,6 @@ class Service extends Component {
 						</p>
 
 						<div className="lat-long-container">
-							<label for="username">Username</label>
 							<input
 								class="form-control-buy"
 								type="text"
@@ -38,9 +39,7 @@ class Service extends Component {
 								onChange={this.handleUserInput}
 								value={this.state.userInput}
 							></input>
-							<div className="label-container">
-								<label for="username">Username</label>
-							</div>
+							<div className="label-container"></div>
 
 							<input
 								class="form-control-buy"
@@ -73,4 +72,4 @@ class Service extends Component {
 	}
 }
 
-export default Service;
+export default Buy;
