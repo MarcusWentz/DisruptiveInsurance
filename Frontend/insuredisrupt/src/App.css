@@ -76,17 +76,6 @@ body {
 	outline: none !important;
 }
 
-.form-control-buy {
-	background-color: #22212a !important;
-	width: 48%;
-	margin-bottom: 20px;
-	border-radius: 15px;
-	padding: 5px;
-	text-align: center;
-	color: white !important;
-	outline: none !important;
-}
-
 .btn.btn-dark-buy {
 	background-color: #22212a;
 	width: 90%;
@@ -110,7 +99,7 @@ body {
 
 	text-align: center;
 	color: white !important;
-	outline: none !important;
+	display: block;
 }
 
 label {
