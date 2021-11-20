@@ -13,12 +13,16 @@ class Buy extends Component {
 			lat: 0,
 			long: 0,
 			getAvailableEth: null,
+			currentPolicySignedYear: null,
 		};
 	}
 	componentDidMount() {
 		this.loadBlockchainData();
 		this.handleChangeUserInput = this.handleChangeUserInput.bind(this);
 		this.handleBuyPolicy = this.handleBuyPolicy.bind(this);
+		this.handleClaimReward = this.handleClaimReward.bind(this);
+
+		//handleClaimReward();
 	}
 
 	async loadBlockchainData() {
@@ -28,7 +32,7 @@ class Buy extends Component {
 		//Fetch account data:
 		const accountFromMetaMask = await web3.eth.getAccounts();
 		this.setState({ account: accountFromMetaMask });
-		console.log(this.state.account[0], "CONTRact address");
+		console.log(this.state.account[0], "user metamask address");
 		//Load the smart contract
 		const volcanoContract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
 		this.setState({ volcanoContract: volcanoContract });
@@ -46,10 +50,22 @@ class Buy extends Component {
 
 		//GET inital values
 		let availableEth = await volcanoContract.methods
-			.OpenETHtoEnsure()
+			.OpenETHtoInsure()
 			.call();
 		this.setState({ getAvailableEth: availableEth });
 		console.log(this.state.getAvailableEth, "avail eth:");
+
+		//Get if user has policy and when signed
+		let currentPolicySignedYear = await volcanoContract.methods.policies[
+			this.state.account[0]
+		]
+			.YearSigned()
+			.call();
+		this.setState({ currentPolicySignedYear: currentPolicySignedYear });
+		console.log(
+			this.state.currentPolicySignedYear,
+			"cUrrentPolicy signed year"
+		);
 
 		///----Event will automatically read data
 		//this.eventListener(volcanoContract);
@@ -96,6 +112,19 @@ class Buy extends Component {
 				.BuyerCreatePolicy(this.state.lat, this.state.long)
 				.encodeABI(),
 			value: 10000000000000000,
+			from: this.state.account[0],
+		});
+	}
+
+	handleClaimReward() {
+		console.log("Handle claim reward");
+
+		let web3js = new Web3(window.web3.currentProvider);
+		web3js.eth.sendTransaction({
+			to: CONTRACT_ADDRESS,
+			data: this.state.volcanoContract.methods
+				.BuyerClaimReward(this.state.account[0])
+				.encodeABI(),
 			from: this.state.account[0],
 		});
 	}
@@ -153,7 +182,7 @@ class Buy extends Component {
 							<button
 								type="button"
 								class="btn btn-dark-buy"
-								onClick={this.handleSetContract}
+								onClick={this.handleClaimReward}
 							>
 								Claim Reward
 							</button>
