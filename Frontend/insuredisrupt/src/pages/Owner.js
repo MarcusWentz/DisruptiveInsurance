@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-
+import Web3 from "web3";
+import { CONTRACT_ADDRESS, ABI } from "../config";
 class Owner extends Component {
 	constructor(props) {
 		super(props);
@@ -7,7 +8,37 @@ class Owner extends Component {
 			account: "default",
 			successMsg: "",
 			availableEth: "",
+			volcanoContract: null,
 		};
+	}
+	componentDidMount() {
+		this.loadBlockchainData();
+		//this.handleChangeUserInput = this.handleChangeUserInput.bind(this);
+		//this.handleBuyPolicy = this.handleBuyPolicy.bind(this);
+	}
+
+	async loadBlockchainData() {
+		const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+		const network = await web3.eth.net.getNetworkType();
+		await window.ethereum.enable();
+		//Fetch account data:
+		const accountFromMetaMask = await web3.eth.getAccounts();
+		this.setState({ account: accountFromMetaMask });
+		console.log(this.state.account[0], "CONTRact address");
+		//Load the smart contract
+		const volcanoContract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
+		this.setState({ volcanoContract: volcanoContract });
+		console.log(this.state.volcanoContract, "CONTRAACT");
+
+		//GET inital values
+		let availableEth = await volcanoContract.methods
+			.OpenETHtoEnsure()
+			.call();
+		this.setState({ getAvailableEth: availableEth });
+		console.log(this.state.getAvailableEthToInsure, "avail eth:");
+
+		///----Event will automatically read data
+		//this.eventListener(volcanoContract);
 	}
 
 	render() {
@@ -28,10 +59,10 @@ class Owner extends Component {
 							style={{ textAlign: "center", margin: 0 }}
 							className="v-txt"
 						>
-							Available Eth:
+							Available ETH to insure:
 						</p>
 						<p style={{ textAlign: "center" }} className="v-txt">
-							1
+							put get value here
 						</p>
 						<button
 							type="button"
