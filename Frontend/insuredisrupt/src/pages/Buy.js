@@ -13,7 +13,7 @@ class Buy extends Component {
 			lat: 0,
 			long: 0,
 			getAvailableEth: null,
-			currentPolicySignedYear: null,
+			currentPolicySignedYearStruct: null,
 		};
 	}
 	componentDidMount() {
@@ -56,19 +56,44 @@ class Buy extends Component {
 		console.log(this.state.getAvailableEth, "avail eth:");
 
 		//Get if user has policy and when signed
-		let currentPolicySignedYear = await volcanoContract.methods.policies[
-			this.state.account[0]
-		]
-			.YearSigned()
+		let currentPolicySignedYearStruct = await volcanoContract.methods
+			.policies(this.state.account[0])
 			.call();
-		this.setState({ currentPolicySignedYear: currentPolicySignedYear });
+		console.log(currentPolicySignedYearStruct, ".......");
+		this.setState({
+			currentPolicySignedYearStruct: currentPolicySignedYearStruct,
+		});
 		console.log(
-			this.state.currentPolicySignedYear,
+			this.state.currentPolicySignedYearStruct,
 			"cUrrentPolicy signed year"
 		);
+		this.helperSetYearPolicySignedWithStructData();
+
+		//	var salaryInfoContract = web3.eth.contract(salaryInfoCompiled.SalaryInfo.info.abiDefinition);
+		// var salaryInfo = salaryInfoContract.new({from:web3.eth.accounts[0], data: salaryInfoCompiled.SalaryInfo.code, gas: 1000000},
 
 		///----Event will automatically read data
 		//this.eventListener(volcanoContract);
+	}
+
+	helperSetYearPolicySignedWithStructData() {
+		let struct = this.state.currentPolicySignedYearStruct;
+		console.log(
+			this.state.currentPolicySignedYearStruct.YearSigned,
+			"ÄÄÄÄÄÄÄÄÄ"
+		);
+
+		console.log();
+
+		/* 	let keysOfStruct = Object.keys(struct);
+		console.log(keysOfStruct, "keysofstruct");
+		keysOfStruct.forEach((keyName) => {
+			if (
+				keyName === "DaySigned" ||
+				keyName === "EthereumAwardTiedToAddress"
+			) {
+			}
+		}); */
 	}
 
 	eventListener(volcanoContract) {
@@ -187,9 +212,7 @@ class Buy extends Component {
 								Claim Reward
 							</button>
 
-							<h4 style={{ textAlign: "center" }}>
-								display success msg here
-							</h4>
+							<h4 style={{ textAlign: "center" }}>{}</h4>
 
 							<div style={{ textAlign: "center" }}></div>
 						</div>
