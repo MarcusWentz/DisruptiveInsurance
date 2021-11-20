@@ -5,7 +5,7 @@ var chai = require('chai');
 const BN = require('bn.js');
 chai.use(require('chai-bn')(BN));
 
-  describe('APIConsumer Integration Tests', async function () {
+  describe('VolcanoInsurance Integration Tests', async function () {
 
     let apiConsumer
 
@@ -13,92 +13,53 @@ chai.use(require('chai-bn')(BN));
       const APIConsumer = await ethers.getContractFactory('VolcanoInsurance');
       apiConsumer = await APIConsumer.deploy();
       await apiConsumer.deployed();
-
+    })
+    it('OracleRequestVolcanoEruptionData: YearEruption*MonthEruption*DayEruption*LatitudeEruption*LongitudeEruption>0', async () => {
       const accounts = await ethers.getSigners()
       const signer = accounts[0]
       const linkTokenContract = new ethers.Contract('0x01BE23585060835E02B77ef475b0Cc51aA1e0709',LinkTokenABI, signer)
-
-      var transferTransaction = await linkTokenContract.transfer(apiConsumer.address,'1000000000000000000')
+      var transferTransaction = await linkTokenContract.transfer(apiConsumer.address,'50000000000000000')
       await transferTransaction.wait()
       console.log('hash:' + transferTransaction.hash)
-    })
-
-    it('numberOfHits', async () => {
-      const transaction = await apiConsumer.request_numberOfHits()
+      const transaction = await apiConsumer.OracleRequestVolcanoEruptionData("1727","08","03","Iceland")
       const tx_receipt = await transaction.wait()
       const requestId = tx_receipt.events[0].topics[1]
-
-      //wait 30 secs for oracle to callback
       await new Promise(resolve => setTimeout(resolve, 30000))
-
-      //Now check the result
-      const result = await apiConsumer.numberOfHits()
-      console.log("API Consumer numberOfHits: ", new ethers.BigNumber.from(result._hex).toString())
-      expect(new ethers.BigNumber.from(result._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
+      const resultYear = await apiConsumer.YearEruption()
+      const resultMonth = await apiConsumer.MonthEruption()
+      const resultDay = await apiConsumer.DayEruption()
+      const resultLAT = await apiConsumer.LatitudeEruption()
+      const resultLONG = await apiConsumer.LongitudeEruption()
+      console.log("DayEruption: ", new ethers.BigNumber.from(resultDay._hex).toString())
+      expect(new ethers.BigNumber.from(resultDay._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
+      console.log("MonthEruption: ", new ethers.BigNumber.from(resultMonth._hex).toString())
+      expect(new ethers.BigNumber.from(resultMonth._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
+      console.log("DayEruption: ", new ethers.BigNumber.from(resultYear._hex).toString())
+      expect(new ethers.BigNumber.from(resultYear._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
+      console.log("LatitudeEruption: ", new ethers.BigNumber.from(resultLAT._hex).toString())
+      expect(new ethers.BigNumber.from(resultLAT._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
+      console.log("LongitudeEruption: ", new ethers.BigNumber.from(resultLONG._hex).toString())
+      expect(new ethers.BigNumber.from(resultLONG._hex).toString()).to.be.a.bignumber.that.is.lessThan(new ethers.BigNumber.from(0).toString())
     })
-    it('Latitude', async () => {
-      const transaction = await apiConsumer.request_Latitude()
+    it('OracleRequestPresentTime: PresentYear*PresentMonth*PresentDay>0', async () => {
+      const accounts = await ethers.getSigners()
+      const signer = accounts[0]
+      const linkTokenContract = new ethers.Contract('0x01BE23585060835E02B77ef475b0Cc51aA1e0709',LinkTokenABI, signer)
+      var transferTransaction = await linkTokenContract.transfer(apiConsumer.address,'30000000000000000')
+      await transferTransaction.wait()
+      console.log('hash:' + transferTransaction.hash)
+      const transaction = await apiConsumer.OracleRequestPresentTime()
       const tx_receipt = await transaction.wait()
       const requestId = tx_receipt.events[0].topics[1]
-
-      //wait 30 secs for oracle to callback
       await new Promise(resolve => setTimeout(resolve, 30000))
-
-      //Now check the result
-      const result = await apiConsumer.Latitude()
-      console.log("API Consumer numberOfHits: ", new ethers.BigNumber.from(result._hex).toString())
-      expect(new ethers.BigNumber.from(result._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
-    })
-    it('Longitude', async () => {
-      const transaction = await apiConsumer.request_Longitude()
-      const tx_receipt = await transaction.wait()
-      const requestId = tx_receipt.events[0].topics[1]
-
-      //wait 30 secs for oracle to callback
-      await new Promise(resolve => setTimeout(resolve, 30000))
-
-      //Now check the result
-      const result = await apiConsumer.Longitude()
-      console.log("API Consumer numberOfHits: ", new ethers.BigNumber.from(result._hex).toString())
-      expect(new ethers.BigNumber.from(result._hex).toString()).to.be.a.bignumber.that.is.lessThan(new ethers.BigNumber.from(0).toString())
-    })
-    it('Year', async () => {
-      const transaction = await apiConsumer.request_Year()
-      const tx_receipt = await transaction.wait()
-      const requestId = tx_receipt.events[0].topics[1]
-
-      //wait 30 secs for oracle to callback
-      await new Promise(resolve => setTimeout(resolve, 30000))
-
-      //Now check the result
-      const result = await apiConsumer.Year()
-      console.log("API Consumer numberOfHits: ", new ethers.BigNumber.from(result._hex).toString())
-      expect(new ethers.BigNumber.from(result._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
-    })
-    it('Month', async () => {
-      const transaction = await apiConsumer.request_Month()
-      const tx_receipt = await transaction.wait()
-      const requestId = tx_receipt.events[0].topics[1]
-
-      //wait 30 secs for oracle to callback
-      await new Promise(resolve => setTimeout(resolve, 30000))
-
-      //Now check the result
-      const result = await apiConsumer.Month()
-      console.log("API Consumer numberOfHits: ", new ethers.BigNumber.from(result._hex).toString())
-      expect(new ethers.BigNumber.from(result._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
-    })
-    it('Day', async () => {
-      const transaction = await apiConsumer.request_Day()
-      const tx_receipt = await transaction.wait()
-      const requestId = tx_receipt.events[0].topics[1]
-
-      //wait 30 secs for oracle to callback
-      await new Promise(resolve => setTimeout(resolve, 30000))
-
-      //Now check the result
-      const result = await apiConsumer.Day()
-      console.log("API Consumer numberOfHits: ", new ethers.BigNumber.from(result._hex).toString())
-      expect(new ethers.BigNumber.from(result._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
+      const resultYear = await apiConsumer.YearPresent()
+      const resultMonth = await apiConsumer.MonthPresent()
+      const resultDay = await apiConsumer.DayPresent()
+      console.log("YearPresent: ", new ethers.BigNumber.from(resultDay._hex).toString())
+      expect(new ethers.BigNumber.from(resultDay._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
+      console.log("MonthPresent: ", new ethers.BigNumber.from(resultMonth._hex).toString())
+      expect(new ethers.BigNumber.from(resultMonth._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
+      console.log("DayPresent: ", new ethers.BigNumber.from(resultYear._hex).toString())
+      expect(new ethers.BigNumber.from(resultYear._hex).toString()).to.be.a.bignumber.that.is.greaterThan(new ethers.BigNumber.from(0).toString())
     })
   })
