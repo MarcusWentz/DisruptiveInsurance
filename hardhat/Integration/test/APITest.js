@@ -14,7 +14,7 @@ chai.use(require('chai-bn')(BN));
       apiConsumer = await APIConsumer.deploy();
       await apiConsumer.deployed();
     })
-    it('OracleRequestVolcanoEruptionData: YearEruption*MonthEruption*DayEruption*LatitudeEruption*LongitudeEruption>0', async () => {
+    it('OracleRequestVolcanoEruptionData: YearEruption,MonthEruption,DayEruption,LatitudeEruption,LongitudeEruption updated.', async () => {
       const accounts = await ethers.getSigners()
       const signer = accounts[0]
       const linkTokenContract = new ethers.Contract('0x01BE23585060835E02B77ef475b0Cc51aA1e0709',LinkTokenABI, signer)
@@ -41,7 +41,7 @@ chai.use(require('chai-bn')(BN));
       console.log("LongitudeEruption: ", new ethers.BigNumber.from(resultLONG._hex).toString())
       expect(new ethers.BigNumber.from(resultLONG._hex).toString()).to.be.a.bignumber.that.is.lessThan(new ethers.BigNumber.from(0).toString())
     })
-    it('OracleRequestPresentTime: PresentYear*PresentMonth*PresentDay>0', async () => {
+    it('OracleRequestPresentTime: PresentYear,PresentMonth,PresentDay updated.', async () => {
       const accounts = await ethers.getSigners()
       const signer = accounts[0]
       const linkTokenContract = new ethers.Contract('0x01BE23585060835E02B77ef475b0Cc51aA1e0709',LinkTokenABI, signer)
