@@ -148,16 +148,10 @@ class Oracle extends Component {
 				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Set Oracle Data</h2>
 
-					<form class="form-container-buy"></form>
-				</div>
-
-				<div className="center-container-buy ">
-					<h2 style={{ textAlign: "center" }}>Set Oracle Data</h2>
-
-					<div class="form-container-buy">
+					<form class="form-container-buy">
 						<button
 							type="button"
-							class="btn btn-dark-buy"
+							class="btn btn-dark-request-time"
 							onClick={this.handleRequestTimeNow}
 						>
 							Request Time Now
@@ -169,52 +163,55 @@ class Oracle extends Component {
 								"/" +
 								this.state.dayPresent}
 						</p>
-
-						<div className="lat-long-container">
-							<input
-								class="form-control-oracle"
-								type="text"
-								placeholder="Year"
-								onChange={this.handleChangeUserInput}
-								data-name="yearEruption"
-								value={this.state.yearEruption}
-							></input>
-							<div className="label-container"></div>
-
-							<input
-								class="form-control-oracle"
-								type="text"
-								placeholder="Month"
-								onChange={this.handleChangeUserInput}
-								data-name="monthEruption"
-								value={this.state.monthEruption}
-							></input>
-							<input
-								class="form-control-oracle"
-								type="text"
-								placeholder="Day"
-								onChange={this.handleChangeUserInput}
-								data-name="dayEruption"
-								value={this.state.dayEruption}
-							></input>
-							<input
-								class="form-control-oracle"
-								type="text"
-								placeholder="Country"
-								onChange={this.handleChangeUserInput}
-								data-name="country"
-								value={this.state.country}
-							></input>
+						<div className="container oracle">
+							<div class="label-input-container-oracle">
+								<label for="lat">Year</label>
+								<input
+									type="text"
+									placeholder="Year"
+									onChange={this.handleChangeUserInput}
+									data-name="yearEruption"
+									value={this.state.yearEruption}
+								></input>
+							</div>
+							<div class="label-input-container-oracle">
+								<label for="long">Month</label>
+								<input
+									type="text"
+									placeholder="Month"
+									onChange={this.handleChangeUserInput}
+									data-name="monthEruption"
+									value={this.state.monthEruption}
+								></input>
+							</div>
+							<div class="label-input-container-oracle">
+								<label for="long">Day</label>
+								<input
+									type="text"
+									placeholder="Day"
+									onChange={this.handleChangeUserInput}
+									data-name="dayEruption"
+									value={this.state.dayEruption}
+								></input>
+							</div>
+							<div class="label-input-container-oracle">
+								<label for="long">Country</label>
+								<input
+									type="text"
+									placeholder="Country"
+									onChange={this.handleChangeUserInput}
+									data-name="country"
+									value={this.state.country}
+								></input>
+							</div>
 						</div>
-
 						<button
 							type="button"
-							class="btn btn-dark-buy"
+							class="btn btn-dark-request-eruption"
 							onClick={this.handleRequestEruptionCoordinates}
 						>
 							Request Eruption Coordinates
 						</button>
-
 						<div>
 							<h4 style={{ textAlign: "center" }}>
 								Lat:{" "}
@@ -241,7 +238,7 @@ class Oracle extends Component {
 
 							<div style={{ textAlign: "center" }}></div>
 						</div>
-					</div>
+					</form>
 				</div>
 			</div>
 		);

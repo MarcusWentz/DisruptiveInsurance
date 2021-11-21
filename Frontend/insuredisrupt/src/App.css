@@ -244,3 +244,44 @@ label {
 	color: white;
 	border: 3px solid #f85c2c;
 }
+
+/*Style for oracle.js*/
+
+.container.oracle {
+	background-color: #2e2e36;
+	border-radius: 15px;
+	padding: 10px;
+	margin-bottom: 20px;
+}
+
+.label-input-container-oracle {
+	display: flex;
+	flex-direction: column;
+}
+
+.label-input-container-oracle input {
+	margin: 0 6px 0 5px;
+	width: 60%;
+}
+
+.label-input-container-oracle label {
+	align-self: flex-start;
+}
+
+.btn.btn-dark-request-time {
+	background-color: #22212a;
+	width: 330px;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	color: white;
+	border: 3px solid green;
+}
+
+.btn.btn-dark-request-eruption {
+	background-color: #22212a;
+	width: 330px;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	color: white;
+	border: 3px solid #f85c2c;
+}
