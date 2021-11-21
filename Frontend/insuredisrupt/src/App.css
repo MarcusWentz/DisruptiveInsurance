@@ -189,6 +189,8 @@ label {
 	display: block;
 }
 
+/*Home.js styling*/
+
 .form-container-about {
 	background-color: rgba(60, 60, 72, 1);
 	border-radius: 15px;
@@ -200,6 +202,28 @@ label {
 
 .about-header {
 	color: #f34e24;
+}
+
+.project-description {
+	font-size: 20px;
+}
+
+.url-json {
+	color: orange;
+	text-decoration: none;
+	background: #22212a;
+	padding: 8px;
+	margin: 5px;
+	border-radius: 10px;
+}
+.url-json:hover {
+	color: orange;
+	text-decoration: none;
+	background: #1a1a21;
+}
+
+.url-container {
+	padding: 10px;
 }
 
 /*Style for owner.js*/

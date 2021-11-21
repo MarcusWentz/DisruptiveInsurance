@@ -21,8 +21,13 @@ class Home extends Component {
 					</h2>
 
 					<form class="form-container-about">
-						<h3 className="about-header">About</h3>
-						<p className="project-description">Explore our</p>
+						<h2 className="about-header">About</h2>
+						<p className="project-description">
+							Disruptive Insurance is an exotic insurance service
+							that allows users to buy insurance against volcano
+							eruptions. No other insurance business on Earth
+							offers volcano eruption insurance.
+						</p>
 					</form>
 				</div>
 

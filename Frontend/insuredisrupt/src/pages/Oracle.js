@@ -219,13 +219,15 @@ class Oracle extends Component {
 									" Long: " +
 									this.state.longEruption}
 							</h4>
-							<a
-								className="url-json"
-								href={this.state.urlJSON}
-								target="_blank"
-							>
-								Link to URL
-							</a>
+							<div className="url-container">
+								<a
+									className="url-json"
+									href={this.state.urlJSON}
+									target="_blank"
+								>
+									Link to URL
+								</a>
+							</div>
 
 							<p>
 								{" "}
