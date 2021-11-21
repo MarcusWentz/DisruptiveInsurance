@@ -167,56 +167,65 @@ class Buy extends Component {
 				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Buy Insurance</h2>
 
-					<div class="form-container-buy">
-						<button
-							type="button"
-							class="btn btn-dark-buy"
-							onClick={this.handleBuyPolicy}
-						>
-							Buy Policy
-						</button>
-						<p style={{ textAlign: "center" }} className="v-txt">
-							Available ETH to insure:
-						</p>
-						<p style={{ textAlign: "center" }} className="v-txt">
-							{this.state.getAvailableEth}
-						</p>
-
-						<div className="lat-long-container">
-							<input
-								class="form-control-buy"
-								type="text"
-								placeholder="Latitude . . . "
-								onChange={this.handleChangeUserInput}
-								data-name="lat"
-								value={this.state.lat}
-							></input>
-							<div className="label-container"></div>
-
-							<input
-								class="form-control-buy"
-								type="text"
-								placeholder="Longitude . . ."
-								onChange={this.handleChangeUserInput}
-								value={this.state.long}
-								data-name="long"
-							></input>
+					<form class="form-container-buy">
+						<div className="container longLat">
+							<div class="label-input-container">
+								<label for="lat">Latitude</label>
+								<input
+									type="text"
+									name="lat"
+									placeholder="Latitude . . . "
+									onChange={this.handleChangeUserInput}
+									data-name="lat"
+									value={this.state.lat}
+								></input>
+							</div>
+							<div class="label-input-container">
+								<label for="long">Longitude</label>
+								<input
+									type="text"
+									name="long"
+									placeholder="Longitude . . ."
+									onChange={this.handleChangeUserInput}
+									value={this.state.long}
+									data-name="long"
+								></input>
+							</div>
 						</div>
 
-						<div>
+						<div className="container">
 							<button
 								type="button"
-								class="btn btn-dark-buy"
+								class="btn btn-dark-buy-policy"
+								onClick={this.handleBuyPolicy}
+							>
+								Buy Policy
+							</button>
+
+							<button
+								type="button"
+								class="btn btn-dark-claim"
 								onClick={this.handleClaimReward}
 							>
 								Claim Reward
 							</button>
-
-							<h4 style={{ textAlign: "center" }}>{}</h4>
-
-							<div style={{ textAlign: "center" }}></div>
 						</div>
-					</div>
+
+						<div class="available-eth-container">
+							<h3
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								Available ETH to insure:
+							</h3>
+							<h3
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								{this.state.getAvailableEth}
+							</h3>
+						</div>
+					</form>
 				</div>
 			</div>
 		);

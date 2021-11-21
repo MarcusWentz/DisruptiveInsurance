@@ -32,7 +32,7 @@ class Owner extends Component {
 
 		//GET inital values
 		let availableEth = await volcanoContract.methods
-			.OpenETHtoEnsure()
+			.OpenETHtoInsure()
 			.call();
 		this.setState({ getAvailableEth: availableEth });
 		console.log(this.state.getAvailableEthToInsure, "avail eth:");
@@ -64,13 +64,6 @@ class Owner extends Component {
 						<p style={{ textAlign: "center" }} className="v-txt">
 							put get value here
 						</p>
-						<button
-							type="button"
-							class="btn btn-dark"
-							onClick={this.handleSetContract}
-						>
-							Claim ETH from expired policy
-						</button>
 
 						<div>
 							<input
@@ -81,6 +74,14 @@ class Owner extends Component {
 								value={this.state.userInput}
 								style={{ textAlign: "center" }}
 							></input>
+
+							<button
+								type="button"
+								class="btn btn-dark"
+								onClick={this.handleSetContract}
+							>
+								Claim ETH from expired policy
+							</button>
 
 							<button
 								type="button"

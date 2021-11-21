@@ -164,14 +164,6 @@ class Oracle extends Component {
 								this.state.dayPresent}
 						</p>
 
-						<button
-							type="button"
-							class="btn btn-dark-buy"
-							onClick={this.handleRequestEruptionCoordinates}
-						>
-							Request Eruption Coordinates
-						</button>
-
 						<div className="lat-long-container">
 							<input
 								class="form-control-oracle"
@@ -208,6 +200,14 @@ class Oracle extends Component {
 								value={this.state.country}
 							></input>
 						</div>
+
+						<button
+							type="button"
+							class="btn btn-dark-buy"
+							onClick={this.handleRequestEruptionCoordinates}
+						>
+							Request Eruption Coordinates
+						</button>
 
 						<div>
 							<h4 style={{ textAlign: "center" }}>
