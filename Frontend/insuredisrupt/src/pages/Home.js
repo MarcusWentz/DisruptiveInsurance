@@ -16,9 +16,14 @@ class Home extends Component {
 		return (
 			<div className="App-background">
 				<div className="center-container-buy ">
-					<h2 style={{ textAlign: "center" }}>Welcome</h2>
+					<h2 style={{ textAlign: "center" }}>
+						Disruptive Volcano Insurance
+					</h2>
 
-					<form class="form-container-buy"></form>
+					<form class="form-container-about">
+						<h3 className="about-header">About</h3>
+						<p className="project-description">Explore our</p>
+					</form>
 				</div>
 
 				<MeetTheTeam />

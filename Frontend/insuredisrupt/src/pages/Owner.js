@@ -44,71 +44,58 @@ class Owner extends Component {
 	render() {
 		return (
 			<div className="App-background">
-				<div className="center-container ">
+				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Owner</h2>
 
-					<div class="form-container">
+					<form class="form-container-buy">
+						<div className="container policyaddress">
+							<div class="label-input-container">
+								<label for="long">POLICY ADDRESS</label>
+								<input
+									type="text"
+									name="long"
+									placeholder="Policy Address . . ."
+									onChange={this.handleChangePolicyAddress}
+									value=""
+									data-name="long"
+								></input>
+							</div>
+						</div>
 						<button
 							type="button"
-							class="btn btn-dark"
-							onClick={this.handleSendEth}
+							class="btn btn-dark-fund-contract"
+							onClick={this.handleBuyPolicy}
 						>
 							Fund Contract
 						</button>
-						<p
-							style={{ textAlign: "center", margin: 0 }}
-							className="v-txt"
-						>
-							Available ETH to insure:
-						</p>
-						<p style={{ textAlign: "center" }} className="v-txt">
-							put get value here
-						</p>
-
 						<div>
-							<input
-								class="form-control"
-								type="text"
-								placeholder="Policy address. . . "
-								onChange={this.handleUserInput}
-								value={this.state.userInput}
-								style={{ textAlign: "center" }}
-							></input>
-
 							<button
 								type="button"
-								class="btn btn-dark"
-								onClick={this.handleSetContract}
+								class="btn btn-dark-expired-policy"
+								onClick={this.handleBuyPolicy}
 							>
-								Claim ETH from expired policy
+								Claim 1 ETH from expired policy
 							</button>
-
-							<button
-								type="button"
-								class="btn btn-dark"
-								onClick={this.handleSetContract}
-							>
-								Claim 1 ETH not connected to a Policy
-							</button>
-
-							<button
-								type="button"
-								class="btn btn-dark"
-								onClick={this.handleSetContract}
-							>
-								Claim all ETH from a self destruct attack
-							</button>
-
-							<p
-								style={{ textAlign: "center" }}
-								className="v-txt"
-							>
-								Success message goes here
-								<h4 style={{ textAlign: "center" }}>Success</h4>
-							</p>
-							<div style={{ textAlign: "center" }}></div>
 						</div>
-					</div>
+						<div>
+							<button
+								type="button"
+								class="btn btn-dark-not-connected"
+								onClick={this.handleBuyPolicy}
+							>
+								Claim 1 ETH not connected to a policy
+							</button>
+						</div>
+						<div>
+							<button
+								type="button"
+								class="btn btn-dark-self-destruct"
+								onClick={this.handleBuyPolicy}
+							>
+								Claim all ETH from a self-destruct attack
+							</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		);

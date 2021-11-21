@@ -188,3 +188,59 @@ label {
 	color: white !important;
 	display: block;
 }
+
+.form-container-about {
+	background-color: rgba(60, 60, 72, 1);
+	border-radius: 15px;
+	width: 100%;
+	height: 80%;
+	padding: 15px;
+	outline: none !important;
+}
+
+.about-header {
+	color: #f34e24;
+}
+
+/*Style for owner.js*/
+
+.container.policyaddress {
+	background-color: #2e2e36;
+	border-radius: 15px;
+	padding: 20px;
+	margin-bottom: 20px;
+}
+
+.btn.btn-dark-fund-contract {
+	background-color: #22212a;
+	width: 200px;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	color: white;
+	border: 3px solid #f8922c;
+}
+
+.btn.btn-dark-expired-policy {
+	background-color: #22212a;
+	width: 330px;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	color: white;
+	border: 3px solid #f8792c;
+}
+.btn.btn-dark-not-connected {
+	background-color: #22212a;
+	width: 450px;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	color: white;
+	border: 3px solid #f8662c;
+}
+.btn.btn-dark-self-destruct {
+	background-color: #22212a;
+	width: 530px;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	color: white;
+	border: 3px solid #f85c2c;
+}

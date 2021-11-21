@@ -148,6 +148,12 @@ class Oracle extends Component {
 				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Set Oracle Data</h2>
 
+					<form class="form-container-buy"></form>
+				</div>
+
+				<div className="center-container-buy ">
+					<h2 style={{ textAlign: "center" }}>Set Oracle Data</h2>
+
 					<div class="form-container-buy">
 						<button
 							type="button"
