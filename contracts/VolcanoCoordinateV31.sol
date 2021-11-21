@@ -3,12 +3,14 @@ pragma solidity ^0.8.10;
 
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "./Convert.sol";
 
 contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 
 contract VolcanoInsurance is ChainlinkClient {
     
     using Chainlink for Chainlink.Request;
+    Convert public convert = new Convert();
     
     int public LatitudeEruption; 
     int public LongitudeEruption;
@@ -51,39 +53,10 @@ contract VolcanoInsurance is ChainlinkClient {
         _;
     }
     
-    function bytes32ToString(bytes32 _bytes32) public pure returns (string memory) { //CREDIT https://ethereum.stackexchange.com/questions/2519/how-to-convert-a-bytes32-to-string/2834
-        uint8 i = 0;
-        while(i < 32 && _bytes32[i] != 0) {
-            i++;
-        }
-        bytes memory bytesArray = new bytes(i);
-        for (i = 0; i < 32 && _bytes32[i] != 0; i++) {
-            bytesArray[i] = _bytes32[i];
-        }
-        return string(bytesArray);
-    }
+    event recordMessageSender(
+        address indexed from
+    );
     
-    function stringToUint(string memory numString) public pure returns(uint) { //CREDIT: https://stackoverflow.com/questions/68976364/solidity-converting-number-strings-to-numbers
-        uint  val=0;
-        bytes   memory stringBytes = bytes(numString);
-        for (uint  i =  0; i<stringBytes.length; i++) {
-            uint exp = stringBytes.length - i;
-            bytes1 ival = stringBytes[i];
-            uint8 uval = uint8(ival);
-           uint jval = uval - uint(0x30);
-   
-           val +=  (uint(jval) * (10**(exp-1))); 
-        }
-      return val;
-    }
-    
-    function bytes32ToUint(bytes32 oracleBytes32Convert) public pure returns(uint){
-        return stringToUint(bytes32ToString(oracleBytes32Convert));
-    }
-    
-    function DateCompareForm(uint YearInput, uint MonthInput, uint DayInput) public pure returns(uint){
-        return ( (YearInput<<9) + (MonthInput<<5) + DayInput ) ;
-    }
     
     function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
         require(tokenObject.balanceOf(address(this)) >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
@@ -120,6 +93,7 @@ contract VolcanoInsurance is ChainlinkClient {
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
+        emit recordMessageSender(msg.sender);
     }
     
     function BuyerClaimReward(address policyHolder) public {
@@ -128,7 +102,7 @@ contract VolcanoInsurance is ChainlinkClient {
         require(YearEruption > 0, "YearPresent not recorded yet by oracle.");        
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
-        require(DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) < DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
+        require(convert.DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
         require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
         require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
         AccountsInsured -= 1;
@@ -138,11 +112,13 @@ contract VolcanoInsurance is ChainlinkClient {
         YearEruption = 0;
         MonthEruption = 0;
         DayEruption = 0;
+        emit recordMessageSender(msg.sender);
     }
     
     function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
         require(msg.value == 1*(10**18), "Value sent must equal 1 ETH");
         OpenETHtoInsure += 1;
+        emit recordMessageSender(msg.sender);
     }
 
     function OwnerClaimExpiredPolicyETH(address policyHolder) public contractOwnerCheck { 
@@ -150,19 +126,21 @@ contract VolcanoInsurance is ChainlinkClient {
         require(MonthPresent > 0, "MonthPresent not recorded yet by oracle.");
         require(YearPresent > 0, "YearPresent not recorded yet by oracle.");
         require(policies[policyHolder].EthereumAwardTiedToAddress > 0, "Policy does not exist.");
-        require(DateCompareForm(YearPresent,MonthPresent,DayPresent) > (DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) + 512) , "Policy has not yet expired");
+        require(convert.DateCompareForm(YearPresent,MonthPresent,DayPresent) > (convert.DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) + 512) , "Policy has not yet expired");
         AccountsInsured -=1;
         policies[policyHolder] = policy(0, 0, 0, 0, 0, 0);
         payable(msg.sender).transfer(address(this).balance);
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
+        emit recordMessageSender(msg.sender);
     }
     
     function OwnerLiquidtoOpenETHToWithdraw() public contractOwnerCheck {
         require(OpenETHtoInsure > 0, 'There is no open ETH in the contract currently.'); 
         OpenETHtoInsure -= 1;
         payable(msg.sender).transfer(1*(10**18));
+        emit recordMessageSender(msg.sender);
     }
     
     function OwnerSelfDestructClaimETH() public contractOwnerCheck {
@@ -212,7 +190,7 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     function fulfill_request_Month_Eruption(bytes32 _requestId, bytes32 oracleMonthEruption) public recordChainlinkFulfillment(_requestId)
     {
-        MonthEruption = bytes32ToUint(oracleMonthEruption);
+        MonthEruption = convert.bytes32ToUint(oracleMonthEruption);
     }
     
     function request_Day_Eruption() private returns (bytes32 requestId) {
@@ -223,7 +201,8 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 oracleDayEruption) public recordChainlinkFulfillment(_requestId)
     {
-        DayEruption = bytes32ToUint(oracleDayEruption);
+        DayEruption = convert.bytes32ToUint(oracleDayEruption);
+        emit recordMessageSender(msg.sender);
     }
     
     function request_YearPresent() private returns (bytes32 requestId) {
@@ -233,7 +212,7 @@ contract VolcanoInsurance is ChainlinkClient {
         return sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_YearPresent(bytes32 _requestId,uint oracleYearPresent) public recordChainlinkFulfillment(_requestId) {
-        YearPresent = oracleYearPresent; 
+        YearPresent = oracleYearPresent;
     }
     
     function request_MonthPresent() private returns (bytes32 requestId) {
@@ -254,6 +233,7 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     function fulfill_request_DayPresent(bytes32 _requestId,uint oracleDayPresent) public recordChainlinkFulfillment(_requestId) {
         DayPresent = oracleDayPresent; 
+        emit recordMessageSender(msg.sender);
     }
     
  }
