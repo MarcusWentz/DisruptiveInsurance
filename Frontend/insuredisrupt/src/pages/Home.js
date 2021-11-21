@@ -2,6 +2,7 @@ import { CONTRACT_ADDRESS, ABI } from "../config";
 
 import React, { Component } from "react";
 import Web3 from "web3";
+import MeetTheTeam from "../components/MeetTheTeam";
 
 class Home extends Component {
 	constructor(props) {
@@ -17,10 +18,7 @@ class Home extends Component {
 				<div className="center-container ">
 					<div class="circle">V</div>
 
-					<p className="v-txt">
-						This site is under construction. storedData :
-					</p>
-					<p className="v-txt">Check out demo on /About</p>
+					<MeetTheTeam />
 				</div>
 			</div>
 		);

@@ -36,11 +36,6 @@ class Navbar extends Component {
 							Oracle
 						</Link>
 					</li>
-					<li className="nav-txt">
-						<Link to="/example" className="nav-link">
-							Example
-						</Link>
-					</li>
 				</ul>
 			</div>
 		);
