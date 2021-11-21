@@ -12,44 +12,44 @@ body {
 	background: #f4f4f4;
 }
 
-.container {
+.container-team {
 	margin-top: 50px;
 }
 
 img {
 	border-radius: 50%;
 }
-.container .team {
+.container-team .team {
 	width: auto;
 	display: flex;
 	justify-content: center;
 	text-align: center;
-	flex-wrap: wrap;
+	/*flex-wrap: wrap;*/
 }
 
-.container .team .member {
+.container-team .team .member {
 	width: 325px;
 	margin: 10px;
 	background: rgba(29, 29, 36, 1);
-	border-radius: 6px;
+	border-radius: 15px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
 	padding: 25px;
 }
 
-.container .team .member img {
+.container-team .team .member img {
 	width: 80px;
 }
 
-.container .team .member h3 {
+.container-team .team .member h3 {
 	color: white;
 }
 
-.container .team .member span {
+.container-team .team .member span {
 	font-size: 12px;
 	color: white;
 }
 
-.container .team .member p {
+.container-team .team .member p {
 	margin: 15px 0;
 	font-weight: 400;
 	color: white;
@@ -57,7 +57,7 @@ img {
 	text-align: justify;
 }
 
-.container .team .member .btn a {
+.container-team .team .member .btn a {
 	background: #3c3c48;
 	display: block;
 	float: right;
@@ -70,7 +70,7 @@ img {
 	transition: all 0.3s ease;
 }
 
-.container .team .member .btn a:hover {
-	background: #5a36dd;
+.container-team .team .member .btn a:hover {
+	background: #2e2e36;
 	color: #fff;
 }

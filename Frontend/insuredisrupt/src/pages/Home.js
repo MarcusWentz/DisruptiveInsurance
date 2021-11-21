@@ -15,11 +15,13 @@ class Home extends Component {
 	render() {
 		return (
 			<div className="App-background">
-				<div className="center-container ">
-					<div class="circle">V</div>
+				<div className="center-container-buy ">
+					<h2 style={{ textAlign: "center" }}>Welcome</h2>
 
-					<MeetTheTeam />
+					<form class="form-container-buy"></form>
 				</div>
+
+				<MeetTheTeam />
 			</div>
 		);
 	}

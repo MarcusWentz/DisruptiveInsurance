@@ -6,7 +6,7 @@ import logo8 from "../Images/LOGO_8_TRANSPARENT.png";
 class MeetTheTeam extends Component {
 	render() {
 		return (
-			<div class="container">
+			<div class="container-team">
 				<div class="team">
 					<div class="member">
 						<img
