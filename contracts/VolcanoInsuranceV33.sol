@@ -57,7 +57,6 @@ contract VolcanoInsurance is ChainlinkClient {
         address indexed from
     );
     
-    
     function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
         require(tokenObject.balanceOf(address(this)) >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
         require(bytes(filterMonth).length == 2, "JSON must have MonthPresent as 2 characters at all times!");
