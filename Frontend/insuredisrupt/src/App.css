@@ -228,6 +228,15 @@ label {
 
 /*Style for owner.js*/
 
+.btn.btn-dark-policy-data {
+	background-color: #22212a;
+	width: 240px;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	color: white;
+	border: 3px solid #e88a2b;
+}
+
 .container.policyaddress {
 	background-color: #2e2e36;
 	border-radius: 15px;
@@ -237,11 +246,11 @@ label {
 
 .btn.btn-dark-fund-contract {
 	background-color: #22212a;
-	width: 200px;
+	width: 180px;
 	margin-bottom: 20px;
 	border-radius: 15px;
 	color: white;
-	border: 3px solid #f8922c;
+	border: 3px solid #ffa74f;
 }
 
 .btn.btn-dark-expired-policy {
@@ -267,6 +276,10 @@ label {
 	border-radius: 15px;
 	color: white;
 	border: 3px solid #f85c2c;
+}
+
+.available-eth-container.owner {
+	margin-bottom: 30px;
 }
 
 /*Style for oracle.js*/

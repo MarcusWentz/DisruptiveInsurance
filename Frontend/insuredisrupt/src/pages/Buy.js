@@ -225,6 +225,12 @@ class Buy extends Component {
 								{this.state.getAvailableEth}
 							</h3>
 						</div>
+						<h6
+							style={{ textAlign: "center", marginTop: 20 }}
+							className="v-txt"
+						>
+							get: policies(policyHolder) ALL DATA
+						</h6>
 					</form>
 				</div>
 			</div>

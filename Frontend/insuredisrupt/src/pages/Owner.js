@@ -48,6 +48,21 @@ class Owner extends Component {
 					<h2 style={{ textAlign: "center" }}>Owner</h2>
 
 					<form class="form-container-buy">
+						<div class="available-eth-container owner">
+							<h5
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								get: openETHtoInsure:
+							</h5>
+							<h6
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								{this.state.getAvailableEth}
+							</h6>
+						</div>
+						<br />
 						<div className="container policyaddress">
 							<div class="label-input-container">
 								<label for="long">POLICY ADDRESS</label>
@@ -61,6 +76,7 @@ class Owner extends Component {
 								></input>
 							</div>
 						</div>
+
 						<button
 							type="button"
 							class="btn btn-dark-fund-contract"
@@ -71,11 +87,22 @@ class Owner extends Component {
 						<div>
 							<button
 								type="button"
+								class="btn btn-dark-policy-data"
+								onClick={this.handleBuyPolicy}
+							>
+								Get Policy Data
+							</button>
+							<p>get: policies policyData</p>
+						</div>
+						<div>
+							<button
+								type="button"
 								class="btn btn-dark-expired-policy"
 								onClick={this.handleBuyPolicy}
 							>
 								Claim 1 ETH from expired policy
 							</button>
+							<p>get: accountsInsured</p>
 						</div>
 						<div>
 							<button
@@ -85,6 +112,7 @@ class Owner extends Component {
 							>
 								Claim 1 ETH not connected to a policy
 							</button>
+							<p>optional get:</p>
 						</div>
 						<div>
 							<button

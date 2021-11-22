@@ -149,6 +149,20 @@ class Oracle extends Component {
 					<h2 style={{ textAlign: "center" }}>Set Oracle Data</h2>
 
 					<form class="form-container-buy">
+						<div class="available-eth-container owner">
+							<h5
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								CONTRACT_ADDRESS concatenated
+							</h5>
+							<h6
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								copy here
+							</h6>
+						</div>
 						<button
 							type="button"
 							class="btn btn-dark-request-time"
