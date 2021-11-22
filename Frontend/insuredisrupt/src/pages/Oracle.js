@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Web3 from "web3";
 import { CONTRACT_ADDRESS, ABI } from "../config";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 class Oracle extends Component {
 	constructor(props) {
@@ -20,6 +21,8 @@ class Oracle extends Component {
 			latEruption: null,
 			longEruption: null,
 			urlJSON: null,
+			copied: false,
+			value: "",
 		};
 	}
 
@@ -154,12 +157,11 @@ class Oracle extends Component {
 									style={{ textAlign: "center" }}
 									className="v-txt"
 								>
-									{this.state.account[0].substr(0, 5) +
+									Contract address:{" "}
+									{CONTRACT_ADDRESS.substr(0, 5) +
 										"..." +
-										this.state.account[0].substr(
-											38,
-											4
-										)}{" "}
+										CONTRACT_ADDRESS.substr(38, 4)}{" "}
+									make clickable/copy
 								</h5>
 								<h6
 									style={{ textAlign: "center" }}
@@ -169,13 +171,8 @@ class Oracle extends Component {
 								</h6>
 							</div>
 						</div>
-						<button
-							type="button"
-							class="btn btn-dark-request-time"
-							onClick={this.handleRequestTimeNow}
-						>
-							Request Time Now
-						</button>
+						<p>Current Date:</p>
+
 						<p style={{ textAlign: "center" }} className="v-txt">
 							{this.state.yearPresent +
 								"/" +
@@ -183,6 +180,42 @@ class Oracle extends Component {
 								"/" +
 								this.state.dayPresent}
 						</p>
+						<button
+							type="button"
+							class="btn btn-dark-request-time"
+							onClick={this.handleRequestTimeNow}
+						>
+							Request Time Now
+						</button>
+
+						<div>
+							<h4 style={{ textAlign: "center" }}>
+								Lat:{" "}
+								{this.state.latEruption +
+									" Long: " +
+									this.state.longEruption}
+							</h4>
+
+							<p>Eruption Date:</p>
+							<p>
+								{this.state.yearEruption +
+									"/" +
+									this.state.monthEruption +
+									"/" +
+									this.state.dayEruption}
+							</p>
+							<div className="url-container">
+								<a
+									className="url-json"
+									href={this.state.urlJSON}
+									target="_blank"
+								>
+									Link to Volcano Data
+								</a>
+							</div>
+
+							<br />
+						</div>
 						<div className="container oracle">
 							<div class="label-input-container-oracle">
 								<label for="lat">Year</label>
@@ -225,41 +258,14 @@ class Oracle extends Component {
 								></input>
 							</div>
 						</div>
+
 						<button
 							type="button"
 							class="btn btn-dark-request-eruption"
 							onClick={this.handleRequestEruptionCoordinates}
 						>
-							Request Eruption Coordinates
+							Request Volcano Eruption Data
 						</button>
-						<div>
-							<h4 style={{ textAlign: "center" }}>
-								Lat:{" "}
-								{this.state.latEruption +
-									" Long: " +
-									this.state.longEruption}
-							</h4>
-							<div className="url-container">
-								<a
-									className="url-json"
-									href={this.state.urlJSON}
-									target="_blank"
-								>
-									Link to URL
-								</a>
-							</div>
-
-							<p>
-								{" "}
-								{this.state.yearEruption +
-									"/" +
-									this.state.monthEruption +
-									"/" +
-									this.state.dayEruption}
-							</p>
-
-							<br />
-						</div>
 					</form>
 				</div>
 			</div>

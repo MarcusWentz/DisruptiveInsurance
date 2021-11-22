@@ -13,7 +13,7 @@ class Buy extends Component {
 			lat: 0,
 			long: 0,
 			getAvailableEth: null,
-			currentPolicySignedYearStruct: null,
+			allPolicyData: "",
 		};
 	}
 	componentDidMount() {
@@ -56,44 +56,18 @@ class Buy extends Component {
 		console.log(this.state.getAvailableEth, "avail eth:");
 
 		//Get if user has policy and when signed
-		let currentPolicySignedYearStruct = await volcanoContract.methods
+		let allPolicyData = await volcanoContract.methods
 			.policies(this.state.account[0])
 			.call();
-		console.log(currentPolicySignedYearStruct, ".......");
 		this.setState({
-			currentPolicySignedYearStruct: currentPolicySignedYearStruct,
+			allPolicyData: allPolicyData,
 		});
-		console.log(
-			this.state.currentPolicySignedYearStruct,
-			"cUrrentPolicy signed year"
-		);
-		this.helperSetYearPolicySignedWithStructData();
 
 		//	var salaryInfoContract = web3.eth.contract(salaryInfoCompiled.SalaryInfo.info.abiDefinition);
 		// var salaryInfo = salaryInfoContract.new({from:web3.eth.accounts[0], data: salaryInfoCompiled.SalaryInfo.code, gas: 1000000},
 
 		///----Event will automatically read data
 		//this.eventListener(volcanoContract);
-	}
-
-	helperSetYearPolicySignedWithStructData() {
-		let struct = this.state.currentPolicySignedYearStruct;
-		console.log(
-			this.state.currentPolicySignedYearStruct.YearSigned,
-			"ÄÄÄÄÄÄÄÄÄ"
-		);
-
-		console.log();
-
-		/* 	let keysOfStruct = Object.keys(struct);
-		console.log(keysOfStruct, "keysofstruct");
-		keysOfStruct.forEach((keyName) => {
-			if (
-				keyName === "DaySigned" ||
-				keyName === "EthereumAwardTiedToAddress"
-			) {
-			}
-		}); */
 	}
 
 	eventListener(volcanoContract) {
@@ -162,12 +136,49 @@ class Buy extends Component {
 	}
 
 	render() {
+		const { allPolicyData } = this.state;
+		console.log(this.state.allPolicyData, "All Policy data");
 		return (
 			<div className="App-background">
 				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Buy Insurance</h2>
 
 					<form class="form-container-buy">
+						<div class="available-eth-container">
+							<h6>Metamask connected policy:</h6>
+							<h6
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								{"Lat: " +
+									allPolicyData.LatitudeInsured +
+									" Long: " +
+									allPolicyData.LongitudeInsured +
+									" Sign Date: " +
+									allPolicyData.YearSigned +
+									"/" +
+									allPolicyData.MonthSigned +
+									"/" +
+									allPolicyData.DaySigned +
+									" ETH Locked: " +
+									allPolicyData.EthereumAwardTiedToAddress}
+							</h6>
+						</div>
+						<div class="available-eth-container">
+							<h3
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								Available ETH to insure:
+							</h3>
+							<h3
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								{this.state.getAvailableEth}
+							</h3>
+						</div>
+
 						<div className="container longLat">
 							<div class="label-input-container">
 								<label for="lat">Latitude</label>
@@ -201,36 +212,14 @@ class Buy extends Component {
 							>
 								Buy Policy
 							</button>
-
-							<button
-								type="button"
-								class="btn btn-dark-claim"
-								onClick={this.handleClaimReward}
-							>
-								Claim Reward
-							</button>
 						</div>
-
-						<div class="available-eth-container">
-							<h3
-								style={{ textAlign: "center" }}
-								className="v-txt"
-							>
-								Available ETH to insure:
-							</h3>
-							<h3
-								style={{ textAlign: "center" }}
-								className="v-txt"
-							>
-								{this.state.getAvailableEth}
-							</h3>
-						</div>
-						<h6
-							style={{ textAlign: "center", marginTop: 20 }}
-							className="v-txt"
+						<button
+							type="button"
+							class="btn btn-dark-claim"
+							onClick={this.handleClaimReward}
 						>
-							get: policies(policyHolder) ALL DATA
-						</h6>
+							Claim Reward
+						</button>
 					</form>
 				</div>
 			</div>
