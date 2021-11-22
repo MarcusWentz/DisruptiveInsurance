@@ -210,15 +210,16 @@ label {
 }
 
 .url-json {
-	color: orange;
+	color: white;
 	text-decoration: none;
 	background: #22212a;
 	padding: 8px;
 	margin: 5px;
 	border-radius: 10px;
+	border: 3px solid #e88a2b;
 }
 .url-json:hover {
-	color: orange;
+	color: white;
 	text-decoration: none;
 	background: #1a1a21;
 }
@@ -231,7 +232,7 @@ label {
 
 .btn.btn-dark-policy-data {
 	background-color: #22212a;
-	width: 240px;
+	width: 450px;
 	margin-bottom: 20px;
 	border-radius: 15px;
 	color: white;
@@ -247,7 +248,7 @@ label {
 
 .btn.btn-dark-fund-contract {
 	background-color: #22212a;
-	width: 180px;
+	width: 450px;
 	margin-bottom: 20px;
 	border-radius: 15px;
 	color: white;
@@ -256,7 +257,7 @@ label {
 
 .btn.btn-dark-expired-policy {
 	background-color: #22212a;
-	width: 330px;
+	width: 450px;
 	margin-bottom: 20px;
 	border-radius: 15px;
 	color: white;
@@ -272,7 +273,7 @@ label {
 }
 .btn.btn-dark-self-destruct {
 	background-color: #22212a;
-	width: 530px;
+	width: 450px;
 	margin-bottom: 20px;
 	border-radius: 15px;
 	color: white;
@@ -313,6 +314,11 @@ label {
 	border-radius: 15px;
 	color: white;
 	border: 3px solid green;
+}
+
+.btn.btn-dark-request-time {
+	text-decoration: none;
+	background: #1a1a21;
 }
 
 .btn.btn-dark-request-eruption {

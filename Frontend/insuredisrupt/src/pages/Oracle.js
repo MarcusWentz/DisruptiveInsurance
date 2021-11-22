@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import Web3 from "web3";
-import { CONTRACT_ADDRESS, ABI } from "../config";
+import {
+	CONTRACT_ADDRESS,
+	ABI,
+	CONTRACT_ERC20_CHAINLINK_ADDRESS,
+	CHAINLINK_ABI,
+} from "../config";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 class Oracle extends Component {
@@ -14,7 +19,10 @@ class Oracle extends Component {
 			yearEruption: null,
 			monthEruption: null,
 			dayEruption: null,
-			country: null,
+			country: "Iceland",
+			yearUserInput: "1727",
+			monthUserInput: "08",
+			dayUserInput: "03",
 			yearPresent: null,
 			monthPresent: null,
 			dayPresent: null,
@@ -23,6 +31,8 @@ class Oracle extends Component {
 			urlJSON: null,
 			copied: false,
 			value: "",
+			chainlinkBalance: "",
+			chainlinkContract: "",
 		};
 	}
 
@@ -45,9 +55,16 @@ class Oracle extends Component {
 		//Load the smart contract
 		const volcanoContract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
 		this.setState({ volcanoContract: volcanoContract });
-		console.log(this.state.volcanoContract, "CONTRAACT");
 
-		//get initial states
+		//Load the chainlink contract
+		const chainlinkContract = new web3.eth.Contract(
+			CHAINLINK_ABI,
+			CONTRACT_ERC20_CHAINLINK_ADDRESS
+		);
+		this.setState({ chainlinkContract: chainlinkContract });
+		console.log(this.state.chainlinkContract, "CHAINLINK CONTRAACT");
+
+		//get current time
 		let yearPresent = await volcanoContract.methods.YearPresent().call();
 		this.setState({ yearPresent: yearPresent });
 		console.log(this.state.yearPresent, "YEAR present");
@@ -60,7 +77,7 @@ class Oracle extends Component {
 		this.setState({ dayPresent: dayPresent });
 		console.log(this.state.dayPresent, "DAY present");
 
-		//get initial states
+		//get initial long/lats/year/month/day of eruption
 		let yearEruption = await volcanoContract.methods.YearEruption().call();
 		this.setState({ yearEruption: yearEruption });
 		console.log(this.state.yearEruption, "YEAR eruption");
@@ -74,9 +91,6 @@ class Oracle extends Component {
 		let dayEruption = await volcanoContract.methods.DayEruption().call();
 		this.setState({ dayEruption: dayEruption });
 		console.log(this.state.dayEruption, "DAY eruption");
-
-		//get initial long/lats of eruption
-		//LatitudeEruption(); LongitudeEruption(); YearEruption(); MonthEruption(); DayEruption();
 
 		let latEruption = await volcanoContract.methods
 			.LatitudeEruption()
@@ -95,7 +109,12 @@ class Oracle extends Component {
 		this.setState({ urlJSON: urlJSON });
 		console.log(this.state.urlJSON, "longEruption");
 
-		//OracleRequestVolcanoEruptionData("YEAR","MONTH","DAY","COUNTRY")
+		//get chainlink balance
+		let chainlinkBalance = await chainlinkContract.methods
+			.balanceOf(CONTRACT_ADDRESS)
+			.call();
+		this.setState({ chainlinkBalance: chainlinkBalance });
+		console.log(this.state.chainlinkBalance, "chainlinkBalance");
 	}
 
 	handleChangeUserInput(event) {
@@ -120,18 +139,22 @@ class Oracle extends Component {
 	}
 
 	handleRequestEruptionCoordinates() {
-		const { yearEruption, monthEruption, dayEruption, country } =
+		const { yearUserInput, monthUserInput, dayUserInput, country } =
 			this.state;
-		console.log(yearEruption, monthEruption, dayEruption, "USER INPUT RN");
-		console.log("Inside requestEruptionCoordinates");
+		console.log(
+			yearUserInput,
+			monthUserInput,
+			dayUserInput,
+			"USER INPUT in handlerequesteruptioncordinates"
+		);
 		let web3js = new Web3(window.web3.currentProvider);
 		web3js.eth.sendTransaction({
 			to: CONTRACT_ADDRESS,
 			data: this.state.volcanoContract.methods
 				.OracleRequestVolcanoEruptionData(
-					yearEruption,
-					monthEruption,
-					dayEruption,
+					yearUserInput,
+					monthUserInput,
+					dayUserInput,
 					country
 				)
 				.encodeABI(),
@@ -142,8 +165,6 @@ class Oracle extends Component {
 		//YearPresent(); MonthPresent(); DayPresent()
 		this.setState({ loading: true });
 	}
-
-	//OracleRequestVolcanoEruptionData("1727","08","03","Iceland")
 
 	render() {
 		return (
@@ -167,7 +188,9 @@ class Oracle extends Component {
 									style={{ textAlign: "center" }}
 									className="v-txt"
 								>
-									get: link balance
+									<label>chainlink balance</label>
+									{this.state.chainlinkBalance /
+										1000000000000000000}
 								</h6>
 							</div>
 						</div>
@@ -223,8 +246,8 @@ class Oracle extends Component {
 									type="text"
 									placeholder="Year"
 									onChange={this.handleChangeUserInput}
-									data-name="yearEruption"
-									value={this.state.yearEruption}
+									data-name="yearUserInput"
+									value={this.state.yearUserInput}
 								></input>
 							</div>
 							<div class="label-input-container-oracle">
@@ -233,8 +256,8 @@ class Oracle extends Component {
 									type="text"
 									placeholder="Month"
 									onChange={this.handleChangeUserInput}
-									data-name="monthEruption"
-									value={this.state.monthEruption}
+									data-name="monthUserInput"
+									value={this.state.monthUserInput}
 								></input>
 							</div>
 							<div class="label-input-container-oracle">
@@ -243,8 +266,8 @@ class Oracle extends Component {
 									type="text"
 									placeholder="Day"
 									onChange={this.handleChangeUserInput}
-									data-name="dayEruption"
-									value={this.state.dayEruption}
+									data-name="dayUserInput"
+									value={this.state.dayUserInput}
 								></input>
 							</div>
 							<div class="label-input-container-oracle">

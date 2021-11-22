@@ -204,7 +204,7 @@ class Buy extends Component {
 							</div>
 						</div>
 
-						<div className="container">
+						<div>
 							<button
 								type="button"
 								class="btn btn-dark-buy-policy"
@@ -213,13 +213,15 @@ class Buy extends Component {
 								Buy Policy
 							</button>
 						</div>
-						<button
-							type="button"
-							class="btn btn-dark-claim"
-							onClick={this.handleClaimReward}
-						>
-							Claim Reward
-						</button>
+						<div>
+							<button
+								type="button"
+								class="btn btn-dark-claim"
+								onClick={this.handleClaimReward}
+							>
+								Claim Reward
+							</button>
+						</div>
 					</form>
 				</div>
 			</div>
