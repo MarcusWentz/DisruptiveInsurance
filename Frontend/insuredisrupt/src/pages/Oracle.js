@@ -147,21 +147,27 @@ class Oracle extends Component {
 			<div className="App-background">
 				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Set Oracle Data</h2>
-
 					<form class="form-container-buy">
-						<div class="available-eth-container owner">
-							<h5
-								style={{ textAlign: "center" }}
-								className="v-txt"
-							>
-								CONTRACT_ADDRESS concatenated
-							</h5>
-							<h6
-								style={{ textAlign: "center" }}
-								className="v-txt"
-							>
-								copy here
-							</h6>
+						<div>
+							<div class="available-eth-container owner">
+								<h5
+									style={{ textAlign: "center" }}
+									className="v-txt"
+								>
+									{this.state.account[0].substr(0, 5) +
+										"..." +
+										this.state.account[0].substr(
+											38,
+											4
+										)}{" "}
+								</h5>
+								<h6
+									style={{ textAlign: "center" }}
+									className="v-txt"
+								>
+									get: link balance
+								</h6>
+							</div>
 						</div>
 						<button
 							type="button"
