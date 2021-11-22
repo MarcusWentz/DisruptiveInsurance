@@ -238,7 +238,7 @@ class Oracle extends Component {
 									this.state.dayEruption}
 							</p>
 
-							<div style={{ textAlign: "center" }}></div>
+							<br />
 						</div>
 					</form>
 				</div>
