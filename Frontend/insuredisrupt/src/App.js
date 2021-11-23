@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Buy from "./pages/Buy";
 import Oracle from "./pages/Oracle";
 import Example from "./pages/Example";
+import Web3 from "web3";
 
 import React, { Component } from "react";
 
@@ -14,24 +15,54 @@ class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			account: "default",
+			account: [],
 		};
+		this.handleConnectMetamask = this.handleConnectMetamask.bind(this);
+	}
+
+	componentDidMount() {}
+
+	async handleConnectMetamask() {
+		let that = this;
+		const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+		const network = await web3.eth.net.getNetworkType();
+		await window.ethereum.enable();
+		//Fetch account data:
+		const accountFromMetaMask = await web3.eth.getAccounts();
+		console.log(accountFromMetaMask, "account in app.js");
+		this.setState({ account: accountFromMetaMask });
+		console.log(this.state.account[0], "user metamask address");
 	}
 
 	render() {
 		return (
 			<div className="App-background">
 				<Router>
-					<Navbar />
+					<Navbar account={this.state.account} />
 					<Switch>
-						<Route exact path="/" component={Home} />
-						<Route path="/owner" component={Owner} />
-						<Route path="/buy" component={Buy} />
-						<Route path="/oracle" component={Oracle} />
-						<Route path="/example" component={Example} />
+						<Route exact path="/">
+							<Home account={this.state.account} />
+						</Route>
+						<Route path="/owner">
+							<Owner account={this.state.account} />
+						</Route>
+						<Route path="/buy">
+							<Buy account={this.state.account} />
+						</Route>
+						<Route path="/oracle">
+							<Oracle account={this.state.account} />
+						</Route>
 					</Switch>
 					<Footer />
 				</Router>
+				<div className="metamask-addr-container">
+					<button
+						className="btn btn-dark"
+						onClick={this.handleConnectMetamask}
+					>
+						Connect to Metamask
+					</button>
+				</div>
 			</div>
 		);
 	}

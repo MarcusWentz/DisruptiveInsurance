@@ -37,11 +37,6 @@ class Navbar extends Component {
 						</Link>
 					</li>
 				</ul>
-				<div className="metamask-addr-container">
-					<button className="btn btn-dark">
-						Connect to Metamask
-					</button>
-				</div>
 			</div>
 		);
 	}

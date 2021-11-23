@@ -42,6 +42,7 @@ class Oracle extends Component {
 		this.handleRequestTimeNow = this.handleRequestTimeNow.bind(this);
 		this.handleRequestEruptionCoordinates =
 			this.handleRequestEruptionCoordinates.bind(this);
+		console.log(this.props, "WHAAAAAAAAAAAAT");
 	}
 
 	async loadBlockchainData() {
@@ -67,6 +68,7 @@ class Oracle extends Component {
 		this.setInitialValues(volcanoContract, chainlinkContract);
 		this.eventListener(volcanoContract);
 		//get current time
+		console.log(this.props.account, "what is props account in ORACLE");
 	}
 
 	setInitialValues(volcanoContract, chainlinkContract) {

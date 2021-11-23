@@ -17,11 +17,7 @@ class MeetTheTeam extends Component {
 						<span>
 							<b>Fullstack</b>
 						</span>
-						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing
-							elit.amet consecteturamet consecteturamet Laboriosam
-							voluptatum fuga iure. Est, dicta voluptatum.
-						</p>
+						<p></p>
 						<div class="btn">
 							<a
 								href="https://www.linkedin.com/in/marcus-wentz-a91351102/"
@@ -41,11 +37,7 @@ class MeetTheTeam extends Component {
 						<span>
 							<b>Frontend</b>
 						</span>
-						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing
-							elit.amet consecteturamet consecteturamet Laboriosam
-							voluptatum fuga iure. Est, dicta voluptatum.
-						</p>
+						<p></p>
 						<div class="btn">
 							<a
 								href="https://www.linkedin.com/in/franssonjohanna/"
@@ -64,11 +56,7 @@ class MeetTheTeam extends Component {
 						<span>
 							<b>Backend</b>
 						</span>
-						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing
-							elit.amet consecteturamet consecteturamet Laboriosam
-							voluptatum fuga iure. Est, dicta voluptatum.
-						</p>
+						<p></p>
 						<div class="btn">
 							<a
 								href="https://www.linkedin.com/in/sanchezgiovanni/"
@@ -87,11 +75,7 @@ class MeetTheTeam extends Component {
 						<span>
 							<b>Backend</b>
 						</span>
-						<p>
-							Lorem ipsum dolor sit amet consectetur adipisicing
-							elit.amet consecteturamet consecteturamet Laboriosam
-							voluptatum fuga iure. Est, dicta voluptatum.
-						</p>
+						<p></p>
 						<div class="btn">
 							<a
 								href="https://www.linkedin.com/in/ilyssaevans/"
