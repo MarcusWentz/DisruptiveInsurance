@@ -15,7 +15,7 @@ Claim ETH
  Get paid directly after a policy is bought.
   Expired Claim
   1.Oracle: Get present time
-  2._______________
+  2. _____
   Claim ETH not tied to policy
   1.Check if ___________
   Self Destruct
@@ -24,8 +24,9 @@ Claim ETH
 Buyer
   Buy policy
   1.Oracle: Get present time
-  2. _____
+  2.Record address, time, input coordinates and locked Owner ETH for policy.
   Claim Reward from qualified policy
   1. Oracle: Get filtered volcano eruption data (time, coordinates)
-  2. __________ 
+  2. Check if policy is older than eruption date and the coordinates are within + or - 1 coordinate point.
+  3. Policy holder claims 1 ETH if Step 2 checks are true then deletes policy data.
   
