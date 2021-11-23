@@ -18,8 +18,8 @@ Project Structure:
     3. Policy holder claims 1 ETH if Step 2 checks are true then deletes policy data.
   
 # Owner:
- Attact Buyers:\
-  1.Add funds to make policies avaliable with OwnerSendOneEthToContractFromInsuranceBusiness.\
+ Attract Buyers:\
+  1.Add funds to make policies available with OwnerSendOneEthToContractFromInsuranceBusiness.\
  Claim ETH\
   Get paid directly after a policy is bought.\
    Expired Claim:\
@@ -30,4 +30,4 @@ Project Structure:
     1.Check if OpenETHtoInsure is greater than 0.\
     2.Claim one ETH from contract.\
    Self Destruct \
-    1.If the sum of AccountsInsured and OpenETHtoInsure is greater than smart contract ETH balance, then a self destruct attack occured and you can claim that ETH.
+    1.If the sum of AccountsInsured and OpenETHtoInsure is greater than smart contract ETH balance, then a self destruct attack occurred and you can claim that ETH.
