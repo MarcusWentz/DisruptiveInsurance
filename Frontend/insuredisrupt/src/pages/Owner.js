@@ -21,6 +21,7 @@ class Owner extends Component {
 		this.handleClaimExpiredPolicy =
 			this.handleClaimExpiredPolicy.bind(this);
 
+		this.setInitialValues = this.setInitialValues.bind(this);
 		this.handleSelfDestruct = this.handleSelfDestruct.bind(this);
 		this.handleGetPolicyAddressData =
 			this.handleGetPolicyAddressData.bind(this);
@@ -45,20 +46,52 @@ class Owner extends Component {
 		console.log(this.state.volcanoContract, "CONTRAACT");
 
 		//GET inital values
-		let availableEth = await volcanoContract.methods
-			.OpenETHtoInsure()
-			.call();
-		this.setState({ getAvailableEth: availableEth });
-		console.log(this.state.getAvailableEthToInsure, "avail eth:");
-
-		let accountsInsured = await volcanoContract.methods
-			.AccountsInsured()
-			.call();
-		this.setState({ accountsInsured: accountsInsured });
-		console.log(this.state.accountsInsured, "accountsInsured:");
+		this.setInitialValues(volcanoContract);
 
 		///----Event will automatically read data
-		//this.eventListener(volcanoContract);
+		this.eventListener(volcanoContract);
+	}
+
+	setInitialValues(volcanoContract) {
+		let that = this;
+		volcanoContract.methods
+			.OpenETHtoInsure()
+			.call()
+			.then((res) => {
+				that.setState({
+					getAvailableEth: res,
+				});
+				console.log(that.state.getAvailableEthToInsure, "avail eth:");
+			});
+
+		volcanoContract.methods
+			.AccountsInsured()
+			.call()
+			.then((res) => {
+				that.setState({
+					accountsInsured: res,
+				});
+				console.log(res, "accountsinsured res");
+			});
+	}
+
+	eventListener(volcanoContract) {
+		let that = this;
+		volcanoContract.events
+			.recordMessageSender(
+				{
+					fromBlock: "latest",
+				},
+				function (error, eventResult) {}
+			)
+			.on("data", function (eventResult) {
+				//Call the get function to get the most accurate present state for the value.
+				that.setInitialValues(volcanoContract);
+			})
+			.on("changed", function (eventResult) {
+				// remove event from local database
+			})
+			.on("error", console.error);
 	}
 
 	handleChangeUserInput(event) {

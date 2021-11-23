@@ -64,57 +64,117 @@ class Oracle extends Component {
 		this.setState({ chainlinkContract: chainlinkContract });
 		console.log(this.state.chainlinkContract, "CHAINLINK CONTRAACT");
 
+		this.setInitialValues(volcanoContract, chainlinkContract);
+		this.eventListener(volcanoContract);
 		//get current time
-		let yearPresent = await volcanoContract.methods.YearPresent().call();
-		this.setState({ yearPresent: yearPresent });
-		console.log(this.state.yearPresent, "YEAR present");
+	}
 
-		let monthPresent = await volcanoContract.methods.MonthPresent().call();
-		this.setState({ monthPresent: monthPresent });
-		console.log(this.state.monthPresent, "MONTH present");
+	setInitialValues(volcanoContract, chainlinkContract) {
+		volcanoContract.methods
+			.YearPresent()
+			.call()
+			.then((res) => {
+				this.setState({ yearPresent: res });
+				console.log(this.state.yearPresent, "YEAR present");
+			});
 
-		let dayPresent = await volcanoContract.methods.DayPresent().call();
-		this.setState({ dayPresent: dayPresent });
-		console.log(this.state.dayPresent, "DAY present");
+		volcanoContract.methods
+			.MonthPresent()
+			.call()
+			.then((res) => {
+				this.setState({ monthPresent: res });
+				console.log(this.state.monthPresent, "MONTH present");
+			});
+
+		volcanoContract.methods
+			.DayPresent()
+			.call()
+			.then((res) => {
+				this.setState({ dayPresent: res });
+				console.log(this.state.dayPresent, "DAY present");
+			});
 
 		//get initial long/lats/year/month/day of eruption
-		let yearEruption = await volcanoContract.methods.YearEruption().call();
-		this.setState({ yearEruption: yearEruption });
-		console.log(this.state.yearEruption, "YEAR eruption");
+		volcanoContract.methods
+			.YearEruption()
+			.call()
+			.then((res) => {
+				this.setState({ yearEruption: res });
+				console.log(this.state.yearEruption, "YEAR eruption");
+			});
 
-		let monthEruption = await volcanoContract.methods
+		volcanoContract.methods
 			.MonthEruption()
-			.call();
-		this.setState({ monthEruption: monthEruption });
-		console.log(this.state.monthEruption, "MONTH eruption");
+			.call()
+			.then((res) => {
+				this.setState({ monthEruption: res });
+				console.log(this.state.monthEruption, "MONTH eruption");
+			});
 
-		let dayEruption = await volcanoContract.methods.DayEruption().call();
-		this.setState({ dayEruption: dayEruption });
-		console.log(this.state.dayEruption, "DAY eruption");
+		volcanoContract.methods
+			.DayEruption()
+			.call()
+			.then((res) => {
+				this.setState({ dayEruption: res });
+				console.log(this.state.dayEruption, "DAY eruption");
+			});
 
-		let latEruption = await volcanoContract.methods
+		volcanoContract.methods
 			.LatitudeEruption()
-			.call();
-		this.setState({ latEruption: latEruption });
-		console.log(this.state.latEruption, "latEruption");
+			.call()
+			.then((res) => {
+				this.setState({ latEruption: res });
+				console.log(this.state.latEruption, "latEruption");
+			});
 
-		let longEruption = await volcanoContract.methods
+		volcanoContract.methods
 			.LongitudeEruption()
-			.call();
-		this.setState({ longEruption: longEruption });
-		console.log(this.state.longEruption, "longEruption");
+			.call()
+			.then((res) => {
+				this.setState({ longEruption: res });
+				console.log(this.state.longEruption, "longEruption");
+			});
 
 		//initial state of url
-		let urlJSON = await volcanoContract.methods.urlRebuiltJSON().call();
-		this.setState({ urlJSON: urlJSON });
-		console.log(this.state.urlJSON, "longEruption");
+		volcanoContract.methods
+			.urlRebuiltJSON()
+			.call()
+			.then((res) => {
+				this.setState({ urlJSON: res });
+				console.log(this.state.urlJSON, "longEruption");
+			});
 
 		//get chainlink balance
-		let chainlinkBalance = await chainlinkContract.methods
+		chainlinkContract.methods
 			.balanceOf(CONTRACT_ADDRESS)
-			.call();
-		this.setState({ chainlinkBalance: chainlinkBalance });
-		console.log(this.state.chainlinkBalance, "chainlinkBalance");
+			.call()
+			.then((res) => {
+				this.setState({ chainlinkBalance: res });
+				console.log(this.state.chainlinkBalance, "chainlinkBalance");
+			});
+	}
+
+	eventListener(volcanoContract) {
+		let that = this;
+		volcanoContract.events
+			.recordMessageSender(
+				{
+					fromBlock: "latest",
+				},
+				function (error, eventResult) {}
+			)
+			.on("data", function (eventResult) {
+				//Call the get function to get the most accurate present state for the value.
+				that.setInitialValues(
+					volcanoContract,
+					that.state.chainlinkContract
+				);
+				console.log("eventlistner triggered!");
+			})
+			.on("changed", function (eventResult) {
+				// remove event from local database
+			})
+			.on("error", console.error);
 	}
 
 	handleChangeUserInput(event) {

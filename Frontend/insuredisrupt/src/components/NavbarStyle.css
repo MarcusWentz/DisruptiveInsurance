@@ -36,3 +36,10 @@
 	margin-top: 58px;
 	margin-left: 30px;
 }
+
+.metamask-addr-container {
+	position: absolute;
+	top: 50px;
+	right: 40px;
+	font-size: 18px;
+}

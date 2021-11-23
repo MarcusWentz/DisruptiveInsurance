@@ -21,8 +21,7 @@ class Buy extends Component {
 		this.handleChangeUserInput = this.handleChangeUserInput.bind(this);
 		this.handleBuyPolicy = this.handleBuyPolicy.bind(this);
 		this.handleClaimReward = this.handleClaimReward.bind(this);
-
-		//handleClaimReward();
+		this.eventListener = this.eventListener.bind(this);
 	}
 
 	async loadBlockchainData() {
@@ -63,17 +62,14 @@ class Buy extends Component {
 			allPolicyData: allPolicyData,
 		});
 
-		//	var salaryInfoContract = web3.eth.contract(salaryInfoCompiled.SalaryInfo.info.abiDefinition);
-		// var salaryInfo = salaryInfoContract.new({from:web3.eth.accounts[0], data: salaryInfoCompiled.SalaryInfo.code, gas: 1000000},
-
-		///----Event will automatically read data
-		//this.eventListener(volcanoContract);
+		this.eventListener(volcanoContract);
 	}
 
 	eventListener(volcanoContract) {
 		let that = this;
+		console.log("Inside event listner");
 		volcanoContract.events
-			.setValueUpdatedViaWebjs(
+			.recordMessageSender(
 				{
 					fromBlock: "latest",
 				},
@@ -82,13 +78,23 @@ class Buy extends Component {
 			.on("data", function (eventResult) {
 				//Call the get function to get the most accurate present state for the value.
 				volcanoContract.methods
-					.OpenETHtoEnsure()
+					.OpenETHtoInsure()
 					.call((err, result) => {
 						that.setState({
 							getAvailableEth: result,
 							loading: false,
 						});
 						console.log(result, "Eventlistener result");
+					});
+
+				volcanoContract.methods
+					.policies(that.state.account[0])
+					.call((err, result) => {
+						that.setState({
+							allPolicyData: result,
+							loading: false,
+						});
+						console.log(result, "2Eventlistener result");
 					});
 			})
 			.on("changed", function (eventResult) {
@@ -145,7 +151,7 @@ class Buy extends Component {
 
 					<form class="form-container-buy">
 						<div class="available-eth-container">
-							<h6>Metamask connected policy:</h6>
+							<label>Metamask connected policy:</label>
 							<h6
 								style={{ textAlign: "center" }}
 								className="v-txt"

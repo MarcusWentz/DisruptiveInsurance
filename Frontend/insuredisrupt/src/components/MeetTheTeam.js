@@ -23,7 +23,10 @@ class MeetTheTeam extends Component {
 							voluptatum fuga iure. Est, dicta voluptatum.
 						</p>
 						<div class="btn">
-							<a href="https://www.linkedin.com/in/marcus-wentz-a91351102/">
+							<a
+								href="https://www.linkedin.com/in/marcus-wentz-a91351102/"
+								target="_blank"
+							>
 								Linkedin
 							</a>
 						</div>
@@ -44,7 +47,10 @@ class MeetTheTeam extends Component {
 							voluptatum fuga iure. Est, dicta voluptatum.
 						</p>
 						<div class="btn">
-							<a href="https://www.linkedin.com/in/franssonjohanna/">
+							<a
+								href="https://www.linkedin.com/in/franssonjohanna/"
+								target="_blank"
+							>
 								Linkedin
 							</a>
 						</div>
@@ -64,7 +70,10 @@ class MeetTheTeam extends Component {
 							voluptatum fuga iure. Est, dicta voluptatum.
 						</p>
 						<div class="btn">
-							<a href="https://www.linkedin.com/in/sanchezgiovanni/">
+							<a
+								href="https://www.linkedin.com/in/sanchezgiovanni/"
+								target="_blank"
+							>
 								Linkedin
 							</a>
 						</div>
@@ -84,7 +93,10 @@ class MeetTheTeam extends Component {
 							voluptatum fuga iure. Est, dicta voluptatum.
 						</p>
 						<div class="btn">
-							<a href="https://www.linkedin.com/in/ilyssaevans/">
+							<a
+								href="https://www.linkedin.com/in/ilyssaevans/"
+								target="_blank"
+							>
 								Linkedin
 							</a>
 						</div>
