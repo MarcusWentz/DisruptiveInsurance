@@ -15,19 +15,19 @@ Project Structure:
   Claim Reward from qualified policy:\
     1. Oracle: Get filtered volcano eruption data (time, coordinates)\
     2. Check if policy is older than eruption date and the coordinates are within + or - 1 coordinate point.\
-    3. Policy holder claims 1 ETH if Step 2 checks are true then deletes policy data.\
+    3. Policy holder claims 1 ETH if Step 2 checks are true then deletes policy data.
   
 # Owner:
- Attact Buyers:
-  1.Add funds to make policies avaliable with OwnerSendOneEthToContractFromInsuranceBusiness.
- Claim ETH
-  Get paid directly after a policy is bought.
-   Expired Claim:
-    1.Oracle: Get present time
-    2.Check if policy connected to a mapped address is over 1 year old.
-    3.Liquidate ETH from policy and delete policy data.
-   Claim ETH not tied to policy
-    1.Check if OpenETHtoInsure is greater than 0.
-    2.Claim one ETH from contract.
-   Self Destruct 
+ Attact Buyers:\
+  1.Add funds to make policies avaliable with OwnerSendOneEthToContractFromInsuranceBusiness.\
+ Claim ETH\
+  Get paid directly after a policy is bought.\
+   Expired Claim:\
+    1.Oracle: Get present time\
+    2.Check if policy connected to a mapped address is over 1 year old.\
+    3.Liquidate ETH from policy and delete policy data.\
+   Claim ETH not tied to policy\
+    1.Check if OpenETHtoInsure is greater than 0.\
+    2.Claim one ETH from contract.\
+   Self Destruct \
     1.If the sum of AccountsInsured and OpenETHtoInsure is greater than smart contract ETH balance, then a self destruct attack occured and you can claim that ETH.
