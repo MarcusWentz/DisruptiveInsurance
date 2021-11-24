@@ -273,7 +273,8 @@ class Oracle extends Component {
 							class="btn btn-dark-request-time"
 							onClick={this.handleRequestTimeNow}
 						>
-							Request Time Now [0.03 LINK]
+							Request Time Now
+							<label>[0.05 LINK]</label>
 						</button>
 
 						<div>
@@ -352,7 +353,8 @@ class Oracle extends Component {
 							class="btn btn-dark-request-eruption"
 							onClick={this.handleRequestEruptionCoordinates}
 						>
-							Request Volcano Eruption Data [0.05 LINK]
+							Request Volcano Eruption Data
+							<label>[0.05 LINK]</label>
 						</button>
 					</form>
 				</div>
