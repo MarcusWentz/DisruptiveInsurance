@@ -161,7 +161,7 @@ class Buy extends Component {
 		return (
 			<div className="App-background">
 				<div className="center-container-buy ">
-					<h2 style={{ textAlign: "center" }}>Buy Insurance</h2>
+					<h2 style={{ textAlign: "center" }}>Buyer</h2>
 
 					<form class="form-container-buy">
 						<div class="available-eth-container">
