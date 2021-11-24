@@ -3,8 +3,7 @@
 Disruptive Insurance is an exotic insurance service that allows users to buy insurance against volcano eruptions.\
 No other insurance business on Earth offers volcano eruption insurance.
 
-Video demo: https://www.youtube.com/watch?v=kvO_nHnvPtQ
-<img src="https://github.com/MarcusWentz/InsureDisruption/blob/main/Images/LOGO_8_TRANSPARENT.png" alt="Logo"/>
+Video demo: [https://www.youtube.com/watch?v=kvO_nHnvPtQ]:
 [![Watch the video](https://github.com/MarcusWentz/DisruptiveInsurance/blob/main/Images/Video_Photo.png)](https://www.youtube.com/watch?v=kvO_nHnvPtQ)
 
 
