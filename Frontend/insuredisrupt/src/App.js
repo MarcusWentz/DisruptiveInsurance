@@ -16,13 +16,17 @@ class App extends Component {
 		super(props);
 		this.state = {
 			account: [],
+            ConnectButtonValue: "Connect to Metamask"
 		};
-		this.handleConnectMetamask = this.handleConnectMetamask.bind(this);
+//		this.handleConnectMetamask = this.handleConnectMetamask.bind(this);
+//      this.loadConnectMetamask();
 	}
 
-	componentDidMount() {}
+	componentDidMount() {
+      this.loadConnectMetamask();
+}
 
-	async handleConnectMetamask() {
+	async loadConnectMetamask() {
 		let that = this;
 		const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
 		const network = await web3.eth.net.getNetworkType();
@@ -31,6 +35,8 @@ class App extends Component {
 		const accountFromMetaMask = await web3.eth.getAccounts();
 		console.log(accountFromMetaMask, "account in app.js");
 		this.setState({ account: accountFromMetaMask });
+		this.setState({ ConnectButtonValue: String(accountFromMetaMask).substr(0, 5) + "..." + String(accountFromMetaMask).substr(38,4) 
+});
 		console.log(this.state.account[0], "user metamask address");
 	}
 
@@ -60,7 +66,7 @@ class App extends Component {
 						className="btn btn-dark"
 						onClick={this.handleConnectMetamask}
 					>
-						Connect to Metamask
+                    {this.state.ConnectButtonValue}
 					</button>
 				</div>
 			</div>
