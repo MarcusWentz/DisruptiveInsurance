@@ -34,6 +34,8 @@ class Oracle extends Component {
 			chainlinkBalance: "",
 			chainlinkContract: "",
 			errorMsg: "",
+			copied: false,
+			contractAddrToCopy: CONTRACT_ADDRESS,
 		};
 	}
 
@@ -238,6 +240,63 @@ class Oracle extends Component {
 		this.setState({ loading: true });
 	}
 
+	onChange = ({ target: { contractAddrToCopy } }) => {
+		this.setState({ contractAddrToCopy, copied: false });
+	};
+
+	onCopy = () => {
+		this.setState({ copied: true });
+	};
+
+	_renderCopyAddress() {
+		return (
+			<div>
+				<input
+					className="contract-addr"
+					onChange={this.onChange}
+					disabled="true"
+					value={
+						String(CONTRACT_ADDRESS).substr(0, 5) +
+						"..." +
+						String(CONTRACT_ADDRESS).substr(38, 4)
+					}
+				/>
+
+				<CopyToClipboard
+					onCopy={this.onCopy}
+					text={this.state.contractAddrToCopy}
+				>
+					<button className="btn btn-dark copy">
+						<span class="sc-jaq3xr-1 doRNia">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="16"
+								height="16"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<rect
+									x="9"
+									y="9"
+									width="13"
+									height="13"
+									rx="2"
+									ry="2"
+								></rect>
+								<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+							</svg>
+						</span>{" "}
+						Copy Contract Address
+					</button>
+				</CopyToClipboard>
+			</div>
+		);
+	}
+
 	render() {
 		return (
 			<div className="App-background">
@@ -247,18 +306,8 @@ class Oracle extends Component {
 						<p style={{ color: "orange" }}>{this.state.errorMsg}</p>
 						<div>
 							<div class="available-eth-container owner">
-								<h5
-									style={{ textAlign: "center" }}
-									className="v-txt"
-								>
-									Contract address:{" "}
-									{
-										//CONTRACT_ADDRESS.substr(0, 5) +
-										//"..." +
-										//CONTRACT_ADDRESS.substr(38, 4)CONTRACT_ADDRESS.substr(0, 5) +
-										CONTRACT_ADDRESS
-									}{" "}
-								</h5>
+								<label>CONTRACT ADDRESS</label>
+								<div>{this._renderCopyAddress()}</div>
 								<h6
 									style={{ textAlign: "center" }}
 									className="v-txt"

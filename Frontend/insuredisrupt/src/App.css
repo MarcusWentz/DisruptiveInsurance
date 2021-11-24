@@ -285,6 +285,18 @@ label {
 }
 
 /*Style for oracle.js*/
+.contract-addr {
+	width: 100px;
+	background-color: #2e2e36;
+	color: white;
+	border-radius: 15px;
+	border: 2px solid #ffa74f;
+	text-align: center;
+}
+
+.btn-btn-dark.copy {
+	background-color: black;
+}
 
 .container.oracle {
 	background-color: #2e2e36;
