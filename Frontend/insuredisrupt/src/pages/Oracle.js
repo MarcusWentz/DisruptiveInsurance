@@ -255,16 +255,14 @@ class Oracle extends Component {
 					className="contract-addr"
 					onChange={this.onChange}
 					disabled="true"
-					value={
-						CONTRACT_ADDRESS
-					}
+					value={this.state.contractAddrToCopy}
 				/>
 
 				<CopyToClipboard
 					onCopy={this.onCopy}
 					text={this.state.contractAddrToCopy}
 				>
-					<button className="btn btn-dark copy">
+					<button className="btn btn-dark-copy">
 						<span class="sc-jaq3xr-1 doRNia">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"

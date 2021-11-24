@@ -286,16 +286,14 @@ label {
 
 /*Style for oracle.js*/
 .contract-addr {
-	width: 100px;
+	width: 100%;
+	margin-bottom: 20px;
 	background-color: #2e2e36;
 	color: white;
 	border-radius: 15px;
-	border: 2px solid #ffa74f;
+	border: 2px solid grey;
 	text-align: center;
-}
-
-.btn-btn-dark.copy {
-	background-color: black;
+	font-size: 14px;
 }
 
 .container.oracle {
@@ -340,4 +338,13 @@ label {
 	border-radius: 15px;
 	color: white;
 	border: 3px solid #f85c2c;
+}
+
+.btn.btn-dark-copy {
+	background-color: #22212a;
+	width: 100%;
+	margin-bottom: 20px;
+	border-radius: 15px;
+	color: white;
+	border: 3px solid grey;
 }
