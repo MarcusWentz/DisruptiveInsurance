@@ -18,12 +18,15 @@ class App extends Component {
 			account: [],
             ConnectButtonValue: "Connect to Metamask"
 		};
-		this.handleConnectMetamask = this.handleConnectMetamask.bind(this);
+//		this.handleConnectMetamask = this.handleConnectMetamask.bind(this);
+//      this.loadConnectMetamask();
 	}
 
-	componentDidMount() {}
+	componentDidMount() {
+      this.loadConnectMetamask();
+}
 
-	async handleConnectMetamask() {
+	async loadConnectMetamask() {
 		let that = this;
 		const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
 		const network = await web3.eth.net.getNetworkType();
