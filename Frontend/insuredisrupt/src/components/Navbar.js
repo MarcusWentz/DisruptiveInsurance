@@ -28,7 +28,7 @@ class Navbar extends Component {
 					</li>
 					<li className="nav-txt">
 						<Link to="/buy" className="nav-link">
-							Buy
+							Buyer
 						</Link>
 					</li>
 					<li className="nav-txt">
