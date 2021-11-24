@@ -24,14 +24,16 @@ class Buy extends Component {
 		this.eventListener = this.eventListener.bind(this);
 	}
 
+	componentDidUpdate(prevProps, prevState) {
+		if (prevProps.account !== this.props.account) {
+			this.loadBlockchainData();
+		}
+	}
 	async loadBlockchainData() {
 		const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
-		const network = await web3.eth.net.getNetworkType();
-		await window.ethereum.enable();
-		//Fetch account data:
-		const accountFromMetaMask = await web3.eth.getAccounts();
-		this.setState({ account: accountFromMetaMask });
-		console.log(this.state.account[0], "user metamask address");
+		//const network = await web3.eth.net.getNetworkType();
+		//await window.ethereum.enable();
+
 		//Load the smart contract
 		const volcanoContract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
 		this.setState({ volcanoContract: volcanoContract });
@@ -55,12 +57,14 @@ class Buy extends Component {
 		console.log(this.state.getAvailableEth, "avail eth:");
 
 		//Get if user has policy and when signed
-		let allPolicyData = await volcanoContract.methods
-			.policies(this.state.account[0])
-			.call();
-		this.setState({
-			allPolicyData: allPolicyData,
-		});
+		if (this.props.account[0]) {
+			let allPolicyData = await volcanoContract.methods
+				.policies(this.props.account[0])
+				.call();
+			this.setState({
+				allPolicyData: allPolicyData,
+			});
+		}
 
 		this.eventListener(volcanoContract);
 	}
@@ -88,7 +92,7 @@ class Buy extends Component {
 					});
 
 				volcanoContract.methods
-					.policies(that.state.account[0])
+					.policies(that.props.account[0])
 					.call((err, result) => {
 						that.setState({
 							allPolicyData: result,
@@ -117,7 +121,7 @@ class Buy extends Component {
 				.BuyerCreatePolicy(this.state.lat, this.state.long)
 				.encodeABI(),
 			value: 10000000000000000,
-			from: this.state.account[0],
+			from: this.props.account[0],
 		});
 	}
 
@@ -128,9 +132,9 @@ class Buy extends Component {
 		web3js.eth.sendTransaction({
 			to: CONTRACT_ADDRESS,
 			data: this.state.volcanoContract.methods
-				.BuyerClaimReward(this.state.account[0])
+				.BuyerClaimReward(this.props.account[0])
 				.encodeABI(),
-			from: this.state.account[0],
+			from: this.props.account[0],
 		});
 	}
 

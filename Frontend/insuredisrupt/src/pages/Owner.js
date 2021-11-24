@@ -5,7 +5,7 @@ class Owner extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			account: "default",
+			account: this.props.account,
 			successMsg: "",
 			availableEth: "",
 			volcanoContract: null,
@@ -34,13 +34,8 @@ class Owner extends Component {
 
 	async loadBlockchainData() {
 		const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
-		const network = await web3.eth.net.getNetworkType();
-		await window.ethereum.enable();
-		//Fetch account data:
-		const accountFromMetaMask = await web3.eth.getAccounts();
-		this.setState({ account: accountFromMetaMask });
-		console.log(this.state.account[0], "CONTRact address");
-		//Load the smart contract
+		//const network = await web3.eth.net.getNetworkType();
+		//await window.ethereum.enable();
 		const volcanoContract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
 		this.setState({ volcanoContract: volcanoContract });
 		console.log(this.state.volcanoContract, "CONTRAACT");
@@ -50,6 +45,12 @@ class Owner extends Component {
 
 		///----Event will automatically read data
 		this.eventListener(volcanoContract);
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (prevProps.account !== this.props.account) {
+			this.loadBlockchainData();
+		}
 	}
 
 	setInitialValues(volcanoContract) {
@@ -109,7 +110,7 @@ class Owner extends Component {
 				.OwnerSendOneEthToContractFromInsuranceBusiness()
 				.encodeABI(),
 			value: 1000000000000000000,
-			from: this.state.account[0],
+			from: this.props.account[0],
 		});
 	}
 
@@ -120,7 +121,7 @@ class Owner extends Component {
 			data: this.state.volcanoContract.methods
 				.OwnerLiquidtoOpenETHToWithdraw()
 				.encodeABI(),
-			from: this.state.account[0],
+			from: this.props.account[0],
 		});
 	}
 
@@ -132,7 +133,7 @@ class Owner extends Component {
 			data: this.state.volcanoContract.methods
 				.OwnerClaimExpiredPolicyETH(this.state.policyaddress)
 				.encodeABI(),
-			from: this.state.account[0],
+			from: this.props.account[0],
 		});
 	}
 
@@ -143,7 +144,7 @@ class Owner extends Component {
 			data: this.state.volcanoContract.methods
 				.OwnerSelfDestructClaimETH()
 				.encodeABI(),
-			from: this.state.account[0],
+			from: this.props.account[0],
 		});
 	}
 

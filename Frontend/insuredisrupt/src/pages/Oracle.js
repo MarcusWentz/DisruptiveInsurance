@@ -42,18 +42,13 @@ class Oracle extends Component {
 		this.handleRequestTimeNow = this.handleRequestTimeNow.bind(this);
 		this.handleRequestEruptionCoordinates =
 			this.handleRequestEruptionCoordinates.bind(this);
-		console.log(this.props, "WHAAAAAAAAAAAAT");
+		console.log(this.props, "Props in Oracle.js");
 	}
 
 	async loadBlockchainData() {
 		const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
-		const network = await web3.eth.net.getNetworkType();
+		//const network = await web3.eth.net.getNetworkType();
 		//await window.ethereum.enable();
-		//Fetch account data:
-		//const accountFromMetaMask = await web3.eth.getAccounts();
-		//this.setState({ account: accountFromMetaMask });
-		//console.log(this.state.account[0], "CONTRact address");
-		//Load the smart contract
 		const volcanoContract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
 		this.setState({ volcanoContract: volcanoContract });
 
@@ -69,6 +64,12 @@ class Oracle extends Component {
 		this.eventListener(volcanoContract);
 		//get current time
 		console.log(this.props.account, "what is props account in ORACLE");
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if (prevProps.account !== this.props.account) {
+			this.loadBlockchainData();
+		}
 	}
 
 	setInitialValues(volcanoContract, chainlinkContract) {
@@ -193,7 +194,7 @@ class Oracle extends Component {
 			data: this.state.volcanoContract.methods
 				.OracleRequestPresentTime()
 				.encodeABI(),
-			from: this.state.account[0],
+			from: this.props.account[0],
 		});
 		//Todo: get the values from eventlistener
 		//YearPresent(); MonthPresent(); DayPresent()
@@ -220,7 +221,7 @@ class Oracle extends Component {
 					country
 				)
 				.encodeABI(),
-			from: this.state.account[0],
+			from: this.props.account[0],
 		});
 
 		//Todo: get the values from eventlistener
@@ -241,12 +242,12 @@ class Oracle extends Component {
 									className="v-txt"
 								>
 									Contract address:{" "}
-									{//CONTRACT_ADDRESS.substr(0, 5) +
+									{
+										//CONTRACT_ADDRESS.substr(0, 5) +
 										//"..." +
 										//CONTRACT_ADDRESS.substr(38, 4)CONTRACT_ADDRESS.substr(0, 5) +
 										CONTRACT_ADDRESS
-}{" "}
-
+									}{" "}
 								</h5>
 								<h6
 									style={{ textAlign: "center" }}
