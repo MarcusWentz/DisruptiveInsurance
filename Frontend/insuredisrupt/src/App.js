@@ -88,7 +88,13 @@ class App extends Component {
 						className="btn btn-dark"
 						onClick={this.handleConnectMetamask}
 					>
-						{this.state.ConnectButtonValue}
+						Connect
+						<img
+							width="50"
+							height="50"
+							style={{ marginLeft: 10 }}
+							src="https://cdn.discordapp.com/attachments/908513230714982410/913132016365633596/aaaaa.png"
+						></img>
 					</button>
 				</div>
 			</div>
