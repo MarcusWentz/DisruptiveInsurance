@@ -256,9 +256,7 @@ class Oracle extends Component {
 					onChange={this.onChange}
 					disabled="true"
 					value={
-						String(CONTRACT_ADDRESS).substr(0, 5) +
-						"..." +
-						String(CONTRACT_ADDRESS).substr(38, 4)
+						CONTRACT_ADDRESS
 					}
 				/>
 
