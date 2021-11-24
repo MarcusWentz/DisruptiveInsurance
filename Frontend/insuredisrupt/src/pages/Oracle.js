@@ -12,7 +12,7 @@ class Oracle extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			account: "default",
+			account: this.props.account,
 			successMsg: "",
 			availableEth: "",
 			volcanoContract: null,
@@ -48,11 +48,11 @@ class Oracle extends Component {
 	async loadBlockchainData() {
 		const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
 		const network = await web3.eth.net.getNetworkType();
-		await window.ethereum.enable();
+		//await window.ethereum.enable();
 		//Fetch account data:
-		const accountFromMetaMask = await web3.eth.getAccounts();
-		this.setState({ account: accountFromMetaMask });
-		console.log(this.state.account[0], "CONTRact address");
+		//const accountFromMetaMask = await web3.eth.getAccounts();
+		//this.setState({ account: accountFromMetaMask });
+		//console.log(this.state.account[0], "CONTRact address");
 		//Load the smart contract
 		const volcanoContract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
 		this.setState({ volcanoContract: volcanoContract });
