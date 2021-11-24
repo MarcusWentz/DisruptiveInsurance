@@ -14,6 +14,7 @@ class Buy extends Component {
 			long: 0,
 			getAvailableEth: null,
 			allPolicyData: "",
+			errorMsg: "",
 		};
 	}
 	componentDidMount() {
@@ -108,34 +109,43 @@ class Buy extends Component {
 	}
 
 	handleBuyPolicy() {
-		console.log(
-			"Buu Buy policy",
-			this.state.volcanoContract,
-			this.state.lat,
-			this.state.long
-		);
-		let web3js = new Web3(window.web3.currentProvider);
-		web3js.eth.sendTransaction({
-			to: CONTRACT_ADDRESS,
-			data: this.state.volcanoContract.methods
-				.BuyerCreatePolicy(this.state.lat, this.state.long)
-				.encodeABI(),
-			value: 10000000000000000,
-			from: this.props.account[0],
-		});
+		if (this.props.account[0]) {
+			console.log(
+				"Buu Buy policy",
+				this.state.volcanoContract,
+				this.state.lat,
+				this.state.long
+			);
+			let web3js = new Web3(window.web3.currentProvider);
+			web3js.eth.sendTransaction({
+				to: CONTRACT_ADDRESS,
+				data: this.state.volcanoContract.methods
+					.BuyerCreatePolicy(this.state.lat, this.state.long)
+					.encodeABI(),
+				value: 10000000000000000,
+				from: this.props.account[0],
+			});
+		} else
+			this.setState({
+				errorMsg: "You have to connect to metamask!",
+			});
 	}
 
 	handleClaimReward() {
 		console.log("Handle claim reward");
-
-		let web3js = new Web3(window.web3.currentProvider);
-		web3js.eth.sendTransaction({
-			to: CONTRACT_ADDRESS,
-			data: this.state.volcanoContract.methods
-				.BuyerClaimReward(this.props.account[0])
-				.encodeABI(),
-			from: this.props.account[0],
-		});
+		if (this.props.account[0]) {
+			let web3js = new Web3(window.web3.currentProvider);
+			web3js.eth.sendTransaction({
+				to: CONTRACT_ADDRESS,
+				data: this.state.volcanoContract.methods
+					.BuyerClaimReward(this.props.account[0])
+					.encodeABI(),
+				from: this.props.account[0],
+			});
+		} else
+			this.setState({
+				errorMsg: "You have to connect to metamask!",
+			});
 	}
 
 	handleChangeUserInput(event) {
@@ -188,6 +198,7 @@ class Buy extends Component {
 								{this.state.getAvailableEth}
 							</h3>
 						</div>
+						<p style={{ color: "orange" }}>{this.state.errorMsg}</p>
 
 						<div className="container longLat">
 							<div class="label-input-container">

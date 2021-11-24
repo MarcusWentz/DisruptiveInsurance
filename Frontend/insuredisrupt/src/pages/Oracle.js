@@ -33,6 +33,7 @@ class Oracle extends Component {
 			value: "",
 			chainlinkBalance: "",
 			chainlinkContract: "",
+			errorMsg: "",
 		};
 	}
 
@@ -187,45 +188,53 @@ class Oracle extends Component {
 	}
 
 	handleRequestTimeNow() {
-		console.log("Buuuuu set contract", this.state.volcanoContract);
-		let web3js = new Web3(window.web3.currentProvider);
-		web3js.eth.sendTransaction({
-			to: CONTRACT_ADDRESS,
-			data: this.state.volcanoContract.methods
-				.OracleRequestPresentTime()
-				.encodeABI(),
-			from: this.props.account[0],
-		});
-		//Todo: get the values from eventlistener
-		//YearPresent(); MonthPresent(); DayPresent()
-		this.setState({ loading: true });
+		if (this.props.account[0]) {
+			console.log("Buuuuu set contract", this.state.volcanoContract);
+			let web3js = new Web3(window.web3.currentProvider);
+			web3js.eth.sendTransaction({
+				to: CONTRACT_ADDRESS,
+				data: this.state.volcanoContract.methods
+					.OracleRequestPresentTime()
+					.encodeABI(),
+				from: this.props.account[0],
+			});
+			//Todo: get the values from eventlistener
+			//YearPresent(); MonthPresent(); DayPresent()
+			this.setState({ loading: true });
+		} else
+			this.setState({
+				errorMsg: "You have to connect to metamask!",
+			});
 	}
 
 	handleRequestEruptionCoordinates() {
-		const { yearUserInput, monthUserInput, dayUserInput, country } =
-			this.state;
-		console.log(
-			yearUserInput,
-			monthUserInput,
-			dayUserInput,
-			"USER INPUT in handlerequesteruptioncordinates"
-		);
-		let web3js = new Web3(window.web3.currentProvider);
-		web3js.eth.sendTransaction({
-			to: CONTRACT_ADDRESS,
-			data: this.state.volcanoContract.methods
-				.OracleRequestVolcanoEruptionData(
-					yearUserInput,
-					monthUserInput,
-					dayUserInput,
-					country
-				)
-				.encodeABI(),
-			from: this.props.account[0],
-		});
+		if (this.props.account[0]) {
+			const { yearUserInput, monthUserInput, dayUserInput, country } =
+				this.state;
+			console.log(
+				yearUserInput,
+				monthUserInput,
+				dayUserInput,
+				"USER INPUT in handlerequesteruptioncordinates"
+			);
+			let web3js = new Web3(window.web3.currentProvider);
+			web3js.eth.sendTransaction({
+				to: CONTRACT_ADDRESS,
+				data: this.state.volcanoContract.methods
+					.OracleRequestVolcanoEruptionData(
+						yearUserInput,
+						monthUserInput,
+						dayUserInput,
+						country
+					)
+					.encodeABI(),
+				from: this.props.account[0],
+			});
+		} else
+			this.setState({
+				errorMsg: "You have to connect to metamask!",
+			});
 
-		//Todo: get the values from eventlistener
-		//YearPresent(); MonthPresent(); DayPresent()
 		this.setState({ loading: true });
 	}
 
@@ -235,6 +244,7 @@ class Oracle extends Component {
 				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Set Oracle Data</h2>
 					<form class="form-container-buy">
+						<p style={{ color: "orange" }}>{this.state.errorMsg}</p>
 						<div>
 							<div class="available-eth-container owner">
 								<h5

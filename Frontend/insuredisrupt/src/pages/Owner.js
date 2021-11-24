@@ -9,9 +9,10 @@ class Owner extends Component {
 			successMsg: "",
 			availableEth: "",
 			volcanoContract: null,
-			policyaddress: "0x0000000000000000000000000000000000000000",
+			policyaddress: "",
 			allPolicyData: "",
 			accountsInsured: "",
+			errorMsg: "",
 		};
 	}
 	componentDidMount() {
@@ -103,59 +104,85 @@ class Owner extends Component {
 	}
 
 	handleFundContract() {
-		let web3js = new Web3(window.web3.currentProvider);
-		web3js.eth.sendTransaction({
-			to: CONTRACT_ADDRESS,
-			data: this.state.volcanoContract.methods
-				.OwnerSendOneEthToContractFromInsuranceBusiness()
-				.encodeABI(),
-			value: 1000000000000000000,
-			from: this.props.account[0],
-		});
+		if (this.props.account[0]) {
+			let web3js = new Web3(window.web3.currentProvider);
+			web3js.eth.sendTransaction({
+				to: CONTRACT_ADDRESS,
+				data: this.state.volcanoContract.methods
+					.OwnerSendOneEthToContractFromInsuranceBusiness()
+					.encodeABI(),
+				value: 1000000000000000000,
+				from: this.props.account[0],
+			});
+		} else
+			this.setState({
+				errorMsg: "You have to connect to metamask!",
+			});
 	}
 
 	handleClaimNotConnectedPolicy() {
-		let web3js = new Web3(window.web3.currentProvider);
-		web3js.eth.sendTransaction({
-			to: CONTRACT_ADDRESS,
-			data: this.state.volcanoContract.methods
-				.OwnerLiquidtoOpenETHToWithdraw()
-				.encodeABI(),
-			from: this.props.account[0],
-		});
+		if (this.props.account[0]) {
+			let web3js = new Web3(window.web3.currentProvider);
+			web3js.eth.sendTransaction({
+				to: CONTRACT_ADDRESS,
+				data: this.state.volcanoContract.methods
+					.OwnerLiquidtoOpenETHToWithdraw()
+					.encodeABI(),
+				from: this.props.account[0],
+			});
+		} else
+			this.setState({
+				errorMsg: "You have to connect to metamask!",
+			});
 	}
 
 	handleClaimExpiredPolicy() {
-		console.log(this.state.policyaddress, "policy address sent in:");
-		let web3js = new Web3(window.web3.currentProvider);
-		web3js.eth.sendTransaction({
-			to: CONTRACT_ADDRESS,
-			data: this.state.volcanoContract.methods
-				.OwnerClaimExpiredPolicyETH(this.state.policyaddress)
-				.encodeABI(),
-			from: this.props.account[0],
-		});
+		if (this.props.account[0]) {
+			console.log(this.state.policyaddress, "policy address sent in:");
+			let web3js = new Web3(window.web3.currentProvider);
+			web3js.eth.sendTransaction({
+				to: CONTRACT_ADDRESS,
+				data: this.state.volcanoContract.methods
+					.OwnerClaimExpiredPolicyETH(this.state.policyaddress)
+					.encodeABI(),
+				from: this.props.account[0],
+			});
+		} else
+			this.setState({
+				errorMsg: "You have to specify a policy address!",
+			});
 	}
 
 	handleSelfDestruct() {
-		let web3js = new Web3(window.web3.currentProvider);
-		web3js.eth.sendTransaction({
-			to: CONTRACT_ADDRESS,
-			data: this.state.volcanoContract.methods
-				.OwnerSelfDestructClaimETH()
-				.encodeABI(),
-			from: this.props.account[0],
-		});
+		if (this.props.account[0]) {
+			let web3js = new Web3(window.web3.currentProvider);
+			web3js.eth.sendTransaction({
+				to: CONTRACT_ADDRESS,
+				data: this.state.volcanoContract.methods
+					.OwnerSelfDestructClaimETH()
+					.encodeABI(),
+				from: this.props.account[0],
+			});
+		} else
+			this.setState({
+				errorMsg: "You have to specify a policy address!",
+			});
 	}
 
 	async handleGetPolicyAddressData() {
-		let allPolicyData = await this.state.volcanoContract.methods
-			.policies(this.state.policyaddress)
-			.call();
-		this.setState({
-			allPolicyData: allPolicyData,
-		});
-		console.log(this.state.allPolicyData.DaySigned, "all policy data");
+		if (this.props.account[0]) {
+			let allPolicyData = await this.state.volcanoContract.methods
+				.policies(this.state.policyaddress)
+				.call();
+			this.setState({
+				allPolicyData: allPolicyData,
+				errorMsg: "",
+			});
+			console.log(this.state.allPolicyData.DaySigned, "all policy data");
+		} else
+			this.setState({
+				errorMsg: "You have to specify a policy address!",
+			});
 	}
 
 	render() {
@@ -214,10 +241,14 @@ class Owner extends Component {
 									onChange={this.handleChangeUserInput}
 									value={this.state.policyaddress}
 									data-name="policyaddress"
+									style={{ width: 500 }}
 								></input>
 							</div>
 						</div>
 						<div>
+							<p style={{ color: "orange" }}>
+								{this.state.errorMsg}
+							</p>
 							<button
 								type="button"
 								class="btn btn-dark-policy-data"
