@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "./VolcanoInsuranceV33.sol";
+import "./VolcanoInsuranceV34.sol";
 
 contract SelfDestructSendOneEthereum {
     VolcanoInsurance VolcanoInsuranceInstance;
@@ -19,4 +19,3 @@ contract SelfDestructSendOneEthereum {
         selfdestruct(addr);
     }
 }
-
