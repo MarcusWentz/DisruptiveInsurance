@@ -1,6 +1,8 @@
 import "./FooterStyle.css";
 
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
+
 import logo8 from "../Images/LOGO_8_TRANSPARENT.png";
 
 class Footer extends Component {
@@ -18,34 +20,60 @@ class Footer extends Component {
 						<ul class="box">
 							<li class="link_name">Project</li>
 							<li>
-								<a href="#">Team</a>
+								{" "}
+								<a>
+									<Link
+										to="/"
+										className="nav-link"
+										style={{ marginLeft: -17 }}
+									>
+										Team
+									</Link>
+								</a>
 							</li>
 							<li>
-								<a href="#">Chainlink</a>
-							</li>
-							<li>
-								<a href="#">Terms of Service</a>
-							</li>
-							<li>
-								<a href="#">Privacy Policy</a>
+								<a target="_blank" href="https://chain.link/">
+									Chainlink
+								</a>
 							</li>
 						</ul>
 						<ul class="box">
 							<li class="link_name">Support</li>
 							<li>
-								<a href="#">FAQ</a>
+								<a
+									href="https://chain.link/hackathon"
+									target="_blank"
+								>
+									FAQ
+								</a>
 							</li>
 							<li>
-								<a href="#">Contact</a>
+								<Link
+									to="/"
+									className="nav-link"
+									style={{ marginLeft: -17 }}
+								>
+									Contact
+								</Link>
 							</li>
 						</ul>
 						<ul class="box">
 							<li class="link_name">Social</li>
 							<li>
-								<a href="#">Github</a>
+								<a
+									target="_blank"
+									href="https://github.com/MarcusWentz/DisruptiveInsurance/"
+								>
+									Github
+								</a>
 							</li>
 							<li>
-								<a href="#">Discord</a>
+								<a
+									target="_blank"
+									href="https://discord.com/app"
+								>
+									Discord
+								</a>
 							</li>
 							<li>
 								<a href="#"></a>
