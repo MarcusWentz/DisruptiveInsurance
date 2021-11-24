@@ -241,16 +241,18 @@ class Oracle extends Component {
 									className="v-txt"
 								>
 									Contract address:{" "}
-									{CONTRACT_ADDRESS.substr(0, 5) +
-										"..." +
-										CONTRACT_ADDRESS.substr(38, 4)}{" "}
-									make clickable/copy
+									{//CONTRACT_ADDRESS.substr(0, 5) +
+										//"..." +
+										//CONTRACT_ADDRESS.substr(38, 4)CONTRACT_ADDRESS.substr(0, 5) +
+										CONTRACT_ADDRESS
+}{" "}
+
 								</h5>
 								<h6
 									style={{ textAlign: "center" }}
 									className="v-txt"
 								>
-									<label>chainlink balance</label>
+									<label>contract chainlink balance</label>
 									{this.state.chainlinkBalance /
 										1000000000000000000}
 								</h6>
@@ -270,7 +272,7 @@ class Oracle extends Component {
 							class="btn btn-dark-request-time"
 							onClick={this.handleRequestTimeNow}
 						>
-							Request Time Now
+							Request Time Now [0.03 LINK]
 						</button>
 
 						<div>
@@ -349,7 +351,7 @@ class Oracle extends Component {
 							class="btn btn-dark-request-eruption"
 							onClick={this.handleRequestEruptionCoordinates}
 						>
-							Request Volcano Eruption Data
+							Request Volcano Eruption Data [0.05 LINK]
 						</button>
 					</form>
 				</div>
