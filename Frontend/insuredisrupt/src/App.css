@@ -348,3 +348,14 @@ label {
 	color: white;
 	border: 3px solid grey;
 }
+
+.modal-content {
+	background-color: #1a1a21;
+	color: white;
+	border-radius: 15px;
+	border: 2px solid orange;
+}
+
+.btn-close {
+	color: white !important;
+}

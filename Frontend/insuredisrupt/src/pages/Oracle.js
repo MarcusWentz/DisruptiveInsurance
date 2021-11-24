@@ -7,6 +7,7 @@ import {
 	CHAINLINK_ABI,
 } from "../config";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import ErrorModal from "../components/ErrorModal";
 
 class Oracle extends Component {
 	constructor(props) {
@@ -203,10 +204,11 @@ class Oracle extends Component {
 			//Todo: get the values from eventlistener
 			//YearPresent(); MonthPresent(); DayPresent()
 			this.setState({ loading: true });
-		} else
+		} else {
 			this.setState({
 				errorMsg: "You have to connect to metamask!",
 			});
+		}
 	}
 
 	handleRequestEruptionCoordinates() {
@@ -232,10 +234,11 @@ class Oracle extends Component {
 					.encodeABI(),
 				from: this.props.account[0],
 			});
-		} else
+		} else {
 			this.setState({
 				errorMsg: "You have to connect to metamask!",
 			});
+		}
 
 		this.setState({ loading: true });
 	}
@@ -296,6 +299,7 @@ class Oracle extends Component {
 	render() {
 		return (
 			<div className="App-background">
+				{this.state.errorMsg ? <ErrorModal /> : null}
 				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Oracle</h2>
 					<form class="form-container-buy">

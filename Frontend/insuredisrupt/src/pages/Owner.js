@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Web3 from "web3";
 import { CONTRACT_ADDRESS, ABI } from "../config";
+import ErrorModal from "../components/ErrorModal";
 class Owner extends Component {
 	constructor(props) {
 		super(props);
@@ -189,6 +190,8 @@ class Owner extends Component {
 		const { allPolicyData } = this.state;
 		return (
 			<div className="App-background">
+				{this.state.errorMsg ? <ErrorModal /> : null}
+
 				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Owner</h2>
 

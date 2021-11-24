@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Web3 from "web3";
 import { CONTRACT_ADDRESS, ABI } from "../config";
+import ErrorModal from "../components/ErrorModal";
 
 class Buy extends Component {
 	constructor(props) {
@@ -160,6 +161,8 @@ class Buy extends Component {
 		console.log(this.state.allPolicyData, "All Policy data");
 		return (
 			<div className="App-background">
+				{this.state.errorMsg ? <ErrorModal /> : null}
+
 				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Buyer</h2>
 
