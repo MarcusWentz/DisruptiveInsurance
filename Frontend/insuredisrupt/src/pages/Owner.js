@@ -9,7 +9,7 @@ class Owner extends Component {
 			successMsg: "",
 			availableEth: "",
 			volcanoContract: null,
-			policyaddress: null,
+			policyaddress: "0x0000000000000000000000000000000000000000",
 			allPolicyData: "",
 			accountsInsured: "",
 		};
