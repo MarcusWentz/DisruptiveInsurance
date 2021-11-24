@@ -1,6 +1,4 @@
-require('dotenv').config()
 require("@nomiclabs/hardhat-ethers");
-require("./tasks/MyContractTasks.js")
 require('solidity-coverage')
 
 const RINKEBY_RPC_URL = process.env.rinkebyInfuraAPIKey
