@@ -16,7 +16,7 @@ class App extends Component {
 		super(props);
 		this.state = {
 			account: [],
-			ConnectButtonValue: "Connect to Metamask",
+			ConnectButtonValue: "Connect ",
 		};
 		this.handleConnectMetamask = this.handleConnectMetamask.bind(this);
 		this.loadConnectMetamask = this.loadConnectMetamask.bind(this);
@@ -88,7 +88,7 @@ class App extends Component {
 						className="btn btn-dark"
 						onClick={this.handleConnectMetamask}
 					>
-						Connect
+						{this.state.ConnectButtonValue}
 						<img
 							width="50"
 							height="50"
