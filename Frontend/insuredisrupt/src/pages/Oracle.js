@@ -256,7 +256,7 @@ class Oracle extends Component {
 								</h6>
 							</div>
 						</div>
-						<p>Current Date:</p>
+						<p>Current Date [GMT]:</p>
 
 						<p style={{ textAlign: "center" }} className="v-txt">
 							{this.state.yearPresent +
