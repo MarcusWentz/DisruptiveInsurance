@@ -307,7 +307,9 @@ class Oracle extends Component {
 						<div>
 							<div class="available-eth-container owner">
 								<label>CONTRACT ADDRESS</label>
-								<div>{this._renderCopyAddress()}</div>
+								<div className="contract-addr-container">
+									{this._renderCopyAddress()}
+								</div>
 								<h6
 									style={{ textAlign: "center" }}
 									className="v-txt"

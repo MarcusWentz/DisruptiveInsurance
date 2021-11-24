@@ -340,13 +340,20 @@ label {
 	border: 3px solid #f85c2c;
 }
 
+.contract-addr-container {
+	background-color: #2e2e36;
+	padding: 20px;
+	border-radius: 15px;
+	margin-bottom: 20px;
+}
+
 .btn.btn-dark-copy {
 	background-color: #22212a;
-	width: 100%;
-	margin-bottom: 20px;
+	width: 50%;
 	border-radius: 15px;
 	color: white;
 	border: 3px solid grey;
+	font-size: 12px;
 }
 
 .modal-content {
