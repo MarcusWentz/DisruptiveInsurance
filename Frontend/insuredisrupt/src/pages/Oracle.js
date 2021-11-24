@@ -301,7 +301,7 @@ class Oracle extends Component {
 		return (
 			<div className="App-background">
 				<div className="center-container-buy ">
-					<h2 style={{ textAlign: "center" }}>Set Oracle Data</h2>
+					<h2 style={{ textAlign: "center" }}>Oracle</h2>
 					<form class="form-container-buy">
 						<p style={{ color: "orange" }}>{this.state.errorMsg}</p>
 						<div>
