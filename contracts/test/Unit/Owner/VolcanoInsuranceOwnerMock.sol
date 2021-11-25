@@ -5,6 +5,14 @@ import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../../../Convert.sol";
 
+/*
+ * Mocked contract mirroring logic of VolcanoInsurance contract
+ * Helper functions fill the role of oracles calls in the prod contract
+ *
+ * Lines irrelevant to owner-relation functionality has been commented out,
+ * but maintained for the sake of context
+*/
+
 contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 
 contract VolcanoInsuranceOwnerMock is ChainlinkClient {
