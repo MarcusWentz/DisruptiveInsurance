@@ -53,7 +53,7 @@ class Buy extends Component {
 
 		//GET inital values
 		let availableEth = await volcanoContract.methods
-			.OpenETHtoInsure()
+			.OpenWEItoInsure()
 			.call();
 		this.setState({ getAvailableEth: availableEth });
 		console.log(this.state.getAvailableEth, "avail eth:");
@@ -84,7 +84,7 @@ class Buy extends Component {
 			.on("data", function (eventResult) {
 				//Call the get function to get the most accurate present state for the value.
 				volcanoContract.methods
-					.OpenETHtoInsure()
+					.OpenWEItoInsure()
 					.call((err, result) => {
 						that.setState({
 							getAvailableEth: result,
@@ -139,7 +139,7 @@ class Buy extends Component {
 			web3js.eth.sendTransaction({
 				to: CONTRACT_ADDRESS,
 				data: this.state.volcanoContract.methods
-					.BuyerClaimReward(this.props.account[0])
+					.BuyerClaimReward()
 					.encodeABI(),
 				from: this.props.account[0],
 			});
