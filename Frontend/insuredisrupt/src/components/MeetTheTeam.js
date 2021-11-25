@@ -10,7 +10,7 @@ class MeetTheTeam extends Component {
 				<div class="team">
 					<div class="member">
 						<img
-							src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/user_photos/001/750/177/datas/profile.jpeg"
+							src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/user_photos/001/751/658/datas/profile.jpeg"
 							alt="member_image"
 						/>
 						<h3>Marcus Wentz</h3>
@@ -68,7 +68,7 @@ class MeetTheTeam extends Component {
 					</div>
 					<div class="member">
 						<img
-							src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/user_photos/001/740/512/datas/profile.jpg"
+							src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/user_photos/001/751/668/datas/profile.jpg"
 							alt="member_image"
 						/>
 						<h3>Ilyssa Evans</h3>

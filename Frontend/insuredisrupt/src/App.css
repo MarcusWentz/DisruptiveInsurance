@@ -362,7 +362,6 @@ label {
 	border-radius: 15px;
 	border: 2px solid orange;
 }
-
-.btn-close {
+.closeButton {
 	color: white !important;
 }

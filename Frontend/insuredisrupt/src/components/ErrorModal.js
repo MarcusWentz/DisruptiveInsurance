@@ -37,7 +37,7 @@ class ErrorModal extends Component {
 				aria-labelledby="contained-modal-title-vcenter"
 				centered
 			>
-				<Modal.Header closeButton>Warning</Modal.Header>
+				<Modal.Header>Warning</Modal.Header>
 				<Modal.Body>
 					<div className="inv-toast-body">
 						You have to connect to Metamask before doing this!

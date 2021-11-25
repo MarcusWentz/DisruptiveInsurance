@@ -21,14 +21,11 @@ class Footer extends Component {
 							<li class="link_name">Project</li>
 							<li>
 								{" "}
-								<a>
-									<Link
-										to="/"
-										className="nav-link"
-										style={{ marginLeft: -17 }}
-									>
-										Team
-									</Link>
+								<a
+									href="	https://devpost.com/software/insuredisruption"
+									target="_blank"
+								>
+									Team
 								</a>
 							</li>
 							<li>
@@ -70,7 +67,7 @@ class Footer extends Component {
 							<li>
 								<a
 									target="_blank"
-									href="https://discord.com/app"
+									href="https://discord.com/invite/aSK4zew"
 								>
 									Discord
 								</a>

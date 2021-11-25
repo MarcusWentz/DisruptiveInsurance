@@ -303,7 +303,6 @@ class Oracle extends Component {
 				<div className="center-container-buy ">
 					<h2 style={{ textAlign: "center" }}>Oracle</h2>
 					<form class="form-container-buy">
-						<p style={{ color: "orange" }}>{this.state.errorMsg}</p>
 						<div>
 							<div class="available-eth-container owner">
 								<label>CONTRACT ADDRESS</label>

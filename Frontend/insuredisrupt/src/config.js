@@ -1,5 +1,5 @@
 //THis is the contract address as deployed on rinkeby
-export const CONTRACT_ADDRESS = "0xAc62B615451f227905b65D621308E77861132eF3";
+export const CONTRACT_ADDRESS = "0xbb97d655Ae82F42FAB85DfA86abD95621Eeea125";
 export const CONTRACT_ERC20_CHAINLINK_ADDRESS =
 	"0x01BE23585060835E02B77ef475b0Cc51aA1e0709";
 export const CHAINLINK_ABI = [
@@ -347,15 +347,6 @@ export const ABI = [
 	},
 	{
 		inputs: [],
-		name: "AccountsInsured",
-		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-		stateMutability: "view",
-		type: "function",
-	},
-	{
-		inputs: [
-			{ internalType: "address", name: "policyHolder", type: "address" },
-		],
 		name: "BuyerClaimReward",
 		outputs: [],
 		stateMutability: "nonpayable",
@@ -394,6 +385,13 @@ export const ABI = [
 	},
 	{
 		inputs: [],
+		name: "LockedWEItoPolicies",
+		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
 		name: "LongitudeEruption",
 		outputs: [{ internalType: "int256", name: "", type: "int256" }],
 		stateMutability: "view",
@@ -415,7 +413,7 @@ export const ABI = [
 	},
 	{
 		inputs: [],
-		name: "OpenETHtoInsure",
+		name: "OpenWEItoInsure",
 		outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
 		stateMutability: "view",
 		type: "function",
