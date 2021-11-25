@@ -38,6 +38,7 @@ class Oracle extends Component {
 			copied: false,
 			contractAddrToCopy: CONTRACT_ADDRESS,
 			loading: false,
+			loadingVolcanoData: false,
 		};
 	}
 
@@ -176,7 +177,7 @@ class Oracle extends Component {
 				);
 
 				//Do a wait 30s here
-				that.setState({ loading: false });
+				that.setState({ loading: false, loadingVolcanoData: false });
 				console.log("eventlistner triggered!");
 			})
 			.on("changed", function (eventResult) {
@@ -235,14 +236,12 @@ class Oracle extends Component {
 					.encodeABI(),
 				from: this.props.account[0],
 			});
-			this.setState({ loading: true });
+			this.setState({ loadingVolcanoData: true });
 		} else {
 			this.setState({
 				errorMsg: "You have to connect to metamask!",
 			});
 		}
-
-		this.setState({ loading: true });
 	}
 
 	onChange = ({ target: { contractAddrToCopy } }) => {
@@ -255,6 +254,8 @@ class Oracle extends Component {
 
 	_whenToRenderSpinner() {
 		if (this.state.loading) {
+			return <div class="spinner-border text-light" role="status"></div>;
+		} else if (this.state.loadingVolcanoData) {
 			return <div class="spinner-border text-light" role="status"></div>;
 		}
 	}
@@ -437,7 +438,7 @@ class Oracle extends Component {
 							Request Volcano Eruption Data
 							<label>[0.05 LINK]</label>
 						</button>
-						{this.state.loading ? (
+						{this.state.loadingVolcanoData ? (
 							<p>{this._whenToRenderSpinner()}</p>
 						) : null}
 					</form>
