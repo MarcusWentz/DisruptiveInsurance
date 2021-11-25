@@ -37,6 +37,7 @@ class Oracle extends Component {
 			errorMsg: "",
 			copied: false,
 			contractAddrToCopy: CONTRACT_ADDRESS,
+			loading: false,
 		};
 	}
 
@@ -62,12 +63,9 @@ class Oracle extends Component {
 			CONTRACT_ERC20_CHAINLINK_ADDRESS
 		);
 		this.setState({ chainlinkContract: chainlinkContract });
-		console.log(this.state.chainlinkContract, "CHAINLINK CONTRAACT");
 
 		this.setInitialValues(volcanoContract, chainlinkContract);
 		this.eventListener(volcanoContract);
-		//get current time
-		console.log(this.props.account, "what is props account in ORACLE");
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -176,6 +174,9 @@ class Oracle extends Component {
 					volcanoContract,
 					that.state.chainlinkContract
 				);
+
+				//Do a wait 30s here
+				that.setState({ loading: false });
 				console.log("eventlistner triggered!");
 			})
 			.on("changed", function (eventResult) {
@@ -234,6 +235,7 @@ class Oracle extends Component {
 					.encodeABI(),
 				from: this.props.account[0],
 			});
+			this.setState({ loading: true });
 		} else {
 			this.setState({
 				errorMsg: "You have to connect to metamask!",
@@ -250,6 +252,12 @@ class Oracle extends Component {
 	onCopy = () => {
 		this.setState({ copied: true });
 	};
+
+	_whenToRenderSpinner() {
+		if (this.state.loading) {
+			return <div class="spinner-border text-light" role="status"></div>;
+		}
+	}
 
 	_renderCopyAddress() {
 		return (
@@ -321,13 +329,26 @@ class Oracle extends Component {
 						</div>
 						<p>Current Date [GMT]:</p>
 
-						<p style={{ textAlign: "center" }} className="v-txt">
-							{this.state.yearPresent +
-								"/" +
-								this.state.monthPresent +
-								"/" +
-								this.state.dayPresent}
-						</p>
+						{this.state.loading ? (
+							<p
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								{this._whenToRenderSpinner()}
+							</p>
+						) : (
+							<p
+								style={{ textAlign: "center" }}
+								className="v-txt"
+							>
+								{this.state.yearPresent +
+									"/" +
+									this.state.monthPresent +
+									"/" +
+									this.state.dayPresent}
+							</p>
+						)}
+
 						<button
 							type="button"
 							class="btn btn-dark-request-time"
@@ -416,6 +437,9 @@ class Oracle extends Component {
 							Request Volcano Eruption Data
 							<label>[0.05 LINK]</label>
 						</button>
+						{this.state.loading ? (
+							<p>{this._whenToRenderSpinner()}</p>
+						) : null}
 					</form>
 				</div>
 			</div>
