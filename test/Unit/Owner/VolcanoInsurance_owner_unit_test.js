@@ -7,6 +7,11 @@ chai.use(require('chai-bn')(BN));
 
 provider = ethers.provider;
 
+
+/*
+ * Tests for owner-related functions in VolcanoInsurance contract
+*/
+
 describe('VolcanoCoordinate Owner Unit Tests', function () {
 
     let VolcanoCoordinate;
@@ -82,15 +87,10 @@ describe('VolcanoCoordinate Owner Unit Tests', function () {
         it("Self destruct tx sending 1 ETH. Then Withdraw tx. Balance should be 0 after Withdraw.", async function () {
             await SelfDestructSendOneEthereumDeployed.attack(
                 { value: ethers.utils.parseEther('1')});
-            // let bigNumVal = await provider.getBalance(VolcanoCoordinateDeployed.address)
-            // let bal = ethers.utils.formatEther( bigNumVal )
             await VolcanoCoordinateDeployed.OwnerSelfDestructClaimETH();
             expect(await provider.getBalance(VolcanoCoordinateDeployed.address)).to.equal(0);
         });
         it("Call without sending ETH -> revert", async function () {
-            // let bigNumVal = await provider.getBalance(VolcanoCoordinateDeployed.address)
-            // let bal = ethers.utils.formatEther( bigNumVal )
-            // await VolcanoCoordinateDeployed.OwnerSelfDestructClaimETH();
             await expect(VolcanoCoordinateDeployed.OwnerSelfDestructClaimETH())
                 .to.be
                 .revertedWith("No self destruct detected (address(this).balance == (LockedWEItoPolicies+OpenWEItoInsure))");
@@ -159,13 +159,4 @@ describe('VolcanoCoordinate Owner Unit Tests', function () {
                 .to.be.ok;
         });
     });
-
-    /*
-     * Test cases:
-     *      - OwnerClaimExpiredPolicyETH
-     *          ! - Will need to have a mock policy passed (expired or current) and put in mapping
-     *          * Owner successfully claims ETH from expired policy
-     *          * Owner cannot claim ETH from current policy
-     *          
-    */
 })
