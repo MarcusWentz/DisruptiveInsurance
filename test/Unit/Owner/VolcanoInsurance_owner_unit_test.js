@@ -7,16 +7,13 @@ chai.use(require('chai-bn')(BN));
 
 provider = ethers.provider;
 
-describe('VolcanoCoordinate Unit Tests', function () {
+describe('VolcanoCoordinate Owner Unit Tests', function () {
 
     let VolcanoCoordinate;
     let VolcanoCoordinateDeployed;
     let SelfDestructSendOneEthereum;
     let SelfDestructSendOneEthereumDeployed;
     let owner;
-
-    // Mock expired policy
-    // Mock non-expired policy
 
     beforeEach(async function () {
         VolcanoCoordinate = await ethers.getContractFactory('VolcanoInsuranceOwnerMock');
@@ -99,8 +96,6 @@ describe('VolcanoCoordinate Unit Tests', function () {
                 .revertedWith("No self destruct detected (address(this).balance == (LockedWEItoPolicies+OpenWEItoInsure))");
         });
     });
-
-    // test mock test
 
     describe("OwnerClaimExpiredPolicyETH", function () {
         it("No expired policies -> revert", async function () {

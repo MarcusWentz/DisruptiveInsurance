@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "./Convert.sol";
+import "../../../Convert.sol";
 
 contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 
