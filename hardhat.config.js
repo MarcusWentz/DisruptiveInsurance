@@ -2,7 +2,6 @@ require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-waffle");
 require('solidity-coverage');
 require('dotenv').config();
->>>>>>> Stashed changes
 
 module.exports = {
   defaultNetwork: "rinkeby",
