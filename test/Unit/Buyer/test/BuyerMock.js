@@ -77,6 +77,14 @@ describe("Volcano Insurance Tests:", function () {
             await VolcanoInsuranceDeployed.mockOracleVolcano(0,0,1,1,0)
             await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("YearEruption not recorded yet by oracle.");
           });
+          it("LatitudeEruption != 0 || LongitudeEruption != 0", async function () {
+            await VolcanoInsuranceDeployed.mockOracleVolcano(0,0,1,1,2020)
+            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("Lat and Long cannot both be 0. Wait for oracle response.");
+          });
+          it("policies[msg.sender].EthereumAwardTiedToAddress > 0", async function () {
+            await VolcanoInsuranceDeployed.mockOracleVolcano(0,100,1,1,2020)
+            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("Error: You don't have a policy");
+          });
           it("Test if updating Scale_Fee = 1000 is 8000.", async function () {
             await expect( VolcanoInsuranceDeployed.BuyerClaimReward(1000))
             .to.emit(VolcanoInsuranceDeployed, "ScaleFee_StateChangeEvent")
