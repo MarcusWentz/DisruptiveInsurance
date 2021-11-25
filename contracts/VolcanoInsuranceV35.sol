@@ -95,13 +95,13 @@ contract VolcanoInsurance is ChainlinkClient {
         emit recordMessageSender(msg.sender);
     }
     
-    function BuyerClaimReward(address policyHolder) public {
+    function BuyerClaimReward() public {
         require(DayEruption > 0, "DayPresent not recorded yet by oracle.");
-        require(MonthEruption > 0, "MonthPresent not recorded yet by oracle.");                                                                                                         
-        require(YearEruption > 0, "YearPresent not recorded yet by oracle.");        
+        require(MonthEruption > 0, "MonthPresent not recorded yet by oracle.");
+        require(YearEruption > 0, "YearPresent not recorded yet by oracle.");
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
-        require(convert.DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
+        require(convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
         require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
         require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
         LockedWEItoPolicies -=(1*(10**18));
