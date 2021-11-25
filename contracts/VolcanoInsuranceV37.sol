@@ -22,15 +22,9 @@ contract VolcanoInsurance is ChainlinkClient {
     uint public DayPresent;
     uint public OpenWEItoInsure;
     uint public LockedWEItoPolicies;
-    uint private immutable fee = 1*10**16;
     string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
-    bytes32 private immutable jobIdGetInt ="e5b0e6aeab36405ba33aea12c6988ed6"; 
-    bytes32 private immutable jobIdGetUint ="3b7ca0d48c7a4b2da9268456665d11ae";  
-    bytes32 private immutable jobIdGetBytes32 = "187bb80e5ee74a139734cac7475f3c6e";
-    address private immutable oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; 
     address public immutable Owner;
-    address private ChainlinkTokenAddressRinkeby = 0x01BE23585060835E02B77ef475b0Cc51aA1e0709;
-    ERC20TokenContract tokenObject = ERC20TokenContract(ChainlinkTokenAddressRinkeby);
+    ERC20TokenContract tokenObject = ERC20TokenContract(0x01BE23585060835E02B77ef475b0Cc51aA1e0709);
     
     struct policy {
         int LatitudeInsured;
@@ -95,30 +89,31 @@ contract VolcanoInsurance is ChainlinkClient {
         emit recordMessageSender(msg.sender);
     }
 
-    function BuyerClaimReward() public {
+    function BuyerClaimReward(address policyHolder) public {
         require(DayEruption > 0, "DayEruption not recorded yet by oracle.");
         require(MonthEruption > 0, "MonthEruption not recorded yet by oracle.");
         require(YearEruption > 0, "YearEruption not recorded yet by oracle.");
+        require(policyHolder == msg.sender, "You must be the policy holder to access this!");
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
-        require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
-        require(convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
-        require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
-        require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
-        policies[msg.sender] = policy(0, 0, 0, 0, 0, 0);
+        require(policies[policyHolder].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
+        require(convert.DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
+        // require(policies[policyHolder].LongitudeInsured >=  (LongitudeEruption-100) && policies[policyHolder].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
+        // require(policies[policyHolder].LatitudeInsured >=  (LatitudeEruption-100) && policies[policyHolder].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
+        policies[policyHolder] = policy(0, 0, 0, 0, 0, 0);
         LockedWEItoPolicies -=(1*(10**18));
-        payable(msg.sender).transfer(1*(10**18));
+        payable(policyHolder).transfer(1*(10**18));
         LatitudeEruption = 0;
         LongitudeEruption = 0;
         YearEruption = 0;
         MonthEruption = 0;
         DayEruption = 0;
-        emit recordMessageSender(msg.sender);
+        emit recordMessageSender(policyHolder);
     }
     
     function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
         require(msg.value == 1*(10**18), "Value sent must equal 1 ETH");
         OpenWEItoInsure += 1*(10**18);
-        emit recordMessageSender(msg.sender);
+        emit recordMessageSender(Owner);
     }
 
     function OwnerClaimExpiredPolicyETH(address policyHolder) public contractOwnerCheck { 
@@ -129,42 +124,43 @@ contract VolcanoInsurance is ChainlinkClient {
         require(convert.DateCompareForm(YearPresent,MonthPresent,DayPresent) > (convert.DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) + 512) , "Policy has not yet expired");
         LockedWEItoPolicies -=(1*(10**18));
         policies[policyHolder] = policy(0, 0, 0, 0, 0, 0);
-        payable(msg.sender).transfer(address(this).balance);
+        payable(Owner).transfer(address(this).balance);
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
-        emit recordMessageSender(msg.sender);
+        emit recordMessageSender(Owner);
     }
     
     function OwnerLiquidtoOpenETHToWithdraw() public contractOwnerCheck {
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); 
         OpenWEItoInsure -= (1*(10**18));
-        payable(msg.sender).transfer(1*(10**18));
-        emit recordMessageSender(msg.sender);
+        payable(Owner).transfer(1*(10**18));
+        emit recordMessageSender(Owner);
     }
     
     function OwnerSelfDestructClaimETH() public contractOwnerCheck {
         require(address(this).balance > (LockedWEItoPolicies+OpenWEItoInsure), 'No self destruct detected (address(this).balance == (AccountsInsured+OpenETHtoEnsure))'); 
-        payable(msg.sender).transfer((address(this).balance)-(LockedWEItoPolicies+OpenWEItoInsure));
+        payable(Owner).transfer((address(this).balance)-(LockedWEItoPolicies+OpenWEItoInsure));
+        emit recordMessageSender(Owner);
     }
     
     function request_Latitude() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = buildChainlinkRequest(jobIdGetInt, address(this), this.fulfill_request_Latitude.selector);
+        Chainlink.Request memory request = buildChainlinkRequest("e5b0e6aeab36405ba33aea12c6988ed6", address(this), this.fulfill_request_Latitude.selector);
         request.add("get", urlRebuiltJSON);
         request.add("path", "records.0.fields.coordinates.0");
         request.addInt("times", 10**2);
-        return sendChainlinkRequestTo(oracle, request, fee);
+        return sendChainlinkRequestTo(0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40, request, 1*10**16);
     }
     function fulfill_request_Latitude(bytes32 _requestId, int oracleLatitudeEruption) public recordChainlinkFulfillment(_requestId){
         LatitudeEruption = oracleLatitudeEruption;
     }
     
     function request_Longitude() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = buildChainlinkRequest(jobIdGetInt, address(this), this.fulfill_request_Longitude.selector);
+        Chainlink.Request memory request = buildChainlinkRequest("e5b0e6aeab36405ba33aea12c6988ed6", address(this), this.fulfill_request_Longitude.selector);
         request.add("get", urlRebuiltJSON);
         request.add("path", "records.0.fields.coordinates.1");
         request.addInt("times", 10**2);
-        return sendChainlinkRequestTo(oracle, request, fee);
+        return sendChainlinkRequestTo(0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40, request, 1*10**16);
     }
     function fulfill_request_Longitude(bytes32 _requestId, int oracleLongitudeEruption) public recordChainlinkFulfillment(_requestId)
     {
@@ -172,10 +168,10 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     
     function request_Year_Eruption() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_Year_Eruption.selector);
+        Chainlink.Request memory request = buildChainlinkRequest("3b7ca0d48c7a4b2da9268456665d11ae" , address(this), this.fulfill_request_Year_Eruption.selector);
         request.add("get", urlRebuiltJSON);
         request.add("path", "records.0.fields.year");
-        return sendChainlinkRequestTo(oracle, request, fee);
+        return sendChainlinkRequestTo(0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40, request, 1*10**16);
     }
     function fulfill_request_Year_Eruption(bytes32 _requestId, uint oracleYearEruption) public recordChainlinkFulfillment(_requestId)
     {
@@ -183,10 +179,10 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     
     function request_Month_Eruption() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = buildChainlinkRequest(jobIdGetBytes32, address(this), this.fulfill_request_Month_Eruption.selector);
+        Chainlink.Request memory request = buildChainlinkRequest("187bb80e5ee74a139734cac7475f3c6e", address(this), this.fulfill_request_Month_Eruption.selector);
         request.add("get", urlRebuiltJSON);
         request.add("path", "records.0.fields.month");
-        return sendChainlinkRequestTo(oracle, request, fee);
+        return sendChainlinkRequestTo(0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40, request, 1*10**16);
     }
     function fulfill_request_Month_Eruption(bytes32 _requestId, bytes32 oracleMonthEruption) public recordChainlinkFulfillment(_requestId)
     {
@@ -194,10 +190,10 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     
     function request_Day_Eruption() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = buildChainlinkRequest(jobIdGetBytes32, address(this), this.fulfill_request_Day_Eruption.selector);
+        Chainlink.Request memory request = buildChainlinkRequest("187bb80e5ee74a139734cac7475f3c6e", address(this), this.fulfill_request_Day_Eruption.selector);
         request.add("get", urlRebuiltJSON);
         request.add("path", "records.0.fields.day");
-        return sendChainlinkRequestTo(oracle, request, fee);
+        return sendChainlinkRequestTo(0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40, request, 1*10**16);
     }
     function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 oracleDayEruption) public recordChainlinkFulfillment(_requestId)
     {
@@ -206,30 +202,30 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     
     function request_YearPresent() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_YearPresent.selector);
+        Chainlink.Request memory request = buildChainlinkRequest("3b7ca0d48c7a4b2da9268456665d11ae" , address(this), this.fulfill_request_YearPresent.selector);
         request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
         request.add("path", "year");
-        return sendChainlinkRequestTo(oracle, request, fee);
+        return sendChainlinkRequestTo(0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40, request, 1*10**16);
     }
     function fulfill_request_YearPresent(bytes32 _requestId,uint oracleYearPresent) public recordChainlinkFulfillment(_requestId) {
         YearPresent = oracleYearPresent;
     }
     
     function request_MonthPresent() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_MonthPresent.selector);
+        Chainlink.Request memory request = buildChainlinkRequest("3b7ca0d48c7a4b2da9268456665d11ae" , address(this), this.fulfill_request_MonthPresent.selector);
         request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
         request.add("path", "month");
-        return sendChainlinkRequestTo(oracle, request, fee);
+        return sendChainlinkRequestTo(0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40, request, 1*10**16);
     }
     function fulfill_request_MonthPresent(bytes32 _requestId,uint oracleMonthPresent) public recordChainlinkFulfillment(_requestId) {
         MonthPresent = oracleMonthPresent; 
     }
     
     function request_DayPresent() private returns (bytes32 requestId)  {
-        Chainlink.Request memory request = buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_DayPresent.selector);
+        Chainlink.Request memory request = buildChainlinkRequest("3b7ca0d48c7a4b2da9268456665d11ae" , address(this), this.fulfill_request_DayPresent.selector);
         request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
         request.add("path", "day");
-        return sendChainlinkRequestTo(oracle, request, fee);
+        return sendChainlinkRequestTo(0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40, request, 1*10**16);
     }
     function fulfill_request_DayPresent(bytes32 _requestId,uint oracleDayPresent) public recordChainlinkFulfillment(_requestId) {
         DayPresent = oracleDayPresent; 
