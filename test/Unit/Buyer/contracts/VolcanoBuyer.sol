@@ -114,9 +114,9 @@ contract VolcanoInsurance is ChainlinkClient {
     }
 
     function BuyerClaimReward() public {
-        require(DayEruption > 0, "DayPresent not recorded yet by oracle.");
-        require(MonthEruption > 0, "MonthPresent not recorded yet by oracle.");
-        require(YearEruption > 0, "YearPresent not recorded yet by oracle.");
+        require(DayEruption > 0, "");
+        require(MonthEruption > 0, "MonthEruption not recorded yet by oracle.");
+        require(YearEruption > 0, "YearEruption not recorded yet by oracle.");
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
         require(convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
