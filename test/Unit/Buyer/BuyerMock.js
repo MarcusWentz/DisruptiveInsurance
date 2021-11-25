@@ -85,15 +85,15 @@ describe("Volcano Insurance Tests:", function () {
 
       describe("BuyerClaimReward", function () {
           it("Day<0.", async function () {
-            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("DayEruption not recorded yet by oracle.");
+            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("DayPresent not recorded yet by oracle.");
           });
           it("Month<0.", async function () {
             await VolcanoInsuranceDeployed.mockOracleVolcano(0,0,1,0,0)
-            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("MonthEruption not recorded yet by oracle.");
+            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("MonthPresent not recorded yet by oracle.");
           });
           it("Year<0.", async function () {
             await VolcanoInsuranceDeployed.mockOracleVolcano(0,0,1,1,0)
-            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("YearEruption not recorded yet by oracle.");
+            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("YearPresent not recorded yet by oracle.");
           });
           it("LatitudeEruption != 0 || LongitudeEruption != 0", async function () {
             await VolcanoInsuranceDeployed.mockOracleVolcano(0,0,1,1,2020)
