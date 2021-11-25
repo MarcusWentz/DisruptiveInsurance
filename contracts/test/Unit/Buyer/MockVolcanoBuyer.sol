@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../../../Convert.sol";
+import "./Convert.sol";
 
 contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 
@@ -48,10 +48,10 @@ contract VolcanoInsurance is ChainlinkClient {
         // setPublicChainlinkToken();
     }
 
-    // modifier contractOwnerCheck() {
-    //     require(msg.sender == Owner, "Only contract owner can interact with this contract");
-    //     _;
-    // }
+    modifier contractOwnerCheck() {
+        require(msg.sender == Owner, "Only contract owner can interact with this contract");
+        _;
+    }
 
     event recordMessageSender(
         address indexed from
@@ -91,8 +91,8 @@ contract VolcanoInsurance is ChainlinkClient {
         YearPresent = h;
     }
 
-    function mockOwnerAddFunds() public payable {
-        require(msg.value == 1*(10**18));
+    function mockOwnerAddFunds() public payable contractOwnerCheck {
+        require(msg.value == 1*(10**18), "You must send one ETH for msg.value");
         OpenWEItoInsure += 1*(10**18);
     }
 
@@ -111,16 +111,15 @@ contract VolcanoInsurance is ChainlinkClient {
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
-        emit recordMessageSender(msg.sender);
     }
 
     function BuyerClaimReward() public {
-        require(DayEruption > 0, "DayEruption not recorded yet by oracle.");
-        require(MonthEruption > 0, "MonthEruption not recorded yet by oracle.");
-        require(YearEruption > 0, "YearEruption not recorded yet by oracle.");
+        require(DayEruption > 0, "DayPresent not recorded yet by oracle.");
+        require(MonthEruption > 0, "MonthPresent not recorded yet by oracle.");
+        require(YearEruption > 0, "YearPresent not recorded yet by oracle.");
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
-        // require(convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
+        require(convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
         require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
         require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
         policies[msg.sender] = policy(0, 0, 0, 0, 0, 0);
@@ -131,7 +130,6 @@ contract VolcanoInsurance is ChainlinkClient {
         YearEruption = 0;
         MonthEruption = 0;
         DayEruption = 0;
-        emit recordMessageSender(msg.sender);
     }
 
     // function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
