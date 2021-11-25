@@ -1,10 +1,7 @@
-require('dotenv').config()
 require("@nomiclabs/hardhat-ethers");
-require("./tasks/MyContractTasks.js")
-require('solidity-coverage')
-
-const RINKEBY_RPC_URL = process.env.rinkebyInfuraAPIKey
-const PRIVATE_KEY = process.env.devTestnetPrivateKey
+require("@nomiclabs/hardhat-waffle");
+require('solidity-coverage');
+require('dotenv').config();
 
 module.exports = {
   defaultNetwork: "rinkeby",
@@ -12,14 +9,14 @@ module.exports = {
     hardhat: {
     },
     rinkeby: {
-      url: RINKEBY_RPC_URL,
-      accounts: [PRIVATE_KEY]
+      url: process.env.RINKEBY_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY]
     }
   },
   solidity: {
     compilers: [{version: "0.8.0"},
     {version: "0.8.7"},
-    {version: "0.8.9"},
+    {version: "0.8.10"},
     {version: "0.6.6"}],
     settings: {
       optimizer: {
@@ -30,7 +27,7 @@ module.exports = {
   },
   paths: {
     sources: "./contracts",
-    tests: "./test",
+    tests: "./test/Unit/Owner",
     cache: "./cache",
     artifacts: "./artifacts"
   },
