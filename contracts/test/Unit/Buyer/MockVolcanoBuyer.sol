@@ -91,8 +91,9 @@ contract VolcanoInsurance is ChainlinkClient {
         YearPresent = h;
     }
 
-    function mockOwnerAddFunds(uint i) public {
-        OpenWEItoInsure = i;
+    function mockOwnerAddFunds() public payable {
+        require(msg.value == 1*(10**18));
+        OpenWEItoInsure += 1*(10**18);
     }
 
     function BuyerCreatePolicy(int inputLat, int inputLong) public payable {
@@ -124,7 +125,7 @@ contract VolcanoInsurance is ChainlinkClient {
         require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
         policies[msg.sender] = policy(0, 0, 0, 0, 0, 0);
         LockedWEItoPolicies -=(1*(10**18));
-        // payable(msg.sender).transfer(1*(10**18));
+        payable(msg.sender).transfer(1*(10**18));
         LatitudeEruption = 0;
         LongitudeEruption = 0;
         YearEruption = 0;
