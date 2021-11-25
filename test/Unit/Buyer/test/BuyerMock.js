@@ -51,9 +51,13 @@ describe("Volcano Insurance Tests:", function () {
           await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(500,-500)).to.be.revertedWith("Error: Please submit your request with insurance contribution of 0.001 Ether");
         });
         it("policies[msg.sender].EthereumAwardTiedToAddress == 0,", async function () {
-          await VolcanoInsuranceDeployed.mockOwnerAddFunds(1)
+          await VolcanoInsuranceDeployed.mockOwnerAddFunds(10^18)
           await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2020)
-          await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(500,-500,{ value: ethers.utils.parseEther( ('0.01') )  } ) ).to.be.revertedWith("Error: You've already purchased insurance");
+          // await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(500,-500,{ value: ethers.utils.parseEther( ('0.01') )  } ) ).to.be.revertedWith("Error: You've already purchased insurance");
+          await VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(500,-500,{ value: ethers.utils.parseEther( ('0.01') )  } );
+          await expect(await VolcanoInsuranceDeployed.OpenWEItoInsure()).to.equal(0)
+          console.log(await VolcanoInsuranceDeployed.LockedWEItoPolicies())
+          await expect(await VolcanoInsuranceDeployed.LockedWEItoPolicies()).to.equal(10^18)
         });
         it("Fail tx if insurance purchased already [msg.value = (1 * 10**16)].", async function () {
           await VolcanoInsuranceDeployed.BuyerCreatePolicy( { value: ethers.utils.parseEther( ('0.001') )  } )
@@ -62,14 +66,16 @@ describe("Volcano Insurance Tests:", function () {
       });
 
       describe("BuyerClaimReward", function () {
-        it("Day<0.", async function () {
-            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("DayPresent not recorded yet by oracle.");
-        });
-          it("Fail tx if Owner address is not used for tx.", async function () {
-            await expect(VolcanoInsuranceDeployed.connect().BuyerClaimReward(7)).to.be.revertedWith('Only contract owner (deployer) can access this function.');
+          it("Day<0.", async function () {
+            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("DayEruption not recorded yet by oracle.");
           });
-          it("Fail tx if input matches Scale_Fee already.", async function () {
-            await expect(VolcanoInsuranceDeployed.BuyerClaimReward(0)).to.be.revertedWith('Input value is already the same as Scale_Fee!');
+          it("Month<0.", async function () {
+            await VolcanoInsuranceDeployed.mockOracleVolcano(0,0,1,0,0)
+            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("MonthEruption not recorded yet by oracle.");
+          });
+          it("Year<0.", async function () {
+            await VolcanoInsuranceDeployed.mockOracleVolcano(0,0,1,1,0)
+            await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("YearEruption not recorded yet by oracle.");
           });
           it("Test if updating Scale_Fee = 1000 is 8000.", async function () {
             await expect( VolcanoInsuranceDeployed.BuyerClaimReward(1000))
