@@ -328,27 +328,30 @@ class Oracle extends Component {
 								</h6>
 							</div>
 						</div>
-						<p>Current Date [GMT]:</p>
-
-						{this.state.loading ? (
-							<p
-								style={{ textAlign: "center" }}
-								className="v-txt"
-							>
-								{this._whenToRenderSpinner()}
-							</p>
-						) : (
-							<p
-								style={{ textAlign: "center" }}
-								className="v-txt"
-							>
-								{this.state.yearPresent +
-									"/" +
-									this.state.monthPresent +
-									"/" +
-									this.state.dayPresent}
-							</p>
-						)}
+						<div className="container oracle-get">
+							<div class="label-input-container">
+								<label for="lat">Current time [GMT]</label>
+								{this.state.loading ? (
+									<p
+										style={{ textAlign: "center" }}
+										className="v-txt"
+									>
+										{this._whenToRenderSpinner()}
+									</p>
+								) : (
+									<p
+										style={{ textAlign: "center" }}
+										className="v-txt"
+									>
+										{this.state.yearPresent +
+											"/" +
+											this.state.monthPresent +
+											"/" +
+											this.state.dayPresent}
+									</p>
+								)}
+							</div>
+						</div>
 
 						<button
 							type="button"
@@ -360,21 +363,31 @@ class Oracle extends Component {
 						</button>
 
 						<div>
-							<h4 style={{ textAlign: "center" }}>
-								Lat:{" "}
-								{this.state.latEruption +
-									" Long: " +
-									this.state.longEruption}
-							</h4>
+							<div className="container oracle-get">
+								<div class="label-input-container">
+									<label for="lat">Latitude</label>
+									{this.state.latEruption}
+								</div>
+								<div class="label-input-container">
+									<label for="lat">Longitude</label>
+									{this.state.longEruption}
+								</div>
+							</div>
 
-							<p>Eruption Date:</p>
-							<p>
-								{this.state.yearEruption +
-									"/" +
-									this.state.monthEruption +
-									"/" +
-									this.state.dayEruption}
-							</p>
+							<div className="container oracle-get">
+								<div class="label-input-container">
+									<br />
+									<label for="lat">eruption date</label>
+									<p>
+										{this.state.yearEruption +
+											"/" +
+											this.state.monthEruption +
+											"/" +
+											this.state.dayEruption}
+									</p>{" "}
+								</div>
+							</div>
+
 							<div className="url-container">
 								<a
 									className="url-json"

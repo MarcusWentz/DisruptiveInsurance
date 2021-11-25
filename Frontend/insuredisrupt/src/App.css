@@ -365,3 +365,10 @@ label {
 .closeButton {
 	color: white !important;
 }
+
+.container.longLat {
+	background-color: #2e2e36;
+	border-radius: 15px;
+
+	margin-bottom: 20px;
+}
