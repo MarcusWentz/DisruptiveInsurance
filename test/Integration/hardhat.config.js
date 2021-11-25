@@ -1,5 +1,11 @@
+<<<<<<< Updated upstream
 require("@nomiclabs/hardhat-ethers");
 require('solidity-coverage')
+=======
+require('dotenv').config();
+require("@nomiclabs/hardhat-ethers");
+require('solidity-coverage');
+>>>>>>> Stashed changes
 
 const RINKEBY_RPC_URL = process.env.rinkebyInfuraAPIKey
 const PRIVATE_KEY = process.env.devTestnetPrivateKey
