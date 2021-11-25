@@ -29,6 +29,15 @@ describe("Volcano Insurance Tests:", function () {
           });
        });
 
+       describe("mockOwnerAddFunds", function () {
+         it("msg.sender == Owner", async function () {
+           await expect(VolcanoInsuranceDeployed.connect(buyer1).mockOwnerAddFunds()).to.be.revertedWith("Only contract owner can interact with this contract");
+         });
+         it("require(msg.value == 1*(10**18)", async function () {
+           await expect(VolcanoInsuranceDeployed.mockOwnerAddFunds()).to.be.revertedWith("You must send one ETH for msg.value");
+         });
+        });
+
       describe("BuyerCreatePolicy", function () {
         it("Day<0.", async function () {
           await expect(VolcanoInsuranceDeployed.BuyerCreatePolicy(500,-500)).to.be.revertedWith("DayPresent not recorded yet by oracle.");
@@ -54,19 +63,17 @@ describe("Volcano Insurance Tests:", function () {
           await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2020)
           await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(500,-500)).to.be.revertedWith("Error: Please submit your request with insurance contribution of 0.001 Ether");
         });
-        it("locked", async function () {
+        it("OpenWEItoInsure and OpenWEItoInsure check", async function () {
           await VolcanoInsuranceDeployed.mockOwnerAddFunds({ value: ethers.utils.parseEther("1") })
           await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2020)
           const transaction = await VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(500,-500, { value: ethers.utils.parseEther("0.01") } )
           const tx_receipt = await transaction.wait()
           result1 = await VolcanoInsuranceDeployed.OpenWEItoInsure();
           result2 = await VolcanoInsuranceDeployed.LockedWEItoPolicies();
-          console.log('OPEN:  ' + new ethers.BigNumber.from(result1._hex).toString())
           expect((new ethers.BigNumber.from(result1._hex).toString())).to.be.a.bignumber.that.is.equal(new ethers.BigNumber.from('0').toString())
-          console.log('LOCKED:  ' + new ethers.BigNumber.from(result2._hex).toString())
           expect((new ethers.BigNumber.from(result2._hex).toString())).to.be.a.bignumber.that.is.equal(new ethers.BigNumber.from('1000000000000000000').toString())
         });
-        it("Check all states for valid transaction", async function () {
+        it("Error: You've already purchased insurance", async function () {
           await VolcanoInsuranceDeployed.mockOwnerAddFunds({ value: ethers.utils.parseEther("1") })
           await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2020)
           await VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(500,-500, { value: ethers.utils.parseEther("0.01") }   );
@@ -96,13 +103,13 @@ describe("Volcano Insurance Tests:", function () {
             await VolcanoInsuranceDeployed.mockOracleVolcano(0,100,1,1,2020)
             await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("Error: You don't have a policy");
           });
-          // it("convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption)", async function () {
-          //   await VolcanoInsuranceDeployed.mockOracleVolcano(0,100,2,1,1)
-          //   await VolcanoInsuranceDeployed.mockOwnerAddFunds(new ethers.BigNumber.from('1000000000000000000'))
-          //   await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,1)
-          //   await VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(0,100, { value: ethers.utils.parseEther("0.01") }   );
-          //   await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerClaimReward()).to.be.revertedWith("Policy was signed after eruption");
-          // });
+          it("convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption)", async function () {
+            await VolcanoInsuranceDeployed.mockOracleVolcano(0,100,1,1,2019)
+            await VolcanoInsuranceDeployed.mockOwnerAddFunds({ value: ethers.utils.parseEther("1") })
+            await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2020)
+            await VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(0,100, { value: ethers.utils.parseEther("0.01") }   );
+            await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerClaimReward()).to.be.revertedWith("Policy was signed after eruption");
+          });
           it("policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100)", async function () {
             await VolcanoInsuranceDeployed.mockOracleVolcano(0,2,1,1,2020)
             await VolcanoInsuranceDeployed.mockOwnerAddFunds({ value: ethers.utils.parseEther("1") })
