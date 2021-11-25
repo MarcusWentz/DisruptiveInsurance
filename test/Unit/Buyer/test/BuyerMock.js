@@ -34,11 +34,30 @@ describe("Volcano Insurance Tests:", function () {
           await expect(VolcanoInsuranceDeployed.BuyerCreatePolicy(500,-500)).to.be.revertedWith("MonthPresent not recorded yet by oracle.");
         });
         it("Year<0.", async function () {
-          await expect(VolcanoInsuranceDeployed.BuyerCreatePolicy(500,-500)).to.be.revertedWith("DayPresent not recorded yet by oracle.");
+          await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,0)
+          await expect(VolcanoInsuranceDeployed.BuyerCreatePolicy(500,-500)).to.be.revertedWith("YearPresent not recorded yet by oracle.");
+        });
+        it("Owner != msg.sender", async function () {
+          await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2020)
+          await expect(VolcanoInsuranceDeployed.BuyerCreatePolicy(500,-500)).to.be.revertedWith("Error: Owner cannot self-insure");
+        });
+        it("OpenWEItoInsure > 0", async function () {
+          await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2020)
+          await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(500,-500)).to.be.revertedWith("There is no open ETH in the contract currently.");
+        });
+        it("msg.value == (1*10**16)", async function () {
+          await VolcanoInsuranceDeployed.mockOwnerAddFunds(1)
+          await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2020)
+          await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(500,-500)).to.be.revertedWith("Error: Please submit your request with insurance contribution of 0.001 Ether");
+        });
+        it("policies[msg.sender].EthereumAwardTiedToAddress == 0,", async function () {
+          await VolcanoInsuranceDeployed.mockOwnerAddFunds(1)
+          await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2020)
+          await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(500,-500,{ value: ethers.utils.parseEther( ('0.01') )  } ) ).to.be.revertedWith("Error: You've already purchased insurance");
         });
         it("Fail tx if insurance purchased already [msg.value = (1 * 10**16)].", async function () {
-                await VolcanoInsuranceDeployed.BuyerCreatePolicy({ value: ethers.utils.parseEther( ('0.001') )  } )
-                await expect( VolcanoInsuranceDeployed.BuyerCreatePolicy({ value: ethers.utils.parseEther( ('0.001') )  } )   ).to.be.revertedWith('Gold is sold out already!');//'With("");
+          await VolcanoInsuranceDeployed.BuyerCreatePolicy( { value: ethers.utils.parseEther( ('0.001') )  } )
+          await expect( VolcanoInsuranceDeployed.BuyerCreatePolicy({ value: ethers.utils.parseEther( ('0.001') )  } )   ).to.be.revertedWith('Gold is sold out already!');//'With("");
         });
       });
 
@@ -47,7 +66,7 @@ describe("Volcano Insurance Tests:", function () {
             await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("DayPresent not recorded yet by oracle.");
         });
           it("Fail tx if Owner address is not used for tx.", async function () {
-            await expect(VolcanoInsuranceDeployed.connect(buyer2).BuyerClaimReward(7)).to.be.revertedWith('Only contract owner (deployer) can access this function.');
+            await expect(VolcanoInsuranceDeployed.connect().BuyerClaimReward(7)).to.be.revertedWith('Only contract owner (deployer) can access this function.');
           });
           it("Fail tx if input matches Scale_Fee already.", async function () {
             await expect(VolcanoInsuranceDeployed.BuyerClaimReward(0)).to.be.revertedWith('Input value is already the same as Scale_Fee!');
