@@ -201,7 +201,6 @@ class Buy extends Component {
 								{this.state.getAvailableEth}
 							</h3>
 						</div>
-						<p style={{ color: "orange" }}>{this.state.errorMsg}</p>
 
 						<div className="container longLat">
 							<div class="label-input-container">

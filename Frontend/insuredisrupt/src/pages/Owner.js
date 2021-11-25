@@ -249,9 +249,7 @@ class Owner extends Component {
 							</div>
 						</div>
 						<div>
-							<p style={{ color: "orange" }}>
-								{this.state.errorMsg}
-							</p>
+							<p style={{ color: "orange" }}></p>
 							<button
 								type="button"
 								class="btn btn-dark-policy-data"
