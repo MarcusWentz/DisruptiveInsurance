@@ -96,6 +96,35 @@ describe("Volcano Insurance Tests:", function () {
             await VolcanoInsuranceDeployed.mockOracleVolcano(0,100,1,1,2020)
             await expect(VolcanoInsuranceDeployed.BuyerClaimReward()).to.be.revertedWith("Error: You don't have a policy");
           });
+          // it("convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption)", async function () {
+          //   await VolcanoInsuranceDeployed.mockOracleVolcano(0,100,1,1,2020)
+          //   await VolcanoInsuranceDeployed.mockOwnerAddFunds(1)
+          //   await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2019)
+          //   await VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(0,100, { value: ethers.utils.parseEther("0.01") }   );
+          //   await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerClaimReward()).to.be.revertedWith("Must be within 1 long coordinate point.");
+          // });
+          it("policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100)", async function () {
+            await VolcanoInsuranceDeployed.mockOracleVolcano(0,2,1,1,2020)
+            await VolcanoInsuranceDeployed.mockOwnerAddFunds(1)
+            await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2019)
+            await VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(0,1000, { value: ethers.utils.parseEther("0.01") }   );
+            await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerClaimReward()).to.be.revertedWith("Must be within 1 long coordinate point.");
+          });
+          it("policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100)", async function () {
+            await VolcanoInsuranceDeployed.mockOracleVolcano(0,2,1,1,2020)
+            await VolcanoInsuranceDeployed.mockOwnerAddFunds(1)
+            await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2019)
+            await VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(1000,2, { value: ethers.utils.parseEther("0.01") }   );
+            await expect(VolcanoInsuranceDeployed.connect(buyer1).BuyerClaimReward()).to.be.revertedWith("Must be within 1 lat coordinate point.");
+          });
+          it("Final", async function () {
+            await VolcanoInsuranceDeployed.mockOracleVolcano(3,2,1,1,2020)
+            await VolcanoInsuranceDeployed.mockOwnerAddFunds(1)
+            await VolcanoInsuranceDeployed.mockOraclePresentTime(1,1,2019)
+            await VolcanoInsuranceDeployed.connect(buyer1).BuyerCreatePolicy(3,2, { value: ethers.utils.parseEther("0.01") }   );
+            await VolcanoInsuranceDeployed.connect(buyer1).BuyerClaimReward()
+            // expect(await provider.getBalance(VolcanoInsuranceDeployed.address)).to.equal(0);
+          });
       });
 
 });
