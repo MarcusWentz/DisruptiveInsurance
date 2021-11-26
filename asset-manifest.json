@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/DisruptiveInsurance/static/css/main.aa54135e.chunk.css",
+    "main.js": "/DisruptiveInsurance/static/js/main.290ee1cd.chunk.js",
+    "main.js.map": "/DisruptiveInsurance/static/js/main.290ee1cd.chunk.js.map",
+    "runtime-main.js": "/DisruptiveInsurance/static/js/runtime-main.cd92ad32.js",
+    "runtime-main.js.map": "/DisruptiveInsurance/static/js/runtime-main.cd92ad32.js.map",
+    "static/css/2.a75f5a2c.chunk.css": "/DisruptiveInsurance/static/css/2.a75f5a2c.chunk.css",
+    "static/js/2.485f78d4.chunk.js": "/DisruptiveInsurance/static/js/2.485f78d4.chunk.js",
+    "static/js/2.485f78d4.chunk.js.map": "/DisruptiveInsurance/static/js/2.485f78d4.chunk.js.map",
+    "static/js/3.463c283d.chunk.js": "/DisruptiveInsurance/static/js/3.463c283d.chunk.js",
+    "static/js/3.463c283d.chunk.js.map": "/DisruptiveInsurance/static/js/3.463c283d.chunk.js.map",
+    "index.html": "/DisruptiveInsurance/index.html",
+    "static/css/2.a75f5a2c.chunk.css.map": "/DisruptiveInsurance/static/css/2.a75f5a2c.chunk.css.map",
+    "static/css/main.aa54135e.chunk.css.map": "/DisruptiveInsurance/static/css/main.aa54135e.chunk.css.map",
+    "static/js/2.485f78d4.chunk.js.LICENSE.txt": "/DisruptiveInsurance/static/js/2.485f78d4.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.cd92ad32.js",
+    "static/css/2.a75f5a2c.chunk.css",
+    "static/js/2.485f78d4.chunk.js",
+    "static/css/main.aa54135e.chunk.css",
+    "static/js/main.290ee1cd.chunk.js"
+  ]
+}
