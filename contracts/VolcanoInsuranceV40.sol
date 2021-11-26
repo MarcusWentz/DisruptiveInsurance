@@ -52,11 +52,19 @@ contract VolcanoInsurance is ChainlinkClient {
         require(msg.sender == Owner, "Only contract owner can interact with this contract");
         _;
     }
+
+    modifier presentTImeCheck() {
+        require((DayPresent*MonthPresent*YearPresent) > 0 , "Present time not recorded yet by oracle.");
+        _;
+    }
+
+    event eventBlockTime(
+        uint indexed date
+    );
     
     function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
         require(tokenObject.balanceOf(address(this)) >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
-        require(bytes(filterMonth).length == 2, "JSON must have MonthPresent as 2 characters at all times!");
-        require(bytes(filterDay).length == 2, "JSON must have DayPresent as 2 characters at all times!");
+        require(bytes(filterMonth).length == 2 && bytes(filterDay).length == 2, "JSON must have MonthPresent and DayPresent as 2 characters at all times!");
         urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",filterYear,
         "&refine.month=",filterMonth,"&refine.day=",filterDay,"&refine.country=",filterCountry) );
         request_Latitude();
@@ -73,10 +81,7 @@ contract VolcanoInsurance is ChainlinkClient {
         request_DayPresent();
     }
     
-    function BuyerCreatePolicy(int inputLat, int inputLong) public payable {
-        require(DayPresent > 0, "DayPresent not recorded yet by oracle.");
-        require(MonthPresent > 0, "MonthPresent not recorded yet by oracle.");
-        require(YearPresent > 0, "YearPresent not recorded yet by oracle.");
+    function BuyerCreatePolicy(int inputLat, int inputLong) public payable presentTImeCheck  {
         require(Owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
         require(msg.value == (1*10**16), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
@@ -88,12 +93,13 @@ contract VolcanoInsurance is ChainlinkClient {
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
+        emit eventBlockTime(block.timestamp);
     }
     
     function BuyerClaimReward() public {
-        require(DayEruption > 0, "DayPresent not recorded yet by oracle.");
-        require(MonthEruption > 0, "MonthPresent not recorded yet by oracle.");                                                                                                         
-        require(YearEruption > 0, "YearPresent not recorded yet by oracle.");        
+        require(DayEruption > 0, "DayEruption not recorded yet by oracle.");
+        require(MonthEruption > 0, "MonthEruption not recorded yet by oracle.");                                                                                                         
+        require(YearEruption > 0, "YearEruption not recorded yet by oracle.");        
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
         require(convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
@@ -107,17 +113,16 @@ contract VolcanoInsurance is ChainlinkClient {
         YearEruption = 0;
         MonthEruption = 0;
         DayEruption = 0;
+        emit eventBlockTime(block.timestamp);
     }
     
     function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
         require(msg.value == 1*(10**18), "Value sent must equal 1 ETH");
         OpenWEItoInsure += 1*(10**18);
+        emit eventBlockTime(block.timestamp);
     }
 
-    function OwnerClaimExpiredPolicyETH(address policyHolder) public contractOwnerCheck { 
-        require(DayPresent > 0, "DayPresent not recorded yet by oracle.");
-        require(MonthPresent > 0, "MonthPresent not recorded yet by oracle.");
-        require(YearPresent > 0, "YearPresent not recorded yet by oracle.");
+    function OwnerClaimExpiredPolicyETH(address policyHolder) public contractOwnerCheck presentTImeCheck { 
         require(policies[policyHolder].EthereumAwardTiedToAddress > 0, "Policy does not exist.");
         require(convert.DateCompareForm(YearPresent,MonthPresent,DayPresent) > (convert.DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) + 512) , "Policy has not yet expired");
         LockedWEItoPolicies -=(1*(10**18));
@@ -126,17 +131,20 @@ contract VolcanoInsurance is ChainlinkClient {
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
+        emit eventBlockTime(block.timestamp);
     }
     
     function OwnerLiquidtoOpenETHToWithdraw() public contractOwnerCheck {
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); 
         OpenWEItoInsure -= (1*(10**18));
         payable(Owner).transfer(1*(10**18));
+        emit eventBlockTime(block.timestamp);
     }
     
     function OwnerSelfDestructClaimETH() public contractOwnerCheck {
         require(address(this).balance > (LockedWEItoPolicies+OpenWEItoInsure), 'No self destruct detected (address(this).balance == (AccountsInsured+OpenETHtoEnsure))'); 
         payable(Owner).transfer((address(this).balance)-(LockedWEItoPolicies+OpenWEItoInsure));
+        emit eventBlockTime(block.timestamp);
     }
     
     function request_Latitude() private returns (bytes32 requestId) {
@@ -193,6 +201,7 @@ contract VolcanoInsurance is ChainlinkClient {
     function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 oracleDayEruption) public recordChainlinkFulfillment(_requestId)
     {
         DayEruption = convert.bytes32ToUint(oracleDayEruption);
+        emit eventBlockTime(block.timestamp);
     }
     
     function request_YearPresent() private returns (bytes32 requestId) {
@@ -223,6 +232,7 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     function fulfill_request_DayPresent(bytes32 _requestId,uint oracleDayPresent) public recordChainlinkFulfillment(_requestId) {
         DayPresent = oracleDayPresent; 
+        emit eventBlockTime(block.timestamp);
     }
     
  }
