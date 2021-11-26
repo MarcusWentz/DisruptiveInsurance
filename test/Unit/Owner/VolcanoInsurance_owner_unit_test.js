@@ -93,7 +93,7 @@ describe('VolcanoCoordinate Owner Unit Tests', function () {
         it("Call without sending ETH -> revert", async function () {
             await expect(VolcanoCoordinateDeployed.OwnerSelfDestructClaimETH())
                 .to.be
-                .revertedWith("No self destruct detected (address(this).balance == (LockedWEItoPolicies+OpenWEItoInsure))");
+                .revertedWith("No self destruct detected (address(this).balance == (AccountsInsured+OpenETHtoEnsure))");
         });
     });
 
@@ -123,7 +123,7 @@ describe('VolcanoCoordinate Owner Unit Tests', function () {
                 )
             await VolcanoCoordinateDeployed.setMockPresentDates(2021, 11, 0);
             await expect(VolcanoCoordinateDeployed.OwnerClaimExpiredPolicyETH(addr1.address))
-                .to.be.revertedWith("DayPresent not recorded yet by oracle.");
+                .to.be.revertedWith("Present time not recorded yet by oracle.");
         });
         it("Owner calls on expired policy, but MonthPresent == 0 -> revert", async function () {
             await VolcanoCoordinateDeployed.OwnerSendOneEthToContractFromInsuranceBusiness(
@@ -134,7 +134,7 @@ describe('VolcanoCoordinate Owner Unit Tests', function () {
                 )
             await VolcanoCoordinateDeployed.setMockPresentDates(2021, 0, 25);
             await expect(VolcanoCoordinateDeployed.OwnerClaimExpiredPolicyETH(addr1.address))
-                .to.be.revertedWith("MonthPresent not recorded yet by oracle.");
+                .to.be.revertedWith("Present time not recorded yet by oracle.");
         });
         it("Owner calls on expired policy, but YearPresent == 0 -> revert", async function () {
             await VolcanoCoordinateDeployed.OwnerSendOneEthToContractFromInsuranceBusiness(
@@ -145,7 +145,7 @@ describe('VolcanoCoordinate Owner Unit Tests', function () {
                 )
             await VolcanoCoordinateDeployed.setMockPresentDates(0, 11, 25);
             await expect(VolcanoCoordinateDeployed.OwnerClaimExpiredPolicyETH(addr1.address))
-                .to.be.revertedWith("YearPresent not recorded yet by oracle.");
+                .to.be.revertedWith("Present time not recorded yet by oracle.");
         });
         it("Owner calls on expired policy, claiming ETH from expired policy", async function () {
             await VolcanoCoordinateDeployed.OwnerSendOneEthToContractFromInsuranceBusiness(
