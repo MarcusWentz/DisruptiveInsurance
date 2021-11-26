@@ -14,6 +14,7 @@ class Owner extends Component {
 			allPolicyData: "",
 			accountsInsured: "",
 			errorMsg: "",
+			globalContractBalance: null,
 		};
 	}
 	componentDidMount() {
@@ -39,8 +40,15 @@ class Owner extends Component {
 		//const network = await web3.eth.net.getNetworkType();
 		//await window.ethereum.enable();
 		const volcanoContract = new web3.eth.Contract(ABI, CONTRACT_ADDRESS);
-		this.setState({ volcanoContract: volcanoContract });
+		let globalContractBalance = await web3.eth.getBalance(CONTRACT_ADDRESS);
+
+		this.setState({
+			volcanoContract: volcanoContract,
+			globalContractBalance: globalContractBalance,
+		});
 		console.log(this.state.volcanoContract, "CONTRAACT");
+
+		console.log(globalContractBalance, "bruuuuuuu");
 
 		//GET inital values
 		this.setInitialValues(volcanoContract);
@@ -211,7 +219,6 @@ class Owner extends Component {
 							</h6>
 						</div>
 						<br />
-
 						<button
 							type="button"
 							class="btn btn-dark-fund-contract"
@@ -233,7 +240,6 @@ class Owner extends Component {
 								Accounts Insured: {this.state.accountsInsured}
 							</p>
 						</div>
-
 						<div className="container policyaddress">
 							<div class="label-input-container">
 								<label for="long">POLICY ADDRESS</label>
@@ -284,6 +290,10 @@ class Owner extends Component {
 							</button>
 						</div>
 						<div></div>
+						<label>Amount of self-destructed WEI:</label>
+						{this.state.globalContractBalance -
+							(this.state.getAvailableEth +
+								this.state.accountsInsured)}
 						<div>
 							<button
 								type="button"
