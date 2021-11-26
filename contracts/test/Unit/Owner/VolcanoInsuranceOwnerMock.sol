@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../../../Convert.sol";
+import "../../..//Convert.sol";
 
 /*
  * Mocked contract mirroring logic of VolcanoInsurance contract

@@ -6,7 +6,7 @@ var chai = require('chai');
 const BN = require('bn.js');
 chai.use(require('chai-bn')(BN));
 
-describe("Volcano Insurance Tests:", function () {
+describe("Volcano Insurance Buyer Tests:", function () {
 
       let VolcanoInsurance;
       let VolcanoInsuranceDeployed;
@@ -17,7 +17,7 @@ describe("Volcano Insurance Tests:", function () {
 
       beforeEach(async function () {
 
-        VolcanoInsurance = await ethers.getContractFactory('VolcanoInsurance');
+        VolcanoInsurance = await ethers.getContractFactory('VolcanoInsuranceBuyerMock');
         VolcanoInsuranceDeployed = await VolcanoInsurance.deploy();
         [owner, buyer1, buyer2, ...addrs] = await ethers.getSigners();
         await VolcanoInsuranceDeployed.deployed();
