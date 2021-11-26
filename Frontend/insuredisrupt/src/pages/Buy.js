@@ -75,7 +75,7 @@ class Buy extends Component {
 		let that = this;
 		console.log("Inside event listner");
 		volcanoContract.events
-			.recordMessageSender(
+			.eventBlockTime(
 				{
 					fromBlock: "latest",
 				},

@@ -1,5 +1,5 @@
 //THis is the contract address as deployed on rinkeby
-export const CONTRACT_ADDRESS = "0xbb97d655Ae82F42FAB85DfA86abD95621Eeea125";
+export const CONTRACT_ADDRESS = "0x6f4ED1B0340A09386fa08550Cb235aFbE3deE2BD";
 export const CONTRACT_ERC20_CHAINLINK_ADDRESS =
 	"0x01BE23585060835E02B77ef475b0Cc51aA1e0709";
 export const CHAINLINK_ABI = [
@@ -337,12 +337,12 @@ export const ABI = [
 		inputs: [
 			{
 				indexed: true,
-				internalType: "address",
-				name: "from",
-				type: "address",
+				internalType: "uint256",
+				name: "date",
+				type: "uint256",
 			},
 		],
-		name: "recordMessageSender",
+		name: "eventBlockTime",
 		type: "event",
 	},
 	{

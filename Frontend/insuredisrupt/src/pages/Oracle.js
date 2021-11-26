@@ -163,7 +163,7 @@ class Oracle extends Component {
 	eventListener(volcanoContract) {
 		let that = this;
 		volcanoContract.events
-			.recordMessageSender(
+			.eventBlockTime(
 				{
 					fromBlock: "latest",
 				},
