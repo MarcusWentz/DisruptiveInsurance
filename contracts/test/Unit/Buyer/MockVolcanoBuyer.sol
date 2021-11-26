@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "./Convert.sol";
+import "../Convert.sol";
 
 contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 
@@ -53,9 +53,15 @@ contract VolcanoInsurance is ChainlinkClient {
         _;
     }
 
-    event recordMessageSender(
-        address indexed from
+    modifier presentTImeCheck() {
+        require((DayPresent*MonthPresent*YearPresent) > 0 , "Present time not recorded yet by oracle.");
+        _;
+    }
+
+    event eventBlockTime(
+        uint indexed date
     );
+    
 
     // function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
     //     require(tokenObject.balanceOf(address(this)) >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
@@ -96,41 +102,40 @@ contract VolcanoInsurance is ChainlinkClient {
         OpenWEItoInsure += 1*(10**18);
     }
 
-    function BuyerCreatePolicy(int inputLat, int inputLong) public payable {
-        require(DayPresent > 0, "DayPresent not recorded yet by oracle.");
-        require(MonthPresent > 0, "MonthPresent not recorded yet by oracle.");
-        require(YearPresent > 0, "YearPresent not recorded yet by oracle.");
-        require(Owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner.
-        require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
-        require(msg.value == (1*10**16), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
-        require(policies[msg.sender].EthereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance.
-        OpenWEItoInsure -= (1*(10**18));
-        LockedWEItoPolicies += (1*(10**18));
-        policies[msg.sender] = policy(inputLat, inputLong,YearPresent,MonthPresent,DayPresent,1);
-        payable(Owner).transfer(1*10**16);
-        DayPresent = 0;
-        MonthPresent = 0;
-        YearPresent = 0;
-    }
+    function BuyerCreatePolicy(int inputLat, int inputLong) public payable presentTImeCheck  {
+    require(Owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner.
+    require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
+    require(msg.value == (1*10**16), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
+    require(policies[msg.sender].EthereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance.
+    OpenWEItoInsure -= (1*(10**18));
+    LockedWEItoPolicies += (1*(10**18));
+    policies[msg.sender] = policy(inputLat, inputLong,YearPresent,MonthPresent,DayPresent,1);
+    payable(Owner).transfer(1*10**16);
+    DayPresent = 0;
+    MonthPresent = 0;
+    YearPresent = 0;
+    emit eventBlockTime(block.timestamp);
+}
 
-    function BuyerClaimReward() public {
-        require(DayEruption > 0, "DayPresent not recorded yet by oracle.");
-        require(MonthEruption > 0, "MonthPresent not recorded yet by oracle.");
-        require(YearEruption > 0, "YearPresent not recorded yet by oracle.");
-        require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
-        require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
-        require(convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
-        require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
-        require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
-        policies[msg.sender] = policy(0, 0, 0, 0, 0, 0);
-        LockedWEItoPolicies -=(1*(10**18));
-        payable(msg.sender).transfer(1*(10**18));
-        LatitudeEruption = 0;
-        LongitudeEruption = 0;
-        YearEruption = 0;
-        MonthEruption = 0;
-        DayEruption = 0;
-    }
+function BuyerClaimReward() public {
+    require(DayEruption > 0, "DayEruption not recorded yet by oracle.");
+    require(MonthEruption > 0, "MonthEruption not recorded yet by oracle.");
+    require(YearEruption > 0, "YearEruption not recorded yet by oracle.");
+    require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
+    require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
+    require(convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
+    require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
+    require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
+    policies[msg.sender] = policy(0, 0, 0, 0, 0, 0);
+    LockedWEItoPolicies -=(1*(10**18));
+    payable(msg.sender).transfer(1*(10**18));
+    LatitudeEruption = 0;
+    LongitudeEruption = 0;
+    YearEruption = 0;
+    MonthEruption = 0;
+    DayEruption = 0;
+    emit eventBlockTime(block.timestamp);
+}
 
     // function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
     //     require(msg.value == 1*(10**18), "Value sent must equal 1 ETH");
