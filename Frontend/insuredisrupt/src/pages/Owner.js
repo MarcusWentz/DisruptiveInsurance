@@ -15,6 +15,7 @@ class Owner extends Component {
 			accountsInsured: "",
 			errorMsg: "",
 			globalContractBalance: null,
+			calculatedWEI: -1,
 		};
 	}
 	componentDidMount() {
@@ -46,13 +47,17 @@ class Owner extends Component {
 			volcanoContract: volcanoContract,
 			globalContractBalance: globalContractBalance,
 		});
-		console.log(this.state.volcanoContract, "CONTRAACT");
 
-		console.log(globalContractBalance, "bruuuuuuu");
+		let that = this;
+		setTimeout(function () {
+			let calculatedWEI =
+				that.state.globalContractBalance -
+				(that.state.getAvailableEth + that.state.accountsInsured);
+			that.setState({ calculatedWEI: calculatedWEI });
+		}, 1000);
 
 		//GET inital values
 		this.setInitialValues(volcanoContract);
-
 		///----Event will automatically read data
 		this.eventListener(volcanoContract);
 	}
@@ -72,7 +77,6 @@ class Owner extends Component {
 				that.setState({
 					getAvailableEth: res,
 				});
-				console.log(that.state.getAvailableEthToInsure, "avail eth:");
 			});
 
 		volcanoContract.methods
@@ -82,7 +86,6 @@ class Owner extends Component {
 				that.setState({
 					accountsInsured: res,
 				});
-				console.log(res, "accountsinsured res");
 			});
 	}
 
@@ -98,6 +101,14 @@ class Owner extends Component {
 			.on("data", function (eventResult) {
 				//Call the get function to get the most accurate present state for the value.
 				that.setInitialValues(volcanoContract);
+				setTimeout(function () {
+					let calculatedWEI =
+						that.state.globalContractBalance -
+						(that.state.getAvailableEth +
+							that.state.accountsInsured);
+					that.setState({ calculatedWEI: calculatedWEI });
+				}, 1000);
+				console.log("Eventlistener triggered!");
 			})
 			.on("changed", function (eventResult) {
 				// remove event from local database
@@ -109,7 +120,6 @@ class Owner extends Component {
 		let value = event.target.value;
 		let name = event.target.dataset.name;
 		this.setState({ [name]: value });
-		console.log(this.state.policyaddress, "policy addr from user inptu");
 	}
 
 	handleFundContract() {
@@ -147,7 +157,6 @@ class Owner extends Component {
 
 	handleClaimExpiredPolicy() {
 		if (this.props.account[0]) {
-			console.log(this.state.policyaddress, "policy address sent in:");
 			let web3js = new Web3(window.web3.currentProvider);
 			web3js.eth.sendTransaction({
 				to: CONTRACT_ADDRESS,
@@ -187,7 +196,6 @@ class Owner extends Component {
 				allPolicyData: allPolicyData,
 				errorMsg: "",
 			});
-			console.log(this.state.allPolicyData.DaySigned, "all policy data");
 		} else
 			this.setState({
 				errorMsg: "You have to specify a policy address!",
@@ -196,12 +204,7 @@ class Owner extends Component {
 
 	render() {
 		const { allPolicyData } = this.state;
-		console.log(
-			this.state.globalContractBalance,
-			this.state.getAvailableEth,
-			this.state.accountsInsured,
-			"bräääääääääk"
-		);
+
 		return (
 			<div className="App-background">
 				{this.state.errorMsg ? <ErrorModal /> : null}
@@ -301,15 +304,7 @@ class Owner extends Component {
 						<div></div>
 						<label>Amount of self-destructed WEI:</label>
 
-						{this.state.globalContractBalance &&
-						this.state.getAvailableEth &&
-						this.state.accountsInsured ? (
-							this.state.globalContractBalance -
-							(this.state.getAvailableEth +
-								this.state.accountsInsured)
-						) : (
-							<p>nää</p>
-						)}
+						{this.state.calculatedWEI}
 
 						<div>
 							<button
