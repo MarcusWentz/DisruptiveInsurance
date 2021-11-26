@@ -92,16 +92,22 @@ class Buy extends Component {
 						});
 						console.log(result, "Eventlistener result");
 					});
-
-				volcanoContract.methods
-					.policies(that.props.account[0])
-					.call((err, result) => {
-						that.setState({
-							allPolicyData: result,
-							loading: false,
+				if (that.props.account[0]) {
+					volcanoContract.methods
+						.policies(that.props.account[0])
+						.call((err, result) => {
+							that.setState({
+								allPolicyData: result,
+								loading: false,
+							});
+							console.log(result, "2Eventlistener result");
 						});
-						console.log(result, "2Eventlistener result");
+				} else {
+					that.setState({
+						errorMsg: "Account not defined! Need metamask acc",
+						loading: false,
 					});
+				}
 			})
 			.on("changed", function (eventResult) {
 				// remove event from local database
