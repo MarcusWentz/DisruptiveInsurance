@@ -8,7 +8,8 @@ Video demo: [https://www.youtube.com/watch?v=SHUC-wjAipU]:
 
 # Buyer
 
-  Buy policy:\
+  Buy policy:
+  
     1.Oracle: Get present time\
     2.Record address, time, input coordinates and locked Owner ETH for policy.\
     
