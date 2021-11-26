@@ -92,6 +92,7 @@ class Buy extends Component {
 						});
 						console.log(result, "Eventlistener result");
 					});
+
 				if (that.props.account[0]) {
 					volcanoContract.methods
 						.policies(that.props.account[0])
@@ -194,23 +195,26 @@ class Buy extends Component {
 							</h6>
 						</div>
 						<div class="available-eth-container">
-							<h3
+							<h5
 								style={{ textAlign: "center" }}
 								className="v-txt"
 							>
 								Available ETH to insure:
-							</h3>
+							</h5>
 							<h3
 								style={{ textAlign: "center" }}
 								className="v-txt"
 							>
-								{this.state.getAvailableEth}
+								{this.state.getAvailableEth /
+									1000000000000000000}
 							</h3>
 						</div>
 
 						<div className="container longLat">
 							<div class="label-input-container">
-								<label for="lat">Latitude</label>
+								<label for="lat">
+									Latitude (example 100 = 1.00)
+								</label>
 								<input
 									type="text"
 									name="lat"
@@ -221,7 +225,9 @@ class Buy extends Component {
 								></input>
 							</div>
 							<div class="label-input-container">
-								<label for="long">Longitude</label>
+								<label for="long">
+									Longitude (example 100 = 1.00)
+								</label>
 								<input
 									type="text"
 									name="long"

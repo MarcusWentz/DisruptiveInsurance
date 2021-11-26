@@ -196,6 +196,12 @@ class Owner extends Component {
 
 	render() {
 		const { allPolicyData } = this.state;
+		console.log(
+			this.state.globalContractBalance,
+			this.state.getAvailableEth,
+			this.state.accountsInsured,
+			"bräääääääääk"
+		);
 		return (
 			<div className="App-background">
 				{this.state.errorMsg ? <ErrorModal /> : null}
@@ -209,13 +215,14 @@ class Owner extends Component {
 								style={{ textAlign: "center" }}
 								className="v-txt"
 							>
-								ETH availble for insurance:
+								Available ETH to insure:
 							</h5>
 							<h6
 								style={{ textAlign: "center" }}
 								className="v-txt"
 							>
-								{this.state.getAvailableEth}
+								{this.state.getAvailableEth /
+									1000000000000000000}
 							</h6>
 						</div>
 						<br />
@@ -237,7 +244,9 @@ class Owner extends Component {
 						</div>
 						<div class="available-eth-container">
 							<p>
-								Accounts Insured: {this.state.accountsInsured}
+								Accounts Insured: <br />
+								{this.state.accountsInsured /
+									1000000000000000000}
 							</p>
 						</div>
 						<div className="container policyaddress">
@@ -291,9 +300,17 @@ class Owner extends Component {
 						</div>
 						<div></div>
 						<label>Amount of self-destructed WEI:</label>
-						{this.state.globalContractBalance -
+
+						{this.state.globalContractBalance &&
+						this.state.getAvailableEth &&
+						this.state.accountsInsured ? (
+							this.state.globalContractBalance -
 							(this.state.getAvailableEth +
-								this.state.accountsInsured)}
+								this.state.accountsInsured)
+						) : (
+							<p>nää</p>
+						)}
+
 						<div>
 							<button
 								type="button"

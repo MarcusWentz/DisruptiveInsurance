@@ -365,11 +365,15 @@ class Oracle extends Component {
 						<div>
 							<div className="container oracle-get">
 								<div class="label-input-container">
-									<label for="lat">Latitude</label>
+									<label for="lat">
+										Latitude (example 100 = 1.00)
+									</label>
 									{this.state.latEruption}
 								</div>
 								<div class="label-input-container">
-									<label for="lat">Longitude</label>
+									<label for="lat">
+										Longitude (example 100 = 1.00)
+									</label>
 									{this.state.longEruption}
 								</div>
 							</div>
