@@ -21,14 +21,14 @@ Video demo: [https://www.youtube.com/watch?v=SHUC-wjAipU]:
   
 # Owner:
 
+ Get paid directly after a policy is bought.
+
  Attract Buyers:
  
   1.Add funds to make policies available with OwnerSendOneEthToContractFromInsuranceBusiness.\
   
- Claim ETH\
- 
-  Get paid directly after a policy is bought.\
-  
+ Claim ETH
+   
    Expired Claim:
    
     1.Oracle: Get present time\
