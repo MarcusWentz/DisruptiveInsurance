@@ -25,7 +25,7 @@ Video demo: [https://www.youtube.com/watch?v=SHUC-wjAipU]:
 
  Attract Buyers:
  
-  1.Add funds to make policies available with OwnerSendOneEthToContractFromInsuranceBusiness.\
+     1.Add funds to make policies available with OwnerSendOneEthToContractFromInsuranceBusiness.
   
  Claim ETH
    
