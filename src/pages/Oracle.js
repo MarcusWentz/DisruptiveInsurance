@@ -359,7 +359,7 @@ class Oracle extends Component {
 							onClick={this.handleRequestTimeNow}
 						>
 							Request Time Now
-							<label>[0.05 LINK]</label>
+							<label>[0.03 LINK]</label>
 						</button>
 
 						<div>
