@@ -9,8 +9,8 @@ Website: Fleek (IPFS+FILECOIN): https://disruptiveinsurance.on.fleek.co/
 
 Verified contract code on Etherscan using Hardhat: https://rinkeby.etherscan.io/address/0x6f4ED1B0340A09386fa08550Cb235aFbE3deE2BD#code
 
-Video demo: [https://www.youtube.com/watch?v=SHUC-wjAipU]:
-[![Watch the video](https://github.com/MarcusWentz/InsureDisruption/blob/main/Images/structure.png)](https://www.youtube.com/watch?v=SHUC-wjAipU)
+Video demo: [https://www.youtube.com/watch?v=zM4xjX2BJxg]:
+[![Watch the video](https://github.com/MarcusWentz/InsureDisruption/blob/main/Images/structure.png)](https://www.youtube.com/watch?v=zM4xjX2BJxg)
 
 # Buyer
 
