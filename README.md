@@ -49,3 +49,10 @@ Video demo: [https://www.youtube.com/watch?v=zM4xjX2BJxg]:
    Self Destruct 
    
     1.If the sum of AccountsInsured and OpenETHtoInsure is greater than smart contract ETH balance, then a self destruct attack occurred and you can claim that ETH.
+
+## Foundry 
+
+## Install Chainlink 
+```
+forge install smartcontractkit/foundry-chainlink-toolkit
+```
