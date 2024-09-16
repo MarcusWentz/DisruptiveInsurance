@@ -11,8 +11,8 @@ import {Convert} from "./Convert.sol";
 contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 
 contract VolcanoInsurance is ChainlinkClient, Convert {
-    
-    using Chainlink for Chainlink.Request;
+        
+    // variables
     
     int public LatitudeEruption; 
     int public LongitudeEruption;
@@ -24,8 +24,11 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     uint public DayPresent;
     uint public OpenWEItoInsure;
     uint public LockedWEItoPolicies;
-    uint private immutable fee = 1*10**16;
     string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
+ 
+    // immutable and constants
+    
+    uint public immutable fee = 1*10**16;
     bytes32 private immutable jobIdGetInt ="e5b0e6aeab36405ba33aea12c6988ed6"; 
     bytes32 private immutable jobIdGetUint ="3b7ca0d48c7a4b2da9268456665d11ae";  
     bytes32 private immutable jobIdGetBytes32 = "187bb80e5ee74a139734cac7475f3c6e";
@@ -44,6 +47,8 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     }
     
     mapping(address => policy) public policies;
+
+    using Chainlink for Chainlink.Request;
 
     constructor() {
         Owner = msg.sender;
