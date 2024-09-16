@@ -52,7 +52,9 @@ Video demo: [https://www.youtube.com/watch?v=zM4xjX2BJxg]:
 
 ## Foundry 
 
-## Install Chainlink 
+:warning: Note: you might need to add libraries in forge with remappings.txt :warning:
+
+## Install Chainlink libraries
 ```
-forge install smartcontractkit/foundry-chainlink-toolkit
+forge install smartcontractkit/chainlink-brownie-contracts --no-commit
 ```

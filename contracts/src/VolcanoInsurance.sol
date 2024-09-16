@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
+import {AggregatorV3Interface} from "chainlink/v0.8/interfaces/AggregatorV3Interface.sol"; 
+
 // import {ChainlinkClient} from "chainlink/v0.8/interfaces/AggregatorV3Interface.sol"; 
+// import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 // import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Convert} from "./Convert.sol";
