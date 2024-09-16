@@ -58,3 +58,7 @@ Video demo: [https://www.youtube.com/watch?v=zM4xjX2BJxg]:
 ```
 forge install smartcontractkit/chainlink-brownie-contracts --no-commit
 ```
+### Install Solmate Library
+```
+forge install rari-capital/solmate --no-commit
+```
