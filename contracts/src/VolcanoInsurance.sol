@@ -32,12 +32,12 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     // immutable and constants
     
     uint public immutable fee = 1*10**16;
-    bytes32 private immutable jobIdGetInt ="e5b0e6aeab36405ba33aea12c6988ed6"; 
-    bytes32 private immutable jobIdGetUint ="3b7ca0d48c7a4b2da9268456665d11ae";  
-    bytes32 private immutable jobIdGetBytes32 = "187bb80e5ee74a139734cac7475f3c6e";
-    address private immutable oracle = 0x3A56aE4a2831C3d3514b5D7Af5578E45eBDb7a40; 
+    bytes32 private immutable jobIdGetInt256 ="fcf4140d696d44b687012232948bdd5d"; 
+    bytes32 private immutable jobIdGetUint256 ="ca98366cc7314957b8c012c72f05aeeb";  
+    bytes32 private immutable jobIdGetBytes32 = "7da2702f37fd48e5b1b9a5715e3509b6";
+    address private immutable oracle = 0x6090149792dAAeE9D1D568c9f9a6F6B46AA29eFD; 
     address public immutable Owner;
-    address private ChainlinkTokenAddressRinkeby = 0x01BE23585060835E02B77ef475b0Cc51aA1e0709;
+    address private ChainlinkTokenAddressRinkeby = 0x779877A7B0D9E8603169DdbD7836e478b4624789;
     ERC20TokenContract tokenObject = ERC20TokenContract(ChainlinkTokenAddressRinkeby);
     
     struct policy {
@@ -163,7 +163,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     // Chainlink requests.
 
     function request_Latitude() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetInt, address(this), this.fulfill_request_Latitude.selector);
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetInt256, address(this), this.fulfill_request_Latitude.selector);
         request._add("get", urlRebuiltJSON);
         request._add("path", "records.0.fields.coordinates.0");
         request._addInt("times", 10**2);
@@ -174,7 +174,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     }
     
     function request_Longitude() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetInt, address(this), this.fulfill_request_Longitude.selector);
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetInt256, address(this), this.fulfill_request_Longitude.selector);
         request._add("get", urlRebuiltJSON);
         request._add("path", "records.0.fields.coordinates.1");
         request._addInt("times", 10**2);
@@ -186,7 +186,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     }
     
     function request_Year_Eruption() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_Year_Eruption.selector);
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_Year_Eruption.selector);
         request._add("get", urlRebuiltJSON);
         request._add("path", "records.0.fields.year");
         return _sendChainlinkRequestTo(oracle, request, fee);
@@ -220,7 +220,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     }
     
     function request_YearPresent() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_YearPresent.selector);
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_YearPresent.selector);
         request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
         request._add("path", "year");
         return _sendChainlinkRequestTo(oracle, request, fee);
@@ -230,7 +230,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     }
     
     function request_MonthPresent() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_MonthPresent.selector);
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_MonthPresent.selector);
         request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
         request._add("path", "month");
         return _sendChainlinkRequestTo(oracle, request, fee);
@@ -240,7 +240,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     }
     
     function request_DayPresent() private returns (bytes32 requestId)  {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_DayPresent.selector);
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_DayPresent.selector);
         request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
         request._add("path", "day");
         return _sendChainlinkRequestTo(oracle, request, fee);
