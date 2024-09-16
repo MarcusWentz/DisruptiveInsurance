@@ -10,10 +10,9 @@ import {Convert} from "./Convert.sol";
 
 contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 
-contract VolcanoInsurance is ChainlinkClient {
+contract VolcanoInsurance is ChainlinkClient, Convert {
     
     using Chainlink for Chainlink.Request;
-    Convert public convert = new Convert();
     
     int public LatitudeEruption; 
     int public LongitudeEruption;
@@ -107,7 +106,7 @@ contract VolcanoInsurance is ChainlinkClient {
         require(YearEruption > 0, "YearEruption not recorded yet by oracle.");        
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
-        require(convert.DateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < convert.DateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
+        require(dateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < dateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
         require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
         require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
         policies[msg.sender] = policy(0, 0, 0, 0, 0, 0);
@@ -129,7 +128,7 @@ contract VolcanoInsurance is ChainlinkClient {
 
     function OwnerClaimExpiredPolicyETH(address policyHolder) public contractOwnerCheck presentTImeCheck { 
         require(policies[policyHolder].EthereumAwardTiedToAddress > 0, "Policy does not exist.");
-        require(convert.DateCompareForm(YearPresent,MonthPresent,DayPresent) > (convert.DateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) + 512) , "Policy has not yet expired");
+        require(dateCompareForm(YearPresent,MonthPresent,DayPresent) > (dateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) + 512) , "Policy has not yet expired");
         LockedWEItoPolicies -=(1*(10**18));
         policies[policyHolder] = policy(0, 0, 0, 0, 0, 0);
         payable(Owner).transfer(address(this).balance);
@@ -197,7 +196,7 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     function fulfill_request_Month_Eruption(bytes32 _requestId, bytes32 oracleMonthEruption) public recordChainlinkFulfillment(_requestId)
     {
-        MonthEruption = convert.bytes32ToUint(oracleMonthEruption);
+        MonthEruption = bytes32ToUint(oracleMonthEruption);
     }
     
     function request_Day_Eruption() private returns (bytes32 requestId) {
@@ -208,7 +207,7 @@ contract VolcanoInsurance is ChainlinkClient {
     }
     function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 oracleDayEruption) public recordChainlinkFulfillment(_requestId)
     {
-        DayEruption = convert.bytes32ToUint(oracleDayEruption);
+        DayEruption = bytes32ToUint(oracleDayEruption);
         emit eventBlockTime(block.timestamp);
     }
     

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity 0.8.26;
 
-contract Convert{
+contract Convert {
     
-    function DateCompareForm(uint YearInput, uint MonthInput, uint DayInput) public pure returns(uint){
+    function dateCompareForm(uint YearInput, uint MonthInput, uint DayInput) public pure returns(uint){
         return ( (YearInput<<9) + (MonthInput<<5) + DayInput ) ;
     }
     
