@@ -68,9 +68,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
         _;
     }
 
-    event eventBlockTime(
-        uint indexed date
-    );
+    event eventLog();
     
     function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
         require(tokenObject.balanceOf(address(this)) >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
@@ -105,7 +103,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
-        emit eventBlockTime(block.timestamp);
+        emit eventLog();
     }
     
     function BuyerClaimReward() public {
@@ -125,13 +123,13 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
         YearEruption = 0;
         MonthEruption = 0;
         DayEruption = 0;
-        emit eventBlockTime(block.timestamp);
+        emit eventLog();
     }
     
     function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
         require(msg.value == 1*(10**18), "Value sent must equal 1 ETH");
         OpenWEItoInsure += 1*(10**18);
-        emit eventBlockTime(block.timestamp);
+        emit eventLog();
     }
 
     function OwnerClaimExpiredPolicyETH(address policyHolder) public contractOwnerCheck presentTImeCheck { 
@@ -143,20 +141,20 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
-        emit eventBlockTime(block.timestamp);
+        emit eventLog();
     }
     
     function OwnerLiquidtoOpenETHToWithdraw() public contractOwnerCheck {
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); 
         OpenWEItoInsure -= (1*(10**18));
         payable(Owner).transfer(1*(10**18));
-        emit eventBlockTime(block.timestamp);
+        emit eventLog();
     }
     
     function OwnerSelfDestructClaimETH() public contractOwnerCheck {
         require(address(this).balance > (LockedWEItoPolicies+OpenWEItoInsure), 'No self destruct detected (address(this).balance == (AccountsInsured+OpenETHtoEnsure))'); 
         payable(Owner).transfer((address(this).balance)-(LockedWEItoPolicies+OpenWEItoInsure));
-        emit eventBlockTime(block.timestamp);
+        emit eventLog();
     }
     
     
@@ -216,7 +214,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 oracleDayEruption) public recordChainlinkFulfillment(_requestId)
     {
         DayEruption = bytes32ToUint(oracleDayEruption);
-        emit eventBlockTime(block.timestamp);
+        emit eventLog();
     }
     
     function request_YearPresent() private returns (bytes32 requestId) {
@@ -247,7 +245,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
     }
     function fulfill_request_DayPresent(bytes32 _requestId,uint oracleDayPresent) public recordChainlinkFulfillment(_requestId) {
         DayPresent = oracleDayPresent; 
-        emit eventBlockTime(block.timestamp);
+        emit eventLog();
     }
     
  }
