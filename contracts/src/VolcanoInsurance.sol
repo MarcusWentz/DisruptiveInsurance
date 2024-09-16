@@ -1,20 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
-import {AggregatorV3Interface} from "chainlink/v0.8/interfaces/AggregatorV3Interface.sol"; 
-
-// import {ChainlinkClient} from "chainlink/v0.8/interfaces/AggregatorV3Interface.sol"; 
-// import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
-// import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+// // For pricefeeds such as ETH/USD.
+// import {AggregatorV3Interface} from "chainlink/v0.8/interfaces/AggregatorV3Interface.sol"; 
+// For Any API requests.
+import {ChainlinkClient,Chainlink} from "chainlink/v0.8/ChainlinkClient.sol"; 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Convert} from "./Convert.sol";
 
 contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 
-contract VolcanoInsurance {
-// contract VolcanoInsurance is ChainlinkClient {
+contract VolcanoInsurance is ChainlinkClient {
     
-    // using Chainlink for Chainlink.Request;
+    using Chainlink for Chainlink.Request;
     Convert public convert = new Convert();
     
     int public LatitudeEruption; 
@@ -50,7 +48,7 @@ contract VolcanoInsurance {
 
     constructor() {
         Owner = msg.sender;
-        // setPublicChainlinkToken();
+        _setPublicChainlinkToken();
     }
     
     modifier contractOwnerCheck() {
@@ -72,20 +70,20 @@ contract VolcanoInsurance {
         require(bytes(filterMonth).length == 2 && bytes(filterDay).length == 2, "JSON must have MonthPresent and DayPresent as 2 characters at all times!");
         urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",filterYear,
         "&refine.month=",filterMonth,"&refine.day=",filterDay,"&refine.country=",filterCountry) );
-        // // Chainlink requests.
-        // request_Latitude();
-        // request_Longitude();
-        // request_Year_Eruption();
-        // request_Month_Eruption();
-        // request_Day_Eruption();
+        // Chainlink requests.
+        request_Latitude();
+        request_Longitude();
+        request_Year_Eruption();
+        request_Month_Eruption();
+        request_Day_Eruption();
     }    
     
     function OracleRequestPresentTime() public {
         require(tokenObject.balanceOf(address(this)) >= 3*(10*16), "CONTRACT NEEDS 0.03 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!!");
-        // // Chainlink requests.
-        // request_YearPresent();
-        // request_MonthPresent();
-        // request_DayPresent();
+        // Chainlink requests.
+        request_YearPresent();
+        request_MonthPresent();
+        request_DayPresent();
     }
     
     function BuyerCreatePolicy(int inputLat, int inputLong) public payable presentTImeCheck  {
@@ -155,94 +153,94 @@ contract VolcanoInsurance {
     }
     
     
-    // // Chainlink requests.
+    // Chainlink requests.
 
-    // function request_Latitude() private returns (bytes32 requestId) {
-    //     Chainlink.Request memory request = buildChainlinkRequest(jobIdGetInt, address(this), this.fulfill_request_Latitude.selector);
-    //     request.add("get", urlRebuiltJSON);
-    //     request.add("path", "records.0.fields.coordinates.0");
-    //     request.addInt("times", 10**2);
-    //     return sendChainlinkRequestTo(oracle, request, fee);
-    // }
-    // function fulfill_request_Latitude(bytes32 _requestId, int oracleLatitudeEruption) public recordChainlinkFulfillment(_requestId){
-    //     LatitudeEruption = oracleLatitudeEruption;
-    // }
+    function request_Latitude() private returns (bytes32 requestId) {
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetInt, address(this), this.fulfill_request_Latitude.selector);
+        request._add("get", urlRebuiltJSON);
+        request._add("path", "records.0.fields.coordinates.0");
+        request._addInt("times", 10**2);
+        return _sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Latitude(bytes32 _requestId, int oracleLatitudeEruption) public recordChainlinkFulfillment(_requestId){
+        LatitudeEruption = oracleLatitudeEruption;
+    }
     
-    // function request_Longitude() private returns (bytes32 requestId) {
-    //     Chainlink.Request memory request = buildChainlinkRequest(jobIdGetInt, address(this), this.fulfill_request_Longitude.selector);
-    //     request.add("get", urlRebuiltJSON);
-    //     request.add("path", "records.0.fields.coordinates.1");
-    //     request.addInt("times", 10**2);
-    //     return sendChainlinkRequestTo(oracle, request, fee);
-    // }
-    // function fulfill_request_Longitude(bytes32 _requestId, int oracleLongitudeEruption) public recordChainlinkFulfillment(_requestId)
-    // {
-    //     LongitudeEruption = oracleLongitudeEruption;
-    // }
+    function request_Longitude() private returns (bytes32 requestId) {
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetInt, address(this), this.fulfill_request_Longitude.selector);
+        request._add("get", urlRebuiltJSON);
+        request._add("path", "records.0.fields.coordinates.1");
+        request._addInt("times", 10**2);
+        return _sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Longitude(bytes32 _requestId, int oracleLongitudeEruption) public recordChainlinkFulfillment(_requestId)
+    {
+        LongitudeEruption = oracleLongitudeEruption;
+    }
     
-    // function request_Year_Eruption() private returns (bytes32 requestId) {
-    //     Chainlink.Request memory request = buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_Year_Eruption.selector);
-    //     request.add("get", urlRebuiltJSON);
-    //     request.add("path", "records.0.fields.year");
-    //     return sendChainlinkRequestTo(oracle, request, fee);
-    // }
-    // function fulfill_request_Year_Eruption(bytes32 _requestId, uint oracleYearEruption) public recordChainlinkFulfillment(_requestId)
-    // {
-    //     YearEruption = oracleYearEruption;
-    // }
+    function request_Year_Eruption() private returns (bytes32 requestId) {
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_Year_Eruption.selector);
+        request._add("get", urlRebuiltJSON);
+        request._add("path", "records.0.fields.year");
+        return _sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Year_Eruption(bytes32 _requestId, uint oracleYearEruption) public recordChainlinkFulfillment(_requestId)
+    {
+        YearEruption = oracleYearEruption;
+    }
     
-    // function request_Month_Eruption() private returns (bytes32 requestId) {
-    //     Chainlink.Request memory request = buildChainlinkRequest(jobIdGetBytes32, address(this), this.fulfill_request_Month_Eruption.selector);
-    //     request.add("get", urlRebuiltJSON);
-    //     request.add("path", "records.0.fields.month");
-    //     return sendChainlinkRequestTo(oracle, request, fee);
-    // }
-    // function fulfill_request_Month_Eruption(bytes32 _requestId, bytes32 oracleMonthEruption) public recordChainlinkFulfillment(_requestId)
-    // {
-    //     MonthEruption = convert.bytes32ToUint(oracleMonthEruption);
-    // }
+    function request_Month_Eruption() private returns (bytes32 requestId) {
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetBytes32, address(this), this.fulfill_request_Month_Eruption.selector);
+        request._add("get", urlRebuiltJSON);
+        request._add("path", "records.0.fields.month");
+        return _sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Month_Eruption(bytes32 _requestId, bytes32 oracleMonthEruption) public recordChainlinkFulfillment(_requestId)
+    {
+        MonthEruption = convert.bytes32ToUint(oracleMonthEruption);
+    }
     
-    // function request_Day_Eruption() private returns (bytes32 requestId) {
-    //     Chainlink.Request memory request = buildChainlinkRequest(jobIdGetBytes32, address(this), this.fulfill_request_Day_Eruption.selector);
-    //     request.add("get", urlRebuiltJSON);
-    //     request.add("path", "records.0.fields.day");
-    //     return sendChainlinkRequestTo(oracle, request, fee);
-    // }
-    // function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 oracleDayEruption) public recordChainlinkFulfillment(_requestId)
-    // {
-    //     DayEruption = convert.bytes32ToUint(oracleDayEruption);
-    //     emit eventBlockTime(block.timestamp);
-    // }
+    function request_Day_Eruption() private returns (bytes32 requestId) {
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetBytes32, address(this), this.fulfill_request_Day_Eruption.selector);
+        request._add("get", urlRebuiltJSON);
+        request._add("path", "records.0.fields.day");
+        return _sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 oracleDayEruption) public recordChainlinkFulfillment(_requestId)
+    {
+        DayEruption = convert.bytes32ToUint(oracleDayEruption);
+        emit eventBlockTime(block.timestamp);
+    }
     
-    // function request_YearPresent() private returns (bytes32 requestId) {
-    //     Chainlink.Request memory request = buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_YearPresent.selector);
-    //     request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-    //     request.add("path", "year");
-    //     return sendChainlinkRequestTo(oracle, request, fee);
-    // }
-    // function fulfill_request_YearPresent(bytes32 _requestId,uint oracleYearPresent) public recordChainlinkFulfillment(_requestId) {
-    //     YearPresent = oracleYearPresent;
-    // }
+    function request_YearPresent() private returns (bytes32 requestId) {
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_YearPresent.selector);
+        request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        request._add("path", "year");
+        return _sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_YearPresent(bytes32 _requestId,uint oracleYearPresent) public recordChainlinkFulfillment(_requestId) {
+        YearPresent = oracleYearPresent;
+    }
     
-    // function request_MonthPresent() private returns (bytes32 requestId) {
-    //     Chainlink.Request memory request = buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_MonthPresent.selector);
-    //     request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-    //     request.add("path", "month");
-    //     return sendChainlinkRequestTo(oracle, request, fee);
-    // }
-    // function fulfill_request_MonthPresent(bytes32 _requestId,uint oracleMonthPresent) public recordChainlinkFulfillment(_requestId) {
-    //     MonthPresent = oracleMonthPresent; 
-    // }
+    function request_MonthPresent() private returns (bytes32 requestId) {
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_MonthPresent.selector);
+        request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        request._add("path", "month");
+        return _sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_MonthPresent(bytes32 _requestId,uint oracleMonthPresent) public recordChainlinkFulfillment(_requestId) {
+        MonthPresent = oracleMonthPresent; 
+    }
     
-    // function request_DayPresent() private returns (bytes32 requestId)  {
-    //     Chainlink.Request memory request = buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_DayPresent.selector);
-    //     request.add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-    //     request.add("path", "day");
-    //     return sendChainlinkRequestTo(oracle, request, fee);
-    // }
-    // function fulfill_request_DayPresent(bytes32 _requestId,uint oracleDayPresent) public recordChainlinkFulfillment(_requestId) {
-    //     DayPresent = oracleDayPresent; 
-    //     emit eventBlockTime(block.timestamp);
-    // }
+    function request_DayPresent() private returns (bytes32 requestId)  {
+        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint, address(this), this.fulfill_request_DayPresent.selector);
+        request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        request._add("path", "day");
+        return _sendChainlinkRequestTo(oracle, request, fee);
+    }
+    function fulfill_request_DayPresent(bytes32 _requestId,uint oracleDayPresent) public recordChainlinkFulfillment(_requestId) {
+        DayPresent = oracleDayPresent; 
+        emit eventBlockTime(block.timestamp);
+    }
     
  }
