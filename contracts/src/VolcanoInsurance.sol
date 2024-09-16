@@ -1,28 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
+import {IERC20} from "./interfaces/IERC20.sol";
+import {IVolcanoInsurance} from "./interfaces/IVolcanoInsurance.sol";
 // // For pricefeeds such as ETH/USD.
 // import {AggregatorV3Interface} from "chainlink/v0.8/interfaces/AggregatorV3Interface.sol"; 
 // For Any API requests.
 import {ChainlinkClient,Chainlink} from "chainlink/v0.8/ChainlinkClient.sol"; 
-import {Convert} from "./Convert.sol";
+import {Convert} from "./util/Convert.sol";
+import {Owned} from "solmate/auth/Owned.sol";
 
-// import {Owned} from "solmate/auth/Owned.sol";
-// import {ERC20} from "solmate/tokens/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
-contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
-
-interface IVolcanoInsurance {
-    // Custom Errors
-
-
-    // Events
-    event eventLog();
-
-}
-
-contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance {
+contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned {
         
     // variables
 
@@ -40,14 +28,12 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance {
  
     // immutable and constants
     
-    uint public immutable fee = 1*10**16;
-    bytes32 private immutable jobIdGetInt256 ="fcf4140d696d44b687012232948bdd5d"; 
-    bytes32 private immutable jobIdGetUint256 ="ca98366cc7314957b8c012c72f05aeeb";  
-    bytes32 private immutable jobIdGetBytes32 = "7da2702f37fd48e5b1b9a5715e3509b6";
-    address private immutable oracle = 0x6090149792dAAeE9D1D568c9f9a6F6B46AA29eFD; 
-    address public immutable Owner;
-    address private ChainlinkTokenAddressRinkeby = 0x779877A7B0D9E8603169DdbD7836e478b4624789;
-    ERC20TokenContract tokenObject = ERC20TokenContract(ChainlinkTokenAddressRinkeby);
+    uint public constant fee = 1*10**16;
+    address public constant chainlinkTokenAddressSepolia = 0x779877A7B0D9E8603169DdbD7836e478b4624789;
+    bytes32 private constant jobIdGetInt256 ="fcf4140d696d44b687012232948bdd5d"; 
+    bytes32 private constant jobIdGetUint256 ="ca98366cc7314957b8c012c72f05aeeb";  
+    bytes32 private constant jobIdGetBytes32 = "7da2702f37fd48e5b1b9a5715e3509b6";
+    address private constant oracle = 0x6090149792dAAeE9D1D568c9f9a6F6B46AA29eFD; 
     
     struct policy {
         int LatitudeInsured;
@@ -62,23 +48,20 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance {
 
     using Chainlink for Chainlink.Request;
 
-    constructor() {
-        Owner = msg.sender;
+    constructor() Owned(msg.sender) {
+        // _setPublicChainlinkToken(0x779877A7B0D9E8603169DdbD7836e478b4624789);
         _setPublicChainlinkToken();
     }
     
-    modifier contractOwnerCheck() {
-        require(msg.sender == Owner, "Only contract owner can interact with this contract");
-        _;
-    }
-
     modifier presentTImeCheck() {
-        require((DayPresent*MonthPresent*YearPresent) > 0 , "Present time not recorded yet by oracle.");
+        // require((DayPresent*MonthPresent*YearPresent) > 0 , "Present time not recorded yet by oracle.");
+        if((DayPresent*MonthPresent*YearPresent) == 0) revert presentTimeNotSet();
         _;
     }
     
     function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
-        require(tokenObject.balanceOf(address(this)) >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
+        uint256 requestVolcanoDataLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));
+        require(requestVolcanoDataLinkFee >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
         require(bytes(filterMonth).length == 2 && bytes(filterDay).length == 2, "JSON must have MonthPresent and DayPresent as 2 characters at all times!");
         urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",filterYear,
         "&refine.month=",filterMonth,"&refine.day=",filterDay,"&refine.country=",filterCountry) );
@@ -90,8 +73,12 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance {
         request_Day_Eruption();
     }    
     
+    // Gas-Efficient Solidity DateTime Library (EVM fully on chain with UNIX time):
+    // https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary?tab=readme-ov-file
+    // Oracle request time from JSON endpoint:
     function OracleRequestPresentTime() public {
-        require(tokenObject.balanceOf(address(this)) >= 3*(10*16), "CONTRACT NEEDS 0.03 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!!");
+        uint256 requestPresentTimeLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));
+        require(requestPresentTimeLinkFee >= 3*(10*16), "CONTRACT NEEDS 0.03 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!!");
         // Chainlink requests.
         request_YearPresent();
         request_MonthPresent();
@@ -99,14 +86,14 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance {
     }
     
     function BuyerCreatePolicy(int inputLat, int inputLong) public payable presentTImeCheck  {
-        require(Owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
+        require(owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
         require(msg.value == (1*10**16), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
         require(policies[msg.sender].EthereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
         OpenWEItoInsure -= (1*(10**18));
         LockedWEItoPolicies += (1*(10**18));
         policies[msg.sender] = policy(inputLat, inputLong,YearPresent,MonthPresent,DayPresent,1);
-        payable(Owner).transfer(1*10**16);
+        payable(owner).transfer(1*10**16);
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
@@ -133,37 +120,36 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance {
         emit eventLog();
     }
     
-    function OwnerSendOneEthToContractFromInsuranceBusiness() public payable contractOwnerCheck {
+    function OwnerSendOneEthToContractFromInsuranceBusiness() public payable onlyOwner {
         require(msg.value == 1*(10**18), "Value sent must equal 1 ETH");
         OpenWEItoInsure += 1*(10**18);
         emit eventLog();
     }
 
-    function OwnerClaimExpiredPolicyETH(address policyHolder) public contractOwnerCheck presentTImeCheck { 
+    function OwnerClaimExpiredPolicyETH(address policyHolder) public onlyOwner presentTImeCheck { 
         require(policies[policyHolder].EthereumAwardTiedToAddress > 0, "Policy does not exist.");
         require(dateCompareForm(YearPresent,MonthPresent,DayPresent) > (dateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) + 512) , "Policy has not yet expired");
         LockedWEItoPolicies -=(1*(10**18));
         policies[policyHolder] = policy(0, 0, 0, 0, 0, 0);
-        payable(Owner).transfer(address(this).balance);
+        payable(owner).transfer(address(this).balance);
         DayPresent = 0;
         MonthPresent = 0;
         YearPresent = 0;
         emit eventLog();
     }
     
-    function OwnerLiquidtoOpenETHToWithdraw() public contractOwnerCheck {
+    function OwnerLiquidtoOpenETHToWithdraw() public onlyOwner {
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); 
         OpenWEItoInsure -= (1*(10**18));
-        payable(Owner).transfer(1*(10**18));
+        payable(owner).transfer(1*(10**18));
         emit eventLog();
     }
     
-    function OwnerSelfDestructClaimETH() public contractOwnerCheck {
+    function OwnerSelfDestructClaimETH() public onlyOwner {
         require(address(this).balance > (LockedWEItoPolicies+OpenWEItoInsure), 'No self destruct detected (address(this).balance == (AccountsInsured+OpenETHtoEnsure))'); 
-        payable(Owner).transfer((address(this).balance)-(LockedWEItoPolicies+OpenWEItoInsure));
+        payable(owner).transfer((address(this).balance)-(LockedWEItoPolicies+OpenWEItoInsure));
         emit eventLog();
     }
-    
     
     // Chainlink requests.
 
