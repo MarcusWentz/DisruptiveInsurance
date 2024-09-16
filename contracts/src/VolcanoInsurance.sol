@@ -13,7 +13,16 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 
-contract VolcanoInsurance is ChainlinkClient, Convert {
+interface IVolcanoInsurance {
+    // Custom Errors
+
+
+    // Events
+    event eventLog();
+
+}
+
+contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance {
         
     // variables
 
@@ -67,8 +76,6 @@ contract VolcanoInsurance is ChainlinkClient, Convert {
         require((DayPresent*MonthPresent*YearPresent) > 0 , "Present time not recorded yet by oracle.");
         _;
     }
-
-    event eventLog();
     
     function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
         require(tokenObject.balanceOf(address(this)) >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
