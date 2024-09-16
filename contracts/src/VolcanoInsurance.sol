@@ -5,15 +5,18 @@ pragma solidity 0.8.26;
 // import {AggregatorV3Interface} from "chainlink/v0.8/interfaces/AggregatorV3Interface.sol"; 
 // For Any API requests.
 import {ChainlinkClient,Chainlink} from "chainlink/v0.8/ChainlinkClient.sol"; 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Convert} from "./Convert.sol";
+
+// import {Owned} from "solmate/auth/Owned.sol";
+// import {ERC20} from "solmate/tokens/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ERC20TokenContract is ERC20('Chainlink', 'LINK') {}
 
 contract VolcanoInsurance is ChainlinkClient, Convert {
         
     // variables
-    
+
     int public LatitudeEruption; 
     int public LongitudeEruption;
     uint public YearEruption;
