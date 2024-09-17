@@ -11,8 +11,12 @@ pragma solidity 0.8.26;
 
 // import { BokkyPooBahsDateTimeLibrary } from "https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary/blob/master/contracts/BokkyPooBahsDateTimeLibrary.sol";
 
-//Works in Remix IDE.
-import { BokkyPooBahsDateTimeLibrary } from "https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary/blob/master/contracts/BokkyPooBahsDateTimeLibrary.sol";
+// // Works in Remix IDE.
+// import { BokkyPooBahsDateTimeLibrary } from "https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary/blob/master/contracts/BokkyPooBahsDateTimeLibrary.sol";
+// Works in Foundry.
+// Note the remappings.txt file has the following path for BokkyPooBahsDateTimeLibrary:
+// BokkyPooBahsDateTimeLibrary/=lib/BokkyPooBahsDateTimeLibrary/
+import { BokkyPooBahsDateTimeLibrary } from "BokkyPooBahsDateTimeLibrary/contracts/BokkyPooBahsDateTimeLibrary.sol";
 
 contract testTimeOnChain {
 

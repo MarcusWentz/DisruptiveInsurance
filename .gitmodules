@@ -10,3 +10,6 @@
 [submodule "contracts/lib/solmate"]
 	path = contracts/lib/solmate
 	url = https://github.com/rari-capital/solmate
+[submodule "contracts/lib/BokkyPooBahsDateTimeLibrary"]
+	path = contracts/lib/BokkyPooBahsDateTimeLibrary
+	url = https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary

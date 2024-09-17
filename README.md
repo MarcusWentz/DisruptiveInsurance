@@ -62,3 +62,15 @@ forge install smartcontractkit/chainlink-brownie-contracts --no-commit
 ```
 forge install rari-capital/solmate --no-commit
 ```
+### Install BokkyPooBahsDateTimeLibrary
+```
+forge install https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary --no-commit
+```
+### Deploy contract on Sepolia testnet:
+```
+forge create src/gasTests/timeChainlinkOracleTest.sol:timeChainlinkOracleTest \
+--private-key $devTestnetPrivateKey \
+--rpc-url $sepoliaInfuraHttps \
+--etherscan-api-key $ETHERSCAN_API_KEY \
+--verify 
+```
