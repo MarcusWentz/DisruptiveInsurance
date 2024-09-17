@@ -21,9 +21,9 @@ contract timeChainlinkOracleTest is ChainlinkClient {
 
     // variables
 
-    uint256 public YearPresent;
-    uint256 public MonthPresent;
-    uint256 public DayPresent;
+    uint256 public yearPresent;
+    uint256 public monthPresent;
+    uint256 public dayPresent;
     uint256 public price;
  
     // immutable and constants
@@ -60,8 +60,12 @@ contract timeChainlinkOracleTest is ChainlinkClient {
         req._add("path", "year");
         _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
-    function fulfill_request_YearPresent(bytes32 _requestId,uint256 value) public recordChainlinkFulfillment(_requestId) {
-        YearPresent = value;
+
+    function fulfill_request_YearPresent(
+        bytes32 _requestId,
+        uint256 _price
+    ) public recordChainlinkFulfillment(_requestId) {
+        yearPresent = _price;
     }
   
     function request_MonthPresent() public {
@@ -74,8 +78,12 @@ contract timeChainlinkOracleTest is ChainlinkClient {
         req._add("path", "month");
         _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
-    function fulfill_request_MonthPresent(bytes32 _requestId,uint oracleMonthPresent) public recordChainlinkFulfillment(_requestId) {
-        MonthPresent = oracleMonthPresent; 
+
+    function fulfill_request_MonthPresent(
+        bytes32 _requestId,
+        uint256 _price
+    ) public recordChainlinkFulfillment(_requestId) {
+        monthPresent = _price;
     }
 
     function request_DayPresent() public {
@@ -88,8 +96,12 @@ contract timeChainlinkOracleTest is ChainlinkClient {
         req._add("path", "day");
         _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
-    function fulfill_request_DayPresent(bytes32 _requestId,uint oracleDayPresent) public recordChainlinkFulfillment(_requestId) {
-        DayPresent = oracleDayPresent; 
+ 
+    function fulfill_request_DayPresent(
+        bytes32 _requestId,
+        uint256 _price
+    ) public recordChainlinkFulfillment(_requestId) {
+        dayPresent = _price;
     }
 
     function requestEthereumPrice() public {
