@@ -56,14 +56,9 @@ contract timeChainlinkOracleTest is ChainlinkClient {
             address(this),
             this.fulfill_request_YearPresent.selector
         );
-        // req._add("get","https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        // req._add("path", "year");
-        req._add(
-            "get",
-            "https://marcuswentz.github.io/chainlink_test_json_url_types/"
-        );
-        req._add("path", "uint256");
-        req._addInt("times", 10);
+        req._add("get","https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        req._add("path", "year");
+        req._addInt("times", 1);
         _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
 
@@ -80,14 +75,9 @@ contract timeChainlinkOracleTest is ChainlinkClient {
             address(this),
             this.fulfill_request_MonthPresent.selector
         );
-        // req._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        // req._add("path", "month");
-        req._add(
-            "get",
-            "https://marcuswentz.github.io/chainlink_test_json_url_types/"
-        );
-        req._add("path", "uint256");
-        req._addInt("times", 100);
+        req._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        req._add("path", "month");
+        req._addInt("times", 1);
         _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
 
@@ -104,14 +94,9 @@ contract timeChainlinkOracleTest is ChainlinkClient {
             address(this),
             this.fulfill_request_DayPresent.selector
         );
-        // req._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        // req._add("path", "day");
-        req._add(
-            "get",
-            "https://marcuswentz.github.io/chainlink_test_json_url_types/"
-        );
-        req._add("path", "uint256");
-        req._addInt("times", 1000);
+        req._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        req._add("path", "day");
+        req._addInt("times", 1);
         _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
  
