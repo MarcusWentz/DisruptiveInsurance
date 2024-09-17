@@ -40,7 +40,7 @@ contract timeChainlinkOracleTest is ChainlinkClient {
     // Oracle request time from JSON endpoint. 
     // Sepolia Gas:
     // Gas Limit & Usage by Txn:
-    // 432,297 | 279,463 (64.65%) 
+    // 303,558 | 297,591 (98.03%) 
     function OracleRequestPresentTime() public {
         uint256 requestPresentTimeLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));    
         if(requestPresentTimeLinkFee < 3*ORACLE_PAYMENT) revert notEnoughLinkForThreeRequests();
