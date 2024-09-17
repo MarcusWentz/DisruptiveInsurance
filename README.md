@@ -73,4 +73,14 @@ forge create src/gasTests/timeChainlinkOracleTest.sol:timeChainlinkOracleTest \
 --rpc-url $sepoliaInfuraHttps \
 --etherscan-api-key $ETHERSCAN_API_KEY \
 --verify 
+--skip-is-verified-check
+```
+### Verify contract manually if it fails to verify 
+```
+forge verify-contract \
+--chain-id 11155111 \
+--watch \
+--etherscan-api-key $etherscanApiKey \
+<sepolia_contract_address> \
+src/gasTests/timeChainlinkOracleTest.sol:timeChainlinkOracleTest
 ```
