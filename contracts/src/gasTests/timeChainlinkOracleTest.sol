@@ -37,7 +37,10 @@ contract timeChainlinkOracleTest is ChainlinkClient {
         _setChainlinkToken(0x779877A7B0D9E8603169DdbD7836e478b4624789);
     }
        
-    // Oracle request time from JSON endpoint:
+    // Oracle request time from JSON endpoint. 
+    // Sepolia Gas:
+    // Gas Limit & Usage by Txn:
+    // 432,297 | 279,463 (64.65%) 
     function OracleRequestPresentTime() public {
         uint256 requestPresentTimeLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));    
         if(requestPresentTimeLinkFee < 3*ORACLE_PAYMENT) revert notEnoughLinkForThreeRequests();
@@ -47,17 +50,20 @@ contract timeChainlinkOracleTest is ChainlinkClient {
         request_DayPresent();
     } 
 
-    // Sepolia Gas:
-    // Gas Limit & Usage by Txn:
-    // 432,297 | 279,463 (64.65%) 
     function request_YearPresent() public {
         Chainlink.Request memory req = _buildChainlinkRequest(
             stringToBytes32(jobIdGetInt256Sepolia),
             address(this),
             this.fulfill_request_YearPresent.selector
         );
-        req._add("get","https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        req._add("path", "year");
+        // req._add("get","https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        // req._add("path", "year");
+        req._add(
+            "get",
+            "https://marcuswentz.github.io/chainlink_test_json_url_types/"
+        );
+        req._add("path", "uint256");
+        req._addInt("times", 10);
         _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
 
@@ -74,8 +80,14 @@ contract timeChainlinkOracleTest is ChainlinkClient {
             address(this),
             this.fulfill_request_MonthPresent.selector
         );
-        req._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        req._add("path", "month");
+        // req._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        // req._add("path", "month");
+        req._add(
+            "get",
+            "https://marcuswentz.github.io/chainlink_test_json_url_types/"
+        );
+        req._add("path", "uint256");
+        req._addInt("times", 100);
         _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
 
@@ -92,8 +104,14 @@ contract timeChainlinkOracleTest is ChainlinkClient {
             address(this),
             this.fulfill_request_DayPresent.selector
         );
-        req._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        req._add("path", "day");
+        // req._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
+        // req._add("path", "day");
+        req._add(
+            "get",
+            "https://marcuswentz.github.io/chainlink_test_json_url_types/"
+        );
+        req._add("path", "uint256");
+        req._addInt("times", 1000);
         _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
  
@@ -119,6 +137,9 @@ contract timeChainlinkOracleTest is ChainlinkClient {
         _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
 
+    // Sepolia gas cost:
+    // Gas Limit & Usage by Txn:
+    // 500,000 | 63,704 (12.74%) 
     function fulfillEthereumPrice(
         bytes32 _requestId,
         uint256 _price
