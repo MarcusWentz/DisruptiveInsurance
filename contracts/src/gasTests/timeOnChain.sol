@@ -18,7 +18,7 @@ pragma solidity 0.8.26;
 // BokkyPooBahsDateTimeLibrary/=lib/BokkyPooBahsDateTimeLibrary/
 import { BokkyPooBahsDateTimeLibrary } from "BokkyPooBahsDateTimeLibrary/contracts/BokkyPooBahsDateTimeLibrary.sol";
 
-contract testTimeOnChain {
+contract timeOnChain {
 
     // Test with 86399 and 86400
     // Remix IDE gas benchmark:
