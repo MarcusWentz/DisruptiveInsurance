@@ -122,6 +122,9 @@ contract timeChainlinkOracleTest is ChainlinkClient {
         dayPresent = _price;
     }
 
+    // Sepolia Gas:
+    // Gas Limit & Usage by Txn:
+    // 195,715 | 128,292 (65.55%)  
     function requestEthereumPrice() public {
         Chainlink.Request memory req = _buildChainlinkRequest(
             stringToBytes32(jobIdGetInt256Sepolia),

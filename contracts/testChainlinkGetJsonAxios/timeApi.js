@@ -13,6 +13,6 @@ async function getJsonValues() {
     console.log(responseRawJSON)
     console.log(responseDataJSON)
     console.log(responseDataJSON.year)
+    console.log(responseDataJSON.month)
     console.log(responseDataJSON.day)
-    console.log(responseDataJSON.hour)
 }
