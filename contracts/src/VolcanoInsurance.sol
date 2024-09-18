@@ -180,7 +180,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_Year_Eruption.selector);
         request._add("get", urlRebuiltJSON);
         request._add("path", "records.0.fields.year");
-        req._addInt("times", 1);
+        request._addInt("times", 1);
         return _sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_Year_Eruption(bytes32 _requestId, uint oracleYearEruption) public recordChainlinkFulfillment(_requestId)
@@ -215,7 +215,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_YearPresent.selector);
         request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
         request._add("path", "year");
-        req._addInt("times", 1);
+        request._addInt("times", 1);
         return _sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_YearPresent(bytes32 _requestId,uint oracleYearPresent) public recordChainlinkFulfillment(_requestId) {
@@ -226,7 +226,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_MonthPresent.selector);
         request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
         request._add("path", "month");
-        req._addInt("times", 1);
+        request._addInt("times", 1);
         return _sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_MonthPresent(bytes32 _requestId,uint oracleMonthPresent) public recordChainlinkFulfillment(_requestId) {
@@ -237,7 +237,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_DayPresent.selector);
         request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
         request._add("path", "day");
-        req._addInt("times", 1);
+        request._addInt("times", 1);
         return _sendChainlinkRequestTo(oracle, request, fee);
     }
     function fulfill_request_DayPresent(bytes32 _requestId,uint oracleDayPresent) public recordChainlinkFulfillment(_requestId) {
