@@ -21,11 +21,6 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     uint256 public YearEruption;
     uint256 public MonthEruption;
     uint256 public DayEruption;
-    //
-    uint256 public YearPresent;
-    uint256 public MonthPresent;
-    uint256 public DayPresent;
-    //
     uint256 public OpenWEItoInsure;
     uint256 public LockedWEItoPolicies;
     // string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
@@ -40,14 +35,10 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     address private constant oracle = 0x6090149792dAAeE9D1D568c9f9a6F6B46AA29eFD; 
     
     struct policy {
-        int256 LatitudeInsured;
-        int256 LongitudeInsured;
-        //Record as unix timestamp just one variable to save gas then recalculate with library?
-        uint256 YearSigned;
-        uint256 MonthSigned;
-        uint256 DaySigned;
-        //
-        uint256 EthereumAwardTiedToAddress;
+        int256 latitudeInsured;
+        int256 longitudeInsured;
+        uint256 unixTimeSigned;
+        uint256 ethereumAwardTiedToAddress;
     }
     
     mapping(address => policy) public policies;
@@ -58,13 +49,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         // _setPublicChainlinkToken(0x779877A7B0D9E8603169DdbD7836e478b4624789);
         _setPublicChainlinkToken();
     }
-    
-    modifier presentTImeCheck() {
-        // require((DayPresent*MonthPresent*YearPresent) > 0 , "Present time not recorded yet by oracle.");
-        if((DayPresent*MonthPresent*YearPresent) == 0) revert presentTimeNotSet();
-        _;
-    }
-    
+        
     function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
         uint256 requestVolcanoDataLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));
         require(requestVolcanoDataLinkFee >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
@@ -79,18 +64,20 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         request_Day_Eruption();
     }    
     
-    function BuyerCreatePolicy(int inputLat, int inputLong) public payable presentTImeCheck  {
+    function BuyerCreatePolicy(int inputLat, int inputLong) public payable  {
         require(owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
         require(msg.value == (1*10**16), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
-        require(policies[msg.sender].EthereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
+        require(policies[msg.sender].ethereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
         OpenWEItoInsure -= (1*(10**18));
         LockedWEItoPolicies += (1*(10**18));
-        policies[msg.sender] = policy(inputLat, inputLong,YearPresent,MonthPresent,DayPresent,1);
+        policies[msg.sender] = policy(
+            inputLat,
+            inputLong,
+            block.timestamp,
+            1
+        );
         payable(owner).transfer(1*10**16);
-        DayPresent = 0;
-        MonthPresent = 0;
-        YearPresent = 0;
         emit eventLog();
     }
     
@@ -99,11 +86,13 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         require(MonthEruption > 0, "MonthEruption not recorded yet by oracle.");                                                                                                         
         require(YearEruption > 0, "YearEruption not recorded yet by oracle.");        
         require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
-        require(policies[msg.sender].EthereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
-        require(dateCompareForm(policies[msg.sender].YearSigned,policies[msg.sender].MonthSigned,policies[msg.sender].DaySigned) < dateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
-        require(policies[msg.sender].LongitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].LongitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
-        require(policies[msg.sender].LatitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].LatitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
-        policies[msg.sender] = policy(0, 0, 0, 0, 0, 0);
+        require(policies[msg.sender].ethereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
+        uint256 signDateUnixTime = policies[msg.sender].unixTimeSigned;        
+        (uint256 year, uint256 month, uint256 day) = BokkyPooBahsDateTimeLibrary.timestampToDate(signDateUnixTime);
+        require(dateCompareForm(year, month, day) < dateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
+        require(policies[msg.sender].longitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].longitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
+        require(policies[msg.sender].latitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].latitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
+        policies[msg.sender] = policy(0, 0, 0, 0);
         LockedWEItoPolicies -=(1*(10**18));
         payable(msg.sender).transfer(1*(10**18));
         LatitudeEruption = 0;
@@ -120,15 +109,13 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         emit eventLog();
     }
 
-    function OwnerClaimExpiredPolicyETH(address policyHolder) public onlyOwner presentTImeCheck { 
-        require(policies[policyHolder].EthereumAwardTiedToAddress > 0, "Policy does not exist.");
-        require(dateCompareForm(YearPresent,MonthPresent,DayPresent) > (dateCompareForm(policies[policyHolder].YearSigned,policies[policyHolder].MonthSigned,policies[policyHolder].DaySigned) + 512) , "Policy has not yet expired");
+    function OwnerClaimExpiredPolicyETH(address policyHolder) public onlyOwner { 
+        require(policies[policyHolder].ethereumAwardTiedToAddress > 0, "Policy does not exist.");
+        // 31,536,000 seconds in 1 year.
+        require(block.timestamp > policies[msg.sender].unixTimeSigned + 31536000, "Policy not expired. Wait full year for expiration.");
         LockedWEItoPolicies -=(1*(10**18));
-        policies[policyHolder] = policy(0, 0, 0, 0, 0, 0);
+        policies[policyHolder] = policy(0, 0, 0, 0);
         payable(owner).transfer(address(this).balance);
-        DayPresent = 0;
-        MonthPresent = 0;
-        YearPresent = 0;
         emit eventLog();
     }
     
@@ -145,12 +132,12 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         emit eventLog();
     }
 
-        // Test with 86399 and 86400
-    // Remix IDE gas benchmark:
-    // execution cost	7980 gas
-    function testTimestampToDate(uint unixTimestamp) public pure returns (uint year, uint month, uint day) {
-        (year, month, day) = BokkyPooBahsDateTimeLibrary.timestampToDate(unixTimestamp);
-    }
+    // // Test with 86399 and 86400
+    // // Remix IDE gas benchmark:
+    // // execution cost	7980 gas
+    // function testTimestampToDate(uint unixTimestamp) public pure returns (uint year, uint month, uint day) {
+    //     (year, month, day) = BokkyPooBahsDateTimeLibrary.timestampToDate(unixTimestamp);
+    // }
 
     // Chainlink requests.
 
