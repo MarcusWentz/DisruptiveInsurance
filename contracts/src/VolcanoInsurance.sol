@@ -27,13 +27,9 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     string public urlRebuiltJSON = "https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22Iceland%22&refine=date%3A%221727%2F08%2F03%22";
     // immutable and constants
     
-    uint256 public constant fee = 1*10**16;
+    uint256 public constant policyFee = (1 ether)/100;
     address public constant chainlinkTokenAddressSepolia = 0x779877A7B0D9E8603169DdbD7836e478b4624789;
-    bytes32 private constant jobIdGetInt256 ="fcf4140d696d44b687012232948bdd5d"; 
-    bytes32 private constant jobIdGetUint256 ="ca98366cc7314957b8c012c72f05aeeb";  
-    bytes32 private constant jobIdGetBytes32 = "7da2702f37fd48e5b1b9a5715e3509b6";
-    address private constant oracle = 0x6090149792dAAeE9D1D568c9f9a6F6B46AA29eFD; 
-    
+
     struct policy {
         int256 latitudeInsured;
         int256 longitudeInsured;
@@ -43,13 +39,6 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     
     mapping(address => policy) public policies;
 
-    using Chainlink for Chainlink.Request;
-
-    constructor() Owned(msg.sender) {
-        // _setPublicChainlinkToken(0x779877A7B0D9E8603169DdbD7836e478b4624789);
-        _setPublicChainlinkToken();
-    }
-        
     function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
         uint256 requestVolcanoDataLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));
         require(requestVolcanoDataLinkFee >= 5*(10*16), "CONTRACT NEEDS 0.05 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
@@ -59,15 +48,13 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         // Chainlink requests.
         request_Latitude();
         request_Longitude();
-        request_Year_Eruption();
-        request_Month_Eruption();
-        request_Day_Eruption();
+        request_EruptionDate();
     }    
     
     function BuyerCreatePolicy(int inputLat, int inputLong) public payable  {
         require(owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
-        require(msg.value == (1*10**16), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
+        require(msg.value == policyFee , 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
         require(policies[msg.sender].ethereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
         OpenWEItoInsure -= 1 ether;
         LockedWEItoPolicies += 1 ether;
@@ -77,7 +64,8 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
             block.timestamp,
             1
         );
-        payable(owner).transfer(1*10**16);
+        (bool sentOwner, ) = payable(owner).call{value: policyFee}("");
+        if(sentOwner == false) revert EtherNotSent();   
         emit eventLog();
     }
     
@@ -122,7 +110,9 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     function OwnerLiquidtoOpenETHToWithdraw() public onlyOwner {
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); 
         OpenWEItoInsure -= 1 ether;
-        payable(owner).transfer(1 ether);
+        // payable(owner).transfer(1 ether);
+        (bool sentOwner, ) = payable(owner).call{value: 1 ether}("");
+        if(sentOwner == false) revert EtherNotSent();   
         emit eventLog();
     }
     
@@ -141,61 +131,112 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
 
     // Chainlink requests.
 
-    function request_Latitude() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetInt256, address(this), this.fulfill_request_Latitude.selector);
-        request._add("get", urlRebuiltJSON);
-        request._add("path", "records.0.fields.coordinates.0");
-        request._addInt("times", 10**2);
-        return _sendChainlinkRequestTo(oracle, request, fee);
-    }
-    function fulfill_request_Latitude(bytes32 _requestId, int oracleLatitudeEruption) public recordChainlinkFulfillment(_requestId){
-        LatitudeEruption = oracleLatitudeEruption;
-    }
+    error notEnoughLinkForThreeRequests();
+
+    using Chainlink for Chainlink.Request;
+
+    string public eruptionDate;
+    int256 public lat;
+    int256 public long;
+ 
+    // immutable and constants
     
-    function request_Longitude() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetInt256, address(this), this.fulfill_request_Longitude.selector);
-        request._add("get", urlRebuiltJSON);
-        request._add("path", "records.0.fields.coordinates.1");
-        request._addInt("times", 10**2);
-        return _sendChainlinkRequestTo(oracle, request, fee);
+    uint256 public constant ORACLE_PAYMENT = (1 * LINK_DIVISIBILITY) / 10; // 0.1 * 10**18 (0.1 LINK)
+
+    // If this fails on Sepolia, try to debug with a local Sepolia Chainlink node.
+    string  private constant jobIdGetInt256Sepolia ="fcf4140d696d44b687012232948bdd5d"; 
+    string  private constant jobIdGetStringSepolia ="7d80a6386ef543a3abb52817f6707e3b"; 
+    address private constant oracleSepolia = 0x6090149792dAAeE9D1D568c9f9a6F6B46AA29eFD; 
+
+    string public constant jsonUrl = "https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22Iceland%22&refine=date%3A%221727%2F08%2F03%22";
+
+    constructor() Owned(msg.sender) {
+        _setChainlinkToken(0x779877A7B0D9E8603169DdbD7836e478b4624789);
     }
-    function fulfill_request_Longitude(bytes32 _requestId, int oracleLongitudeEruption) public recordChainlinkFulfillment(_requestId)
-    {
-        LongitudeEruption = oracleLongitudeEruption;
+               
+    // Oracle request time from JSON endpoint. 
+    // Sepolia Gas:
+    // Gas Limit & Usage by Txn:
+    // 316,185 | 310,118 (98.08%) 
+    function OracleRequestVolcanoData() public {
+        uint256 requestPresentTimeLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));    
+        if(requestPresentTimeLinkFee < 3*ORACLE_PAYMENT) revert notEnoughLinkForThreeRequests();
+        // Chainlink requests.
+        request_EruptionDate();
+        request_Latitude();
+        request_Longitude();
+    } 
+
+    function request_EruptionDate() public {
+        Chainlink.Request memory req = _buildChainlinkRequest(
+            stringToBytes32(jobIdGetStringSepolia),
+            address(this),
+            this.fulfill_request_EruptionDate.selector
+        );
+        req._add("get",jsonUrl);
+        req._add("path", "results,0,date");
+        _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
-    
-    function request_Year_Eruption() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_Year_Eruption.selector);
-        request._add("get", urlRebuiltJSON);
-        request._add("path", "records.0.fields.year");
-        request._addInt("times", 1);
-        return _sendChainlinkRequestTo(oracle, request, fee);
+
+    function fulfill_request_EruptionDate(
+        bytes32 _requestId,
+        // Calldata is cheaper than memory since it is read only.
+        // string memory _price
+        string calldata _price
+    ) public recordChainlinkFulfillment(_requestId) {
+        eruptionDate = _price;
     }
-    function fulfill_request_Year_Eruption(bytes32 _requestId, uint oracleYearEruption) public recordChainlinkFulfillment(_requestId)
-    {
-        YearEruption = oracleYearEruption;
+  
+    function request_Latitude() public {
+        Chainlink.Request memory req = _buildChainlinkRequest(
+            stringToBytes32(jobIdGetInt256Sepolia),
+            address(this),
+            this.fulfill_request_Latitude.selector
+        );
+        req._add("get",jsonUrl);
+        req._add("path", "results,0,coordinates,lat");
+        req._addInt("times", 1);
+        _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
-    
-    function request_Month_Eruption() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetBytes32, address(this), this.fulfill_request_Month_Eruption.selector);
-        request._add("get", urlRebuiltJSON);
-        request._add("path", "records.0.fields.month");
-        return _sendChainlinkRequestTo(oracle, request, fee);
+
+    function fulfill_request_Latitude(
+        bytes32 _requestId,
+        int256 _price
+    ) public recordChainlinkFulfillment(_requestId) {
+        lat = _price;
     }
-    function fulfill_request_Month_Eruption(bytes32 _requestId, bytes32 oracleMonthEruption) public recordChainlinkFulfillment(_requestId)
-    {
-        MonthEruption = bytes32ToUint(oracleMonthEruption);
+
+    function request_Longitude() public {
+        Chainlink.Request memory req = _buildChainlinkRequest(
+            stringToBytes32(jobIdGetInt256Sepolia),
+            address(this),
+            this.fulfill_request_Longitude.selector
+        );
+        req._add("get", jsonUrl);
+        req._add("path", "results,0,coordinates,lon");
+        req._addInt("times", 1);
+        _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
     }
-    
-    function request_Day_Eruption() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetBytes32, address(this), this.fulfill_request_Day_Eruption.selector);
-        request._add("get", urlRebuiltJSON);
-        request._add("path", "records.0.fields.day");
-        return _sendChainlinkRequestTo(oracle, request, fee);
+ 
+    function fulfill_request_Longitude(
+        bytes32 _requestId,
+        int256 _price
+    ) public recordChainlinkFulfillment(_requestId) {
+        long = _price;
     }
-    function fulfill_request_Day_Eruption(bytes32 _requestId, bytes32 oracleDayEruption) public recordChainlinkFulfillment(_requestId)
-    {
-        DayEruption = bytes32ToUint(oracleDayEruption);
-        emit eventLog();
-    }
- }
+
+    function stringToBytes32(
+        string memory source
+    ) private pure returns (bytes32 result) {
+        bytes memory tempEmptyStringTest = bytes(source);
+        if (tempEmptyStringTest.length == 0) {
+            return 0x0;
+        }
+
+        assembly {
+            // solhint-disable-line no-inline-assembly
+            result := mload(add(source, 32))
+        }
+    }  
+
+}

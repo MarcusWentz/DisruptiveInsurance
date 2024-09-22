@@ -4,7 +4,8 @@ pragma solidity 0.8.26;
 interface IVolcanoInsurance {
     
     // Custom Errors
-    error presentTimeNotSet();
+    error PresentTimeNotSet();
+    error EtherNotSent();
     // Turn require statements into custom errors to save gas.
 
     // Events
