@@ -16,21 +16,23 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         
     // variables
 
-    int public LatitudeEruption; 
-    int public LongitudeEruption;
-    uint public YearEruption;
-    uint public MonthEruption;
-    uint public DayEruption;
-    uint public YearPresent;
-    uint public MonthPresent;
-    uint public DayPresent;
-    uint public OpenWEItoInsure;
-    uint public LockedWEItoPolicies;
+    int256 public LatitudeEruption; 
+    int256 public LongitudeEruption;
+    uint256 public YearEruption;
+    uint256 public MonthEruption;
+    uint256 public DayEruption;
+    //
+    uint256 public YearPresent;
+    uint256 public MonthPresent;
+    uint256 public DayPresent;
+    //
+    uint256 public OpenWEItoInsure;
+    uint256 public LockedWEItoPolicies;
     // string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
     string public urlRebuiltJSON = "https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22Iceland%22&refine=date%3A%221727%2F08%2F03%22";
     // immutable and constants
     
-    uint public constant fee = 1*10**16;
+    uint256 public constant fee = 1*10**16;
     address public constant chainlinkTokenAddressSepolia = 0x779877A7B0D9E8603169DdbD7836e478b4624789;
     bytes32 private constant jobIdGetInt256 ="fcf4140d696d44b687012232948bdd5d"; 
     bytes32 private constant jobIdGetUint256 ="ca98366cc7314957b8c012c72f05aeeb";  
@@ -38,12 +40,14 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     address private constant oracle = 0x6090149792dAAeE9D1D568c9f9a6F6B46AA29eFD; 
     
     struct policy {
-        int LatitudeInsured;
-        int LongitudeInsured;
-        uint YearSigned;
-        uint MonthSigned;
-        uint DaySigned;
-        uint EthereumAwardTiedToAddress;
+        int256 LatitudeInsured;
+        int256 LongitudeInsured;
+        //Record as unix timestamp just one variable to save gas then recalculate with library?
+        uint256 YearSigned;
+        uint256 MonthSigned;
+        uint256 DaySigned;
+        //
+        uint256 EthereumAwardTiedToAddress;
     }
     
     mapping(address => policy) public policies;
