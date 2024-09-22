@@ -9,6 +9,8 @@ import {IVolcanoInsurance} from "./interfaces/IVolcanoInsurance.sol";
 import {ChainlinkClient,Chainlink} from "chainlink/v0.8/ChainlinkClient.sol"; 
 import {Convert} from "./util/Convert.sol";
 import {Owned} from "solmate/auth/Owned.sol";
+// BokkyPooBahsDateTimeLibrary/=lib/BokkyPooBahsDateTimeLibrary/
+import { BokkyPooBahsDateTimeLibrary } from "BokkyPooBahsDateTimeLibrary/contracts/BokkyPooBahsDateTimeLibrary.sol";
 
 contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned {
         
@@ -72,18 +74,6 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         request_Month_Eruption();
         request_Day_Eruption();
     }    
-    
-    // Gas-Efficient Solidity DateTime Library (EVM fully on chain with UNIX time):
-    // https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary?tab=readme-ov-file
-    // Oracle request time from JSON endpoint:
-    function OracleRequestPresentTime() public {
-        uint256 requestPresentTimeLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));
-        require(requestPresentTimeLinkFee >= 3*(10*16), "CONTRACT NEEDS 0.03 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!!");
-        // Chainlink requests.
-        request_YearPresent();
-        request_MonthPresent();
-        request_DayPresent();
-    }
     
     function BuyerCreatePolicy(int inputLat, int inputLong) public payable presentTImeCheck  {
         require(owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
@@ -150,7 +140,14 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         payable(owner).transfer((address(this).balance)-(LockedWEItoPolicies+OpenWEItoInsure));
         emit eventLog();
     }
-    
+
+        // Test with 86399 and 86400
+    // Remix IDE gas benchmark:
+    // execution cost	7980 gas
+    function testTimestampToDate(uint unixTimestamp) public pure returns (uint year, uint month, uint day) {
+        (year, month, day) = BokkyPooBahsDateTimeLibrary.timestampToDate(unixTimestamp);
+    }
+
     // Chainlink requests.
 
     function request_Latitude() private returns (bytes32 requestId) {
@@ -210,39 +207,4 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         DayEruption = bytes32ToUint(oracleDayEruption);
         emit eventLog();
     }
-    
-    function request_YearPresent() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_YearPresent.selector);
-        request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        request._add("path", "year");
-        request._addInt("times", 1);
-        return _sendChainlinkRequestTo(oracle, request, fee);
-    }
-    function fulfill_request_YearPresent(bytes32 _requestId,uint oracleYearPresent) public recordChainlinkFulfillment(_requestId) {
-        YearPresent = oracleYearPresent;
-    }
-    
-    function request_MonthPresent() private returns (bytes32 requestId) {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_MonthPresent.selector);
-        request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        request._add("path", "month");
-        request._addInt("times", 1);
-        return _sendChainlinkRequestTo(oracle, request, fee);
-    }
-    function fulfill_request_MonthPresent(bytes32 _requestId,uint oracleMonthPresent) public recordChainlinkFulfillment(_requestId) {
-        MonthPresent = oracleMonthPresent; 
-    }
-    
-    function request_DayPresent() private returns (bytes32 requestId)  {
-        Chainlink.Request memory request = _buildChainlinkRequest(jobIdGetUint256, address(this), this.fulfill_request_DayPresent.selector);
-        request._add("get", "https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Amsterdam");
-        request._add("path", "day");
-        request._addInt("times", 1);
-        return _sendChainlinkRequestTo(oracle, request, fee);
-    }
-    function fulfill_request_DayPresent(bytes32 _requestId,uint oracleDayPresent) public recordChainlinkFulfillment(_requestId) {
-        DayPresent = oracleDayPresent; 
-        emit eventLog();
-    }
-    
  }
