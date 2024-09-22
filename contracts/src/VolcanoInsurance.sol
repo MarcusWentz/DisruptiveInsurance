@@ -126,11 +126,11 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         emit eventLog();
     }
     
-    function OwnerSelfDestructClaimETH() public onlyOwner {
-        require(address(this).balance > (LockedWEItoPolicies+OpenWEItoInsure), 'No self destruct detected (address(this).balance == (AccountsInsured+OpenETHtoEnsure))'); 
-        payable(owner).transfer((address(this).balance)-(LockedWEItoPolicies+OpenWEItoInsure));
-        emit eventLog();
-    }
+    // function OwnerSelfDestructClaimETH() public onlyOwner {
+    //     require(address(this).balance > (LockedWEItoPolicies+OpenWEItoInsure), 'No self destruct detected (address(this).balance == (AccountsInsured+OpenETHtoEnsure))'); 
+    //     payable(owner).transfer((address(this).balance)-(LockedWEItoPolicies+OpenWEItoInsure));
+    //     emit eventLog();
+    // }
 
     // // Test with 86399 and 86400
     // // Remix IDE gas benchmark:
