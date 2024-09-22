@@ -69,8 +69,8 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
         require(msg.value == (1*10**16), 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
         require(policies[msg.sender].ethereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
-        OpenWEItoInsure -= (1*(10**18));
-        LockedWEItoPolicies += (1*(10**18));
+        OpenWEItoInsure -= 1 ether;
+        LockedWEItoPolicies += 1 ether;
         policies[msg.sender] = policy(
             inputLat,
             inputLong,
@@ -93,8 +93,8 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         require(policies[msg.sender].longitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].longitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
         require(policies[msg.sender].latitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].latitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
         policies[msg.sender] = policy(0, 0, 0, 0);
-        LockedWEItoPolicies -=(1*(10**18));
-        payable(msg.sender).transfer(1*(10**18));
+        LockedWEItoPolicies -= 1 ether;
+        payable(msg.sender).transfer(1 ether);
         LatitudeEruption = 0;
         LongitudeEruption = 0;
         YearEruption = 0;
@@ -104,8 +104,8 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     }
     
     function OwnerSendOneEthToContractFromInsuranceBusiness() public payable onlyOwner {
-        require(msg.value == 1*(10**18), "Value sent must equal 1 ETH");
-        OpenWEItoInsure += 1*(10**18);
+        require(msg.value == 1 ether, "Value sent must equal 1 ETH");
+        OpenWEItoInsure += 1 ether;
         emit eventLog();
     }
 
@@ -113,7 +113,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         require(policies[policyHolder].ethereumAwardTiedToAddress > 0, "Policy does not exist.");
         // 31,536,000 seconds in 1 year.
         require(block.timestamp > policies[msg.sender].unixTimeSigned + 31536000, "Policy not expired. Wait full year for expiration.");
-        LockedWEItoPolicies -=(1*(10**18));
+        LockedWEItoPolicies -= 1 ether;
         policies[policyHolder] = policy(0, 0, 0, 0);
         payable(owner).transfer(address(this).balance);
         emit eventLog();
@@ -121,8 +121,8 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     
     function OwnerLiquidtoOpenETHToWithdraw() public onlyOwner {
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); 
-        OpenWEItoInsure -= (1*(10**18));
-        payable(owner).transfer(1*(10**18));
+        OpenWEItoInsure -= 1 ether;
+        payable(owner).transfer(1 ether);
         emit eventLog();
     }
     
