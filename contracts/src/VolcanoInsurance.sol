@@ -39,7 +39,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     
     mapping(address => policy) public policies;
 
-    function OracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
+    function oracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
         uint256 requestVolcanoDataLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));
         require(requestVolcanoDataLinkFee >= 3*(10*16), "CONTRACT NEEDS 0.03 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
         require(bytes(filterMonth).length == 2 && bytes(filterDay).length == 2, "JSON must have MonthPresent and DayPresent as 2 characters at all times!");
@@ -51,7 +51,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         request_EruptionDate();
     }    
     
-    function BuyerCreatePolicy(int inputLat, int inputLong) public payable  {
+    function buyerCreatePolicy(int inputLat, int inputLong) public payable  {
         require(owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
         require(msg.value == policyFee , 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
@@ -69,7 +69,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         emit eventLog();
     }
     
-    function BuyerClaimReward() public {
+    function buyerClaimReward() public {
         require(DayEruption > 0, "DayEruption not recorded yet by oracle.");
         require(MonthEruption > 0, "MonthEruption not recorded yet by oracle.");                                                                                                         
         require(YearEruption > 0, "YearEruption not recorded yet by oracle.");        
@@ -91,13 +91,13 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         emit eventLog();
     }
     
-    function OwnerSendOneEthToContractFromInsuranceBusiness() public payable onlyOwner {
+    function ownerSendOneEthToContractFromInsuranceBusiness() public payable onlyOwner {
         require(msg.value == 1 ether, "Value sent must equal 1 ETH");
         OpenWEItoInsure += 1 ether;
         emit eventLog();
     }
 
-    function OwnerClaimExpiredPolicyETH(address policyHolder) public onlyOwner { 
+    function ownerClaimExpiredPolicyETH(address policyHolder) public onlyOwner { 
         require(policies[policyHolder].ethereumAwardTiedToAddress > 0, "Policy does not exist.");
         // 31,536,000 seconds in 1 year.
         require(block.timestamp > policies[msg.sender].unixTimeSigned + 31536000, "Policy not expired. Wait full year for expiration.");
@@ -107,7 +107,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         emit eventLog();
     }
     
-    function OwnerLiquidtoOpenETHToWithdraw() public onlyOwner {
+    function ownerLiquidtoOpenETHToWithdraw() public onlyOwner {
         require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); 
         OpenWEItoInsure -= 1 ether;
         // payable(owner).transfer(1 ether);
@@ -158,7 +158,7 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     // Sepolia Gas:
     // Gas Limit & Usage by Txn:
     // 316,185 | 310,118 (98.08%) 
-    function OracleRequestVolcanoData() public {
+    function oracleRequestVolcanoData() public {
         uint256 requestPresentTimeLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));    
         if(requestPresentTimeLinkFee < 3*ORACLE_PAYMENT) revert notEnoughLinkForThreeRequests();
         // Chainlink requests.
