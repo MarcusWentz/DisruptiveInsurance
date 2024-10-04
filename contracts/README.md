@@ -70,3 +70,9 @@ forge create src/gasTests/volcanoChainlinkFunctionsLat.sol:volcanoChainlinkFunct
 --rpc-url $baseSepoliaHTTPS \
 --etherscan-api-key $basescanApiKey \
 --verify 
+
+forge create src/VolcanoInsurance.sol:VolcanoInsurance \
+--private-key $devTestnetPrivateKey \
+--rpc-url $baseSepoliaHTTPS \
+--etherscan-api-key $basescanApiKey \
+--verify 
