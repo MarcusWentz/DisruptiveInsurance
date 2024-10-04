@@ -4,13 +4,21 @@ const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.open
 if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');}
 const { data } = apiResponse;
 console.log('API response data:');
-console.log(data.results[0].date);
-console.log(data.results[0].coordinates.lat);
-console.log(data.results[0].coordinates.lon);
-// const electricityRateRawIntScaled = Math.round(electricityRateRaw*100);
-// console.log(electricityRateRawIntScaled);
-return Functions.encodeUint256(1);
-// return Functions.encodeUint256(electricityRateRawIntScaled);
+
+// const dateNow = data.results[0].date;
+// console.log(dateNow);
+
+// const timeUnix = Math.floor(new Date(dateNow).getTime() / 1000);
+// console.log(timeUnix);
+
+const lonRaw = data.results[0].coordinates.lon;
+console.log(lonRaw);
+const lonScaled = lonRaw*100;
+console.log(lonScaled);
+
+// console.log(data.results[0].coordinates.lat);
+
+return Functions.encodeInt256(lonScaled);
 
 // Format the Function script with the following 
 // tool to add quotes for each line for Solidity:
