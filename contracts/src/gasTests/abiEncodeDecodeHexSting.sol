@@ -6,25 +6,11 @@ pragma solidity 0.8.26;
 
 contract abiEncodeDecodeHexSting {
 
-    function encode(
-        uint256 unixTime,
-        int256 lat,
-        int256 lon
-    ) external pure returns (bytes memory) {
+    function encode(uint256 unixTime, int256 lat, int256 lon) external pure returns (bytes memory) {
         return abi.encode(unixTime, lat, lon);
     }
 
-    function decode(bytes calldata data)
-        external
-        pure
-        returns (
-            uint256 unixTime,
-            int256 lat,
-            int256 lon
-        )
-    {
-        // (uint x, address addr, uint[] memory arr, MyStruct myStruct) = ...
-        (unixTime, lat, lon) =
-            abi.decode(data, (uint256, int256, int256));
+    function decode(bytes calldata data) external pure returns ( uint256 unixTime, int256 lat, int256 lon) {
+        (unixTime, lat, lon) = abi.decode(data, (uint256, int256, int256));
     }
 }
