@@ -18,7 +18,7 @@ console.log(lonScaled);
 console.log("Ethers.js version: ", ethers.version); 
 const abiCoder = new AbiCoder();
 const encodedAbi = abiCoder.encode(["uint256", "int256", "int256"],[ 327456000 , 4620 , -12218 ]);
-console.log(encodeAbiTest);
+console.log(encodedAbi);
 return Functions.encodeString(encodedAbi);
 // Value should be:
 // const encodedAbi = "0x0000000000000000000000000000000000000000000000000000000013849500000000000000000000000000000000000000000000000000000000000000120cffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd046"
