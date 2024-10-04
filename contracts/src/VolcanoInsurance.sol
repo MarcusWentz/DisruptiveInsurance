@@ -144,9 +144,9 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     using FunctionsRequest for FunctionsRequest.Request;
 
     // State variables to store the last request ID, response, and error
-    bytes32 public s_lastRequestId;
-    bytes public s_lastResponse;
-    bytes public s_lastError;
+    bytes32 public s_lastRequestIdUnixTime;
+    bytes public s_lastResponseUnixTime;
+    bytes public s_lastErrorUnixTime;
 
     // State variable to store the returned character information
     // string public wtiPriceOracle; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
@@ -191,7 +191,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
      * @param args The arguments to pass to the HTTP request
      * @return requestId The ID of the request
      */
-    function sendRequest(
+    function sendRequestUnixTime(
         uint64 subscriptionId,
         string[] calldata args
     ) external returns (bytes32 requestId) {
@@ -200,14 +200,14 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         if (args.length > 0) req.setArgs(args); // Set the arguments for the request
 
         // Send the request and store the request ID
-        s_lastRequestId = _sendRequest(
+        s_lastRequestIdUnixTime = _sendRequest(
             req.encodeCBOR(),
             subscriptionId,
             gasLimit,
             donIDBaseSepolia
         );
 
-        return s_lastRequestId;
+        return s_lastRequestIdUnixTime;
     }
 
     /**
@@ -221,16 +221,16 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         bytes memory response,
         bytes memory err
     ) internal override {
-        if (s_lastRequestId != requestId) {
+        if (s_lastRequestIdUnixTime != requestId) {
             revert UnexpectedRequestID(requestId); // Check if request IDs match
         }
         // Update the contract's state variables with the response and any errors
-        s_lastResponse = response;
+        s_lastResponseUnixTime = response;
         unixTime = abi.decode(response, (uint256));
-        s_lastError = err;
+        s_lastErrorUnixTime = err;
 
         // Emit an event to log the response
-        emit ResponseUint256(requestId, unixTime, s_lastResponse, s_lastError);
+        emit ResponseUint256(requestId, unixTime, s_lastResponseUnixTime, s_lastErrorUnixTime);
     }
 
 }
