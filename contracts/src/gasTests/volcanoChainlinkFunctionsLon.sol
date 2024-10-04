@@ -24,19 +24,18 @@ error UnexpectedRequestID(bytes32 requestId);
  * @dev This contract uses hardcoded values and should not be used in production.
  */
 contract volcanoChainlinkFunctionsLon is FunctionsClient {
-    using FunctionsRequest for FunctionsRequest.Request;
-
-    event Response(
-        bytes32 indexed requestId,
-        int256 value,
-        bytes response,
-        bytes err
-    );
 
  // Chainlink Functions logic
 
  using FunctionsRequest for FunctionsRequest.Request;
 
+ event Response(
+    bytes32 indexed requestId,
+    int256 value,
+    bytes response,
+    bytes err
+  );
+    
  // State variables to store the last request ID, response, and error
  bytes32 public s_lastRequestId;
  bytes public s_lastResponse;

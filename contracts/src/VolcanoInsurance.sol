@@ -5,14 +5,20 @@ import {IERC20} from "./interfaces/IERC20.sol";
 import {IVolcanoInsurance} from "./interfaces/IVolcanoInsurance.sol";
 // // For pricefeeds such as ETH/USD.
 // import {AggregatorV3Interface} from "chainlink/v0.8/interfaces/AggregatorV3Interface.sol"; 
-// For Any API requests.
-import {ChainlinkClient,Chainlink} from "chainlink/v0.8/ChainlinkClient.sol"; 
+// import {FunctionsClient} from "@chainlink/contracts@1.2.0/src/v0.8/functions/v1_0_0/FunctionsClient.sol";
+import {FunctionsClient} from "chainlink/v0.8/functions/v1_0_0/FunctionsClient.sol"; 
+
+// import {FunctionsRequest} from "@chainlink/contracts@1.2.0/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
+import {FunctionsRequest} from "chainlink/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol"; 
+
+
+
 import {Convert} from "./util/Convert.sol";
 import {Owned} from "solmate/auth/Owned.sol";
 // BokkyPooBahsDateTimeLibrary/=lib/BokkyPooBahsDateTimeLibrary/
 import { BokkyPooBahsDateTimeLibrary } from "BokkyPooBahsDateTimeLibrary/contracts/BokkyPooBahsDateTimeLibrary.sol";
 
-contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned {
+contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owned {
         
     // variables
 
@@ -45,10 +51,10 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
         require(bytes(filterMonth).length == 2 && bytes(filterDay).length == 2, "JSON must have MonthPresent and DayPresent as 2 characters at all times!");
         urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",filterYear,
         "&refine.month=",filterMonth,"&refine.day=",filterDay,"&refine.country=",filterCountry) );
-        // Chainlink requests.
-        request_Latitude();
-        request_Longitude();
-        request_EruptionDate();
+        // // Chainlink requests.
+        // request_Latitude();
+        // request_Longitude();
+        // request_EruptionDate();
     }    
     
     function buyerCreatePolicy(int inputLat, int inputLong) public payable  {
@@ -132,111 +138,99 @@ contract VolcanoInsurance is ChainlinkClient, Convert, IVolcanoInsurance , Owned
     // Chainlink requests.
 
     error notEnoughLinkForThreeRequests();
-
-    using Chainlink for Chainlink.Request;
-
-    string public eruptionDate;
-    int256 public lat;
-    int256 public long;
- 
-    // immutable and constants
-    
-    uint256 public constant ORACLE_PAYMENT = (1 * LINK_DIVISIBILITY) / 10; // 0.1 * 10**18 (0.1 LINK)
-
-    // If this fails on Sepolia, try to debug with a local Sepolia Chainlink node.
-    string  private constant jobIdGetInt256Sepolia ="fcf4140d696d44b687012232948bdd5d"; 
-    string  private constant jobIdGetStringSepolia ="7d80a6386ef543a3abb52817f6707e3b"; 
-    address private constant oracleSepolia = 0x6090149792dAAeE9D1D568c9f9a6F6B46AA29eFD; 
-
-    string public constant jsonUrl = "https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22Iceland%22&refine=date%3A%221727%2F08%2F03%22";
-
-    constructor() Owned(msg.sender) {
-        _setChainlinkToken(0x779877A7B0D9E8603169DdbD7836e478b4624789);
-    }
                
-    // Oracle request time from JSON endpoint. 
-    // Sepolia Gas:
-    // Gas Limit & Usage by Txn:
-    // 316,185 | 310,118 (98.08%) 
-    function oracleRequestVolcanoData() public {
-        uint256 requestPresentTimeLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));    
-        if(requestPresentTimeLinkFee < 3*ORACLE_PAYMENT) revert notEnoughLinkForThreeRequests();
-        // Chainlink requests.
-        request_EruptionDate();
-        request_Latitude();
-        request_Longitude();
-    } 
+    // Chainlink Functions Logic
 
-    function request_EruptionDate() public {
-        Chainlink.Request memory req = _buildChainlinkRequest(
-            stringToBytes32(jobIdGetStringSepolia),
-            address(this),
-            this.fulfill_request_EruptionDate.selector
-        );
-        req._add("get",jsonUrl);
-        req._add("path", "results,0,date");
-        _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
-    }
+    using FunctionsRequest for FunctionsRequest.Request;
 
-    function fulfill_request_EruptionDate(
-        bytes32 _requestId,
-        // Calldata is cheaper than memory since it is read only.
-        // string memory _price
-        string calldata _price
-    ) public recordChainlinkFulfillment(_requestId) {
-        eruptionDate = _price;
-    }
-  
-    function request_Latitude() public {
-        Chainlink.Request memory req = _buildChainlinkRequest(
-            stringToBytes32(jobIdGetInt256Sepolia),
-            address(this),
-            this.fulfill_request_Latitude.selector
-        );
-        req._add("get",jsonUrl);
-        req._add("path", "results,0,coordinates,lat");
-        req._addInt("times", 1);
-        _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
-    }
+    // State variables to store the last request ID, response, and error
+    bytes32 public s_lastRequestId;
+    bytes public s_lastResponse;
+    bytes public s_lastError;
 
-    function fulfill_request_Latitude(
-        bytes32 _requestId,
-        int256 _price
-    ) public recordChainlinkFulfillment(_requestId) {
-        lat = _price;
-    }
+    // State variable to store the returned character information
+    // string public wtiPriceOracle; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
+    uint256 public unixTime; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
 
-    function request_Longitude() public {
-        Chainlink.Request memory req = _buildChainlinkRequest(
-            stringToBytes32(jobIdGetInt256Sepolia),
-            address(this),
-            this.fulfill_request_Longitude.selector
-        );
-        req._add("get", jsonUrl);
-        req._add("path", "results,0,coordinates,lon");
-        req._addInt("times", 1);
-        _sendChainlinkRequestTo(oracleSepolia, req, ORACLE_PAYMENT);
-    }
+
+    // // Custom error type
+    // error UnexpectedRequestID(bytes32 requestId);
+
+    // // Event to log responses
+    // event Response(
+    //     bytes32 indexed requestId,
+    //     uint256 value,
+    //     bytes response,
+    //     bytes err
+    // );
+
+    // Router address. Check to get the router address for your supported network 
+    // https://docs.chain.link/chainlink-functions/supported-networks#base-sepolia-testnet
+    address constant routerBaseSepolia = 0xf9B8fc078197181C841c296C876945aaa425B278;
+
+    // donID. Check to get the donID for your supported network 
+    // https://docs.chain.link/chainlink-functions/supported-networks#base-sepolia-testnet
+    bytes32 constant donIDBaseSepolia = 0x66756e2d626173652d7365706f6c69612d310000000000000000000000000000;
+    
+    //Callback gas limit
+    uint32 constant gasLimit = 300000;
+
+    // JavaScript source code
+    // Fetch character name from the Star Wars API.
+    // Documentation: https://swapi.info/people
+
+    // return Functions.encodeUint256()
  
-    function fulfill_request_Longitude(
-        bytes32 _requestId,
-        int256 _price
-    ) public recordChainlinkFulfillment(_requestId) {
-        long = _price;
+    string constant javascriptSourceCodeUnixTime = "const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%22`}); if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');} const { data } = apiResponse; console.log('API response data:'); const dateNow = data.results[0].date; console.log(dateNow); const timeUnix = Math.floor(new Date(dateNow).getTime() / 1000); console.log(timeUnix); return Functions.encodeUint256(timeUnix);";
+
+    constructor() FunctionsClient(routerBaseSepolia) Owned(msg.sender) {}
+
+    /**
+     * @notice Sends an HTTP request for character information
+     * @param subscriptionId The ID for the Chainlink subscription
+     * @param args The arguments to pass to the HTTP request
+     * @return requestId The ID of the request
+     */
+    function sendRequest(
+        uint64 subscriptionId,
+        string[] calldata args
+    ) external returns (bytes32 requestId) {
+        FunctionsRequest.Request memory req;
+        req.initializeRequestForInlineJavaScript(javascriptSourceCodeUnixTime); // Initialize the request with JS code
+        if (args.length > 0) req.setArgs(args); // Set the arguments for the request
+
+        // Send the request and store the request ID
+        s_lastRequestId = _sendRequest(
+            req.encodeCBOR(),
+            subscriptionId,
+            gasLimit,
+            donIDBaseSepolia
+        );
+
+        return s_lastRequestId;
     }
 
-    function stringToBytes32(
-        string memory source
-    ) private pure returns (bytes32 result) {
-        bytes memory tempEmptyStringTest = bytes(source);
-        if (tempEmptyStringTest.length == 0) {
-            return 0x0;
+    /**
+     * @notice Callback function for fulfilling a request
+     * @param requestId The ID of the request to fulfill
+     * @param response The HTTP response data
+     * @param err Any errors from the Functions request
+     */
+    function fulfillRequest(
+        bytes32 requestId,
+        bytes memory response,
+        bytes memory err
+    ) internal override {
+        if (s_lastRequestId != requestId) {
+            revert UnexpectedRequestID(requestId); // Check if request IDs match
         }
+        // Update the contract's state variables with the response and any errors
+        s_lastResponse = response;
+        unixTime = abi.decode(response, (uint256));
+        s_lastError = err;
 
-        assembly {
-            // solhint-disable-line no-inline-assembly
-            result := mload(add(source, 32))
-        }
-    }  
+        // Emit an event to log the response
+        emit ResponseUint256(requestId, unixTime, s_lastResponse, s_lastError);
+    }
 
 }
