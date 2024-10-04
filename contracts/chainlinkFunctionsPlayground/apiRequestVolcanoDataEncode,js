@@ -21,7 +21,7 @@ console.log(lonScaled);
 
 console.log("Ethers.js version: ", ethers.version);  // Should print the version of ethers
 const abiCoder = new AbiCoder();
-const encodeAbiTest = abiCoder.encode(
+const encodedAbi = abiCoder.encode(
     ["uint256", "int256", "int256"], 
     [ 327456000 , 4620 , -12218 ]
 );
