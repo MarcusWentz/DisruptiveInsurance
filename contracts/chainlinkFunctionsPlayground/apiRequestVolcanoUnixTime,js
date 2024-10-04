@@ -4,18 +4,11 @@ const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.open
 if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');}
 const { data } = apiResponse;
 console.log('API response data:');
-
 const dateNow = data.results[0].date;
 console.log(dateNow);
-
 const timeUnix = Math.floor(new Date(dateNow).getTime() / 1000);
 console.log(timeUnix);
-
-// console.log(data.results[0].coordinates.lat);
-// console.log(data.results[0].coordinates.lon);
-
 return Functions.encodeUint256(timeUnix);
-
 // Format the Function script with the following 
 // tool to add quotes for each line for Solidity:
 // https://onlinetexttools.com/add-quotes-to-lines
