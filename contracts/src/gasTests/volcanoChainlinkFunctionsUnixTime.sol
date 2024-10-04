@@ -27,7 +27,7 @@ error UnexpectedRequestID(bytes32 requestId);
  * @notice This is an example contract to show how to make HTTP requests using Chainlink
  * @dev This contract uses hardcoded values and should not be used in production.
  */
-contract volcanoChainlinkFunctions is FunctionsClient {
+contract volcanoChainlinkFunctionsUnixTime is FunctionsClient {
     using FunctionsRequest for FunctionsRequest.Request;
 
     event Response(
