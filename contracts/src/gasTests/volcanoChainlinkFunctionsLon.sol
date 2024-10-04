@@ -93,7 +93,7 @@ contract volcanoChainlinkFunctionsUnixTime is FunctionsClient {
      string[] calldata args
  ) external returns (bytes32 requestId) {
      FunctionsRequest.Request memory req;
-     req.initializeRequestForInlineJavaScript(javascriptSourceCode); // Initialize the request with JS code
+     req.initializeRequestForInlineJavaScript(javascriptSourceCodeLon); // Initialize the request with JS code
      if (args.length > 0) req.setArgs(args); // Set the arguments for the request
 
      // Send the request and store the request ID
