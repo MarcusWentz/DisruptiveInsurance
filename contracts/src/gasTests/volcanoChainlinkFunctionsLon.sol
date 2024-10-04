@@ -32,7 +32,7 @@ contract volcanoChainlinkFunctionsUnixTime is FunctionsClient {
 
     event Response(
         bytes32 indexed requestId,
-        uint256 value,
+        int256 value,
         bytes response,
         bytes err
     );
@@ -48,7 +48,7 @@ contract volcanoChainlinkFunctionsUnixTime is FunctionsClient {
 
  // State variable to store the returned character information
  // string public wtiPriceOracle; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
- uint256 public wtiUsdPenniesPriceOracle; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
+ int256 public lon; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
 
 
  // // Custom error type
@@ -124,11 +124,11 @@ contract volcanoChainlinkFunctionsUnixTime is FunctionsClient {
      }
      // Update the contract's state variables with the response and any errors
      s_lastResponse = response;
-     wtiUsdPenniesPriceOracle = abi.decode(response, (uint256));
+     lon = abi.decode(response, (int256));
      s_lastError = err;
 
      // Emit an event to log the response
-     emit Response(requestId, wtiUsdPenniesPriceOracle, s_lastResponse, s_lastError);
+     emit Response(requestId, lon, s_lastResponse, s_lastError);
  }
 
 }

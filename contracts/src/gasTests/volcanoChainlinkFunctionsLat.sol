@@ -32,7 +32,7 @@ contract volcanoChainlinkFunctionsUnixTime is FunctionsClient {
 
     event Response(
         bytes32 indexed requestId,
-        uint256 value,
+        int256 value,
         bytes response,
         bytes err
     );
@@ -48,7 +48,7 @@ contract volcanoChainlinkFunctionsUnixTime is FunctionsClient {
 
  // State variable to store the returned character information
  // string public wtiPriceOracle; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
- uint256 public wtiUsdPenniesPriceOracle; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
+ int256 public lat; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
 
 
  // // Custom error type
