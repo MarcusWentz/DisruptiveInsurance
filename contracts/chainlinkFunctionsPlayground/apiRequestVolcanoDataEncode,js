@@ -3,6 +3,7 @@ const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.open
 if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');}
 const { data } = apiResponse;
 console.log('API response data:');
+
 const dateNow = data.results[0].date;
 console.log(dateNow);
 const timeUnix = Math.floor(new Date(dateNow).getTime() / 1000);
@@ -19,16 +20,13 @@ const lonScaled = lonRaw*100;
 console.log(lonScaled);
 
 console.log("Ethers.js version: ", ethers.version);  // Should print the version of ethers
-
-// Define the ABI of the contract
 const abiCoder = new AbiCoder();
-
 const encodeAbiTest = abiCoder.encode(
     ["uint256", "int256", "int256"], 
     [ 327456000 , 4620 , -12218 ]
 );
 console.log(encodeAbiTest);
-
-const encodedAbi = "0x0000000000000000000000000000000000000000000000000000000013849500000000000000000000000000000000000000000000000000000000000000120cffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd046"
-
 return Functions.encodeString(encodedAbi);
+
+// Value should be:
+// const encodedAbi = "0x0000000000000000000000000000000000000000000000000000000013849500000000000000000000000000000000000000000000000000000000000000120cffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffd046"
