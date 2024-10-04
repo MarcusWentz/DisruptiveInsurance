@@ -1,4 +1,4 @@
-const { ethers, AbiCoder } = await import('npm:ethers');
+const { ethers } = await import("npm:ethers@6.10.0")
 const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%22`});
 if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');}
 const { data } = apiResponse;
@@ -15,10 +15,13 @@ const lonRaw = data.results[0].coordinates.lon;
 console.log(lonRaw);
 const lonScaled = lonRaw*100;
 console.log(lonScaled);
+
 console.log('Ethers.js version: ', ethers.version); 
-const abiCoder = new AbiCoder();
+const abiCoder = ethers.AbiCoder.defaultAbiCoder()
 const encodedAbi = abiCoder.encode(['uint256', 'int256', 'int256'],[ 327456000 , 4620 , -12218 ]);
 console.log(encodedAbi);
+// const bytesReturn = ethers.toUtf8Bytes(encodedAbi);
+// console.log(bytesReturn);
 return Functions.encodeString(encodedAbi);
 
 // Encoded value should be:

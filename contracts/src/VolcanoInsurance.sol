@@ -229,8 +229,6 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         s_lastResponseUnixTime = response;
         s_lastErrorUnixTime = err;
 
-        unixTime = abi.decode(response, (uint256));
-
         if (response.length > 0) {
             (uint256 unixTimeOracle, int256 latOracle,int256 lonOracle) = abi.decode(response, (uint256, int256, int256));
 
