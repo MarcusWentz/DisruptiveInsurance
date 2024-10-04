@@ -151,8 +151,11 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     // State variable to store the returned character information
     // string public wtiPriceOracle; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
     uint256 public unixTime; 
-    int256 public lat;
-    int256 public lon;
+    // lat and lon range signed is -180 to 180.
+    // int16 is within this range:
+    // https://mavlevin.com/2023/02/22/Size-Matters-Solidity-Integer-Range-Cheatsheet-From-uint8-To-uint256.html
+    int16 public lat;
+    int16 public lon;
 
     // // Custom error type
     // error UnexpectedRequestID(bytes32 requestId);
@@ -182,8 +185,8 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
 
     // return Functions.encodeUint256()
  
-    string constant javascriptSourceCode = "const { ethers, AbiCoder } = await import('npm:ethers'); const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%22`}); if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');} const { data } = apiResponse; console.log('API response data:'); const dateNow = data.results[0].date; console.log(dateNow); const timeUnix = Math.floor(new Date(dateNow).getTime() / 1000); console.log(timeUnix); const latRaw = data.results[0].coordinates.lat; console.log(latRaw); const latScaled = latRaw*100; console.log(latScaled); const lonRaw = data.results[0].coordinates.lon; console.log(lonRaw); const lonScaled = lonRaw*100; console.log(lonScaled); console.log('Ethers.js version: ', ethers.version); const abiCoder = new AbiCoder(); const encodedAbi = abiCoder.encode(['uint256', 'int256', 'int256'],[ 327456000 , 4620 , -12218 ]); console.log(encodedAbi); return Functions.encodeString(encodedAbi);";
-
+    string constant javascriptSourceCode = "";
+    
     constructor() FunctionsClient(routerBaseSepolia) Owned(msg.sender) {}
 
     /**
@@ -230,7 +233,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         s_lastErrorUnixTime = err;
 
         if (response.length > 0) {
-            (uint256 unixTimeOracle, int256 latOracle,int256 lonOracle) = abi.decode(response, (uint256, int256, int256));
+            (uint256 unixTimeOracle, int16 latOracle, int16 lonOracle) = abi.decode(response, (uint256, int16, int16));
 
             unixTime = unixTimeOracle;
             lat = latOracle;
