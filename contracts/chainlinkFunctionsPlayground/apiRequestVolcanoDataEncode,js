@@ -1,4 +1,4 @@
-const { ethers, AbiCoder} = await import("npm:ethers")
+const { ethers, AbiCoder } = await import("npm:ethers")
 const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%22`});
 if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');}
 const { data } = apiResponse;

@@ -150,8 +150,9 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
 
     // State variable to store the returned character information
     // string public wtiPriceOracle; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
-    uint256 public unixTime; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
-
+    uint256 public unixTime; 
+    int256 public lat;
+    int256 public lon;
 
     // // Custom error type
     // error UnexpectedRequestID(bytes32 requestId);
@@ -181,7 +182,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
 
     // return Functions.encodeUint256()
  
-    string constant javascriptSourceCodeUnixTime = "const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%22`}); if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');} const { data } = apiResponse; console.log('API response data:'); const dateNow = data.results[0].date; console.log(dateNow); const timeUnix = Math.floor(new Date(dateNow).getTime() / 1000); console.log(timeUnix); return Functions.encodeUint256(timeUnix);";
+    string constant javascriptSourceCodeUnixTime = "";
 
     constructor() FunctionsClient(routerBaseSepolia) Owned(msg.sender) {}
 
@@ -191,7 +192,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
      * @param args The arguments to pass to the HTTP request
      * @return requestId The ID of the request
      */
-    function sendRequestUnixTime(
+    function sendRequest(
         uint64 subscriptionId,
         string[] calldata args
     ) external returns (bytes32 requestId) {
@@ -226,11 +227,27 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         }
         // Update the contract's state variables with the response and any errors
         s_lastResponseUnixTime = response;
-        unixTime = abi.decode(response, (uint256));
         s_lastErrorUnixTime = err;
 
+        unixTime = abi.decode(response, (uint256));
+
+        if (response.length > 0) {
+            (uint256 unixTimeOracle, int256 latOracle,int256 lonOracle) = abi.decode(response, (uint256, int256, int256));
+
+            unixTime = unixTimeOracle;
+            lat = latOracle;
+            lon = lonOracle;
+
+            emit DecodedResponse(
+                requestId,
+                unixTimeOracle,
+                latOracle,
+                lonOracle
+            );
+        }
+    
         // Emit an event to log the response
-        emit ResponseUint256(requestId, unixTime, s_lastResponseUnixTime, s_lastErrorUnixTime);
+        emit Response(requestId, response, err);
     }
 
 }

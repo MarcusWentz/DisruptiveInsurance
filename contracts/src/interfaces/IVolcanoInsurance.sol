@@ -11,17 +11,11 @@ interface IVolcanoInsurance {
 
     // Events
     event eventLog();
-    event ResponseUint256(
+    event DecodedResponse(
         bytes32 indexed requestId,
-        uint256 value,
-        bytes response,
-        bytes err
+        uint256 unixTimeOracle,
+        int256 latOracle,
+        int256 lonOracle
     );
-    event ResponseInt256(
-        bytes32 indexed requestId,
-        int256 value,
-        bytes response,
-        bytes err
-    );
-
+    event Response(bytes32 indexed requestId, bytes response, bytes err);
 }
