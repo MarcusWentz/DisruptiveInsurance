@@ -182,7 +182,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
 
     // return Functions.encodeUint256()
  
-    string constant javascriptSourceCodeUnixTime = "";
+    string constant javascriptSourceCode = "const { ethers, AbiCoder } = await import('npm:ethers'); const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%22`}); if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');} const { data } = apiResponse; console.log('API response data:'); const dateNow = data.results[0].date; console.log(dateNow); const timeUnix = Math.floor(new Date(dateNow).getTime() / 1000); console.log(timeUnix); const latRaw = data.results[0].coordinates.lat; console.log(latRaw); const latScaled = latRaw*100; console.log(latScaled); const lonRaw = data.results[0].coordinates.lon; console.log(lonRaw); const lonScaled = lonRaw*100; console.log(lonScaled); console.log('Ethers.js version: ', ethers.version); const abiCoder = new AbiCoder(); const encodedAbi = abiCoder.encode(['uint256', 'int256', 'int256'],[ 327456000 , 4620 , -12218 ]); console.log(encodedAbi); return Functions.encodeString(encodedAbi);";
 
     constructor() FunctionsClient(routerBaseSepolia) Owned(msg.sender) {}
 
@@ -197,7 +197,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         string[] calldata args
     ) external returns (bytes32 requestId) {
         FunctionsRequest.Request memory req;
-        req.initializeRequestForInlineJavaScript(javascriptSourceCodeUnixTime); // Initialize the request with JS code
+        req.initializeRequestForInlineJavaScript(javascriptSourceCode); // Initialize the request with JS code
         if (args.length > 0) req.setArgs(args); // Set the arguments for the request
 
         // Send the request and store the request ID
