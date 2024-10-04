@@ -65,7 +65,7 @@ $ anvil --help
 $ cast --help
 ```
 
-forge create src/gasTests/volcanoChainlinkFunctionsLon.sol:volcanoChainlinkFunctionsLon \
+forge create src/gasTests/volcanoChainlinkFunctionsLat.sol:volcanoChainlinkFunctionsLat \
 --private-key $devTestnetPrivateKey \
 --rpc-url $baseSepoliaHTTPS \
 --etherscan-api-key $basescanApiKey \

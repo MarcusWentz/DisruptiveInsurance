@@ -14,4 +14,4 @@ return Functions.encodeUint256(timeUnix);
 // https://onlinetexttools.com/add-quotes-to-lines
 
 // Try on a single line with no comments:
-// "const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%22`}); if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');} const { data } = apiResponse; console.log('API response data:'); const dateNow = data.results[0].date; console.log(dateNow); const timeUnix = Math.floor(new Date(dateNow).getTime() / 1000); console.log(timeUnix); return Functions.encodeUint256(timeUnix);"
+// ""
