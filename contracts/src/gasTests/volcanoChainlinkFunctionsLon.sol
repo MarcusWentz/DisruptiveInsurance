@@ -79,8 +79,7 @@ contract volcanoChainlinkFunctionsUnixTime is FunctionsClient {
 
  // return Functions.encodeUint256()
  
- string constant javascriptSourceCode = "const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%22`}); if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');} const { data } = apiResponse; console.log('API response data:'); const dateNow = data.results[0].date; console.log(dateNow); const timeUnix = Math.floor(new Date(dateNow).getTime() / 1000); console.log(timeUnix); return Functions.encodeUint256(timeUnix);";
-
+ string constant javascriptSourceCodeLon = "const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%22`}); if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');} const { data } = apiResponse; console.log('API response data:'); const lonRaw = data.results[0].coordinates.lon; console.log(lonRaw); const lonScaled = lonRaw*100; console.log(lonScaled); return Functions.encodeInt256(lonScaled);";
  constructor() FunctionsClient(routerBaseSepolia)   {}
 
  /**
