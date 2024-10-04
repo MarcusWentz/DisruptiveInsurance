@@ -124,11 +124,11 @@ contract volcanoChainlinkFunctionsUnixTime is FunctionsClient {
      }
      // Update the contract's state variables with the response and any errors
      s_lastResponse = response;
-     wtiUsdPenniesPriceOracle = abi.decode(response, (uint256));
+     lat = abi.decode(response, (int256));
      s_lastError = err;
 
      // Emit an event to log the response
-     emit Response(requestId, wtiUsdPenniesPriceOracle, s_lastResponse, s_lastError);
+     emit Response(requestId, lat, s_lastResponse, s_lastError);
  }
 
 }
