@@ -3,11 +3,17 @@
 Disruptive Insurance is an exotic insurance service that allows users to buy insurance against volcano eruptions.\
 No other insurance business on Earth offers volcano eruption insurance.
 
-Website: Fleek (IPFS+FILECOIN): https://disruptiveinsurance.on.fleek.co/
+Website: Fleek (IPFS+FILECOIN): 
 
-[Github Pages Backup]: https://marcuswentz.github.io/DisruptiveInsurance/
+https://disruptiveinsurance.on.fleek.co/
 
-Verified contract code on Etherscan using Hardhat: https://rinkeby.etherscan.io/address/0x6f4ED1B0340A09386fa08550Cb235aFbE3deE2BD#code
+[Github Pages Backup]: 
+
+https://marcuswentz.github.io/DisruptiveInsurance/
+
+Verified contract code on Etherscan using Foundry: 
+
+https://sepolia.basescan.org/address/0x271b6acd00943c78cd1b6be88fbfec3c402bafd8#code
 
 Video demo: [https://www.youtube.com/watch?v=zM4xjX2BJxg]:
 [![Watch the video](https://github.com/MarcusWentz/InsureDisruption/blob/main/Images/structure.png)](https://www.youtube.com/watch?v=zM4xjX2BJxg)
@@ -66,20 +72,20 @@ forge install rari-capital/solmate --no-commit
 ```
 forge install https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary --no-commit
 ```
-### Deploy contract on Sepolia testnet:
+### Deploy contract on Base Sepolia testnet:
 ```
-forge create src/gasTests/timeChainlinkOracleTest.sol:timeChainlinkOracleTest \
+forge create src/VolcanoInsurance.sol:VolcanoInsurance \
 --private-key $devTestnetPrivateKey \
---rpc-url $sepoliaInfuraHttps \
---etherscan-api-key $ETHERSCAN_API_KEY \
+--rpc-url $baseSepoliaHTTPS \
+--etherscan-api-key $basescanApiKey \
 --verify 
 ```
 ### Verify contract manually if it fails to verify 
 ```
 forge verify-contract \
---chain-id 11155111 \
+--chain-id 84532 \
 --watch \
---etherscan-api-key $etherscanApiKey \
+--etherscan-api-key $basescanApiKey \
 <sepolia_contract_address> \
-src/gasTests/timeChainlinkOracleTest.sol:timeChainlinkOracleTest
+src/VolcanoInsurance.sol:VolcanoInsurance
 ```
