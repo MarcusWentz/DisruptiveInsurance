@@ -65,7 +65,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         // Policy purchaser must be sending their share of insurance contract amount.
         if(msg.value != policyFee) revert MsgValueTooSmallForPolicyBuy(); 
         // Checks if requester has already bought insurance. 
-        require(policies[msg.sender].ethereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); 
+        if(policies[msg.sender].ethereumAwardTiedToAddress != 0) revert PolicyAlreadyBoughtUser(); 
         OpenWEItoInsure -= 1 ether;
         LockedWEItoPolicies += 1 ether;
         policies[msg.sender] = policy(
