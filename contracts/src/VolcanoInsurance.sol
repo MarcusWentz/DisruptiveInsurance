@@ -87,11 +87,11 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
 
         if(signDateUnixTime > volcanoEruptionUnixTime) revert PolicySignedAfterEruption();
 
-        //Must be within 1 lat coordinate point.
+        // Must be within 1 latitude coordinate point.
         if(policies[msg.sender].latitudeInsured >= (volcanoEruptionLatitude - 100) 
            || 
            policies[msg.sender].latitudeInsured <=  (volcanoEruptionLatitude + 100) )  revert NotWithinOneLatitudePoint();
-        //Must be within 1 longitude coordinate point.
+        // Must be within 1 longitude coordinate point.
         if(policies[msg.sender].longitudeInsured >= (volcanoEruptionLongitude - 100) 
            ||
            policies[msg.sender].longitudeInsured <=  (volcanoEruptionLongitude + 100) ) revert NotWithinOneLongitudePoint();
