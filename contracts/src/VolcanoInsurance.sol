@@ -83,7 +83,8 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     function buyerClaimReward() public {
         if(dayEruption*monthEruption*yearEruption == 0) revert VolcanoTimeOracleDataNotSetYet();    
         if(latitudeEruption == 0 && longitudeEruption == 0) revert CoordinatesCannotBeTheOrigin();
-        require(policies[msg.sender].ethereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
+        // Checks if this address has a policy or not.        
+        if(policies[msg.sender].ethereumAwardTiedToAddress == 0) revert PolicyDoesNotExist(); 
         uint256 signDateUnixTime = policies[msg.sender].unixTimeSigned;        
         (uint256 year, uint256 month, uint256 day) = BokkyPooBahsDateTimeLibrary.timestampToDate(signDateUnixTime);
         require(dateCompareForm(year, month, day) < dateCompareForm(yearEruption,monthEruption,dayEruption) , "Policy was signed after eruption");
