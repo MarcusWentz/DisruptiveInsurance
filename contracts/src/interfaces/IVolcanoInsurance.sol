@@ -14,6 +14,7 @@ interface IVolcanoInsurance {
     error PolicyDoesNotExist();
     error PolicyDidNotExpireYet();
     error VolcanoTimeOracleDataNotSetYet();
+    error CoordinatesCannotBeTheOrigin();
     error UnexpectedRequestID(bytes32 requestId);
     // Turn require statements into custom errors to save gas.
 
