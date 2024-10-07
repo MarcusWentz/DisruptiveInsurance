@@ -109,7 +109,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     }
 
     function ownerClaimExpiredPolicyETH(address policyHolder) public onlyOwner { 
-        require(policies[policyHolder].ethereumAwardTiedToAddress > 0, "Policy does not exist.");
+        if(policies[policyHolder].ethereumAwardTiedToAddress == 0) revert PolicyDoesNotExist();
         // 31,536,000 seconds in 1 year.
         require(block.timestamp > policies[msg.sender].unixTimeSigned + 31536000, "Policy not expired. Wait full year for expiration.");
         lockedWeiToPolicies -= 1 ether;

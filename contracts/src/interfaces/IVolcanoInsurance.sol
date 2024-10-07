@@ -11,6 +11,7 @@ interface IVolcanoInsurance {
     error MsgValueTooSmallForPolicyBuy();
     error MsgValueNotOneEther();
     error PolicyAlreadyBoughtUser();
+    error PolicyDoesNotExist();
     error UnexpectedRequestID(bytes32 requestId);
     // Turn require statements into custom errors to save gas.
 
