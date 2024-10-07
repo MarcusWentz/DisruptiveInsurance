@@ -81,9 +81,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     }
     
     function buyerClaimReward() public {
-        require(dayEruption > 0, "DayEruption not recorded yet by oracle.");
-        require(monthEruption > 0, "MonthEruption not recorded yet by oracle.");                                                                                                         
-        require(yearEruption > 0, "YearEruption not recorded yet by oracle.");        
+        if(dayEruption*monthEruption*yearEruption == 0) revert VolcanoTimeOracleDataNotSetYet();    
         require(latitudeEruption != 0 || longitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[msg.sender].ethereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
         uint256 signDateUnixTime = policies[msg.sender].unixTimeSigned;        

@@ -13,6 +13,7 @@ interface IVolcanoInsurance {
     error PolicyAlreadyBoughtUser();
     error PolicyDoesNotExist();
     error PolicyDidNotExpireYet();
+    error VolcanoTimeOracleDataNotSetYet();
     error UnexpectedRequestID(bytes32 requestId);
     // Turn require statements into custom errors to save gas.
 
