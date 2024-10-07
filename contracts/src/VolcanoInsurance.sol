@@ -22,19 +22,21 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         
     // variables
 
-    int256 public LatitudeEruption; 
-    int256 public LongitudeEruption;
-    uint256 public YearEruption;
-    uint256 public MonthEruption;
-    uint256 public DayEruption;
-    uint256 public OpenWEItoInsure;
-    uint256 public LockedWEItoPolicies;
+    int256 public latitudeEruption; 
+    int256 public longitudeEruption;
+    uint256 public yearEruption;
+    uint256 public monthEruption;
+    uint256 public dayEruption;
+    uint256 public openWeiToInsure;
+    uint256 public lockedWeiToPolicies;
+    
+    
     // string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
-    string public urlRebuiltJSON = "https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22Iceland%22&refine=date%3A%221727%2F08%2F03%22";
+    string public constant URL_REBUILT_JSON = "https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22Iceland%22&refine=date%3A%221727%2F08%2F03%22";
     // immutable and constants
     
-    uint256 public constant policyFee = (1 ether)/100;
-    address public constant chainlinkTokenAddressSepolia = 0x779877A7B0D9E8603169DdbD7836e478b4624789;
+    uint256 public constant INSURANCE_POLICY_FEE = (1 ether)/100;
+    // address public constant chainlinkTokenAddressSepolia = 0x779877A7B0D9E8603169DdbD7836e478b4624789;
 
     struct policy {
         int256 latitudeInsured;
@@ -45,65 +47,65 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     
     mapping(address => policy) public policies;
 
-    function oracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
-        uint256 requestVolcanoDataLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));
-        require(requestVolcanoDataLinkFee >= 3*(10*16), "CONTRACT NEEDS 0.03 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
-        require(bytes(filterMonth).length == 2 && bytes(filterDay).length == 2, "JSON must have MonthPresent and DayPresent as 2 characters at all times!");
-        urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",filterYear,
-        "&refine.month=",filterMonth,"&refine.day=",filterDay,"&refine.country=",filterCountry) );
-        // // Chainlink requests.
-        // request_Latitude();
-        // request_Longitude();
-        // request_EruptionDate();
-    }    
+    // function oracleRequestVolcanoEruptionData(string memory filterYear, string memory filterMonth, string memory filterDay, string memory filterCountry) public {
+    //     uint256 requestVolcanoDataLinkFee = IERC20(address(chainlinkTokenAddressSepolia)).balanceOf(address(this));
+    //     require(requestVolcanoDataLinkFee >= 3*(10*16), "CONTRACT NEEDS 0.03 LINK TO DO THIS! PLEASE SEND LINK TO THIS CONTRACT!");
+    //     require(bytes(filterMonth).length == 2 && bytes(filterDay).length == 2, "JSON must have MonthPresent and DayPresent as 2 characters at all times!");
+    //     urlRebuiltJSON= string( abi.encodePacked("https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=",filterYear,
+    //     "&refine.month=",filterMonth,"&refine.day=",filterDay,"&refine.country=",filterCountry) );
+    //     // // Chainlink requests.
+    //     // request_Latitude();
+    //     // request_Longitude();
+    //     // request_EruptionDate();
+    // }    
     
     function buyerCreatePolicy(int inputLat, int inputLong) public payable  {
         // Policy purchaser must not be owner. 
         if(owner == msg.sender) revert OwnerIsMsgSender(); 
         // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
-        if(OpenWEItoInsure == 0) revert NotEnoughCollateralInContract(); 
+        if(openWeiToInsure == 0) revert NotEnoughCollateralInContract(); 
         // Policy purchaser must be sending their share of insurance contract amount.
-        if(msg.value != policyFee) revert MsgValueTooSmallForPolicyBuy(); 
+        if(msg.value != INSURANCE_POLICY_FEE) revert MsgValueTooSmallForPolicyBuy(); 
         // Checks if requester has already bought insurance. 
         if(policies[msg.sender].ethereumAwardTiedToAddress != 0) revert PolicyAlreadyBoughtUser(); 
-        OpenWEItoInsure -= 1 ether;
-        LockedWEItoPolicies += 1 ether;
+        openWeiToInsure -= 1 ether;
+        lockedWeiToPolicies += 1 ether;
         policies[msg.sender] = policy(
             inputLat,
             inputLong,
             block.timestamp,
             1
         );
-        (bool sentOwner, ) = payable(owner).call{value: policyFee}("");
+        (bool sentOwner, ) = payable(owner).call{value: INSURANCE_POLICY_FEE}("");
         if(sentOwner == false) revert EtherNotSent();   
         emit eventLog();
     }
     
     function buyerClaimReward() public {
-        require(DayEruption > 0, "DayEruption not recorded yet by oracle.");
-        require(MonthEruption > 0, "MonthEruption not recorded yet by oracle.");                                                                                                         
-        require(YearEruption > 0, "YearEruption not recorded yet by oracle.");        
-        require(LatitudeEruption != 0 || LongitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
+        require(dayEruption > 0, "DayEruption not recorded yet by oracle.");
+        require(monthEruption > 0, "MonthEruption not recorded yet by oracle.");                                                                                                         
+        require(yearEruption > 0, "YearEruption not recorded yet by oracle.");        
+        require(latitudeEruption != 0 || longitudeEruption != 0, "Lat and Long cannot both be 0. Wait for oracle response.");
         require(policies[msg.sender].ethereumAwardTiedToAddress > 0,"Error: You don't have a policy"); // Checks if this address has a policy or not.
         uint256 signDateUnixTime = policies[msg.sender].unixTimeSigned;        
         (uint256 year, uint256 month, uint256 day) = BokkyPooBahsDateTimeLibrary.timestampToDate(signDateUnixTime);
-        require(dateCompareForm(year, month, day) < dateCompareForm(YearEruption,MonthEruption,DayEruption) , "Policy was signed after eruption");
-        require(policies[msg.sender].longitudeInsured >=  (LongitudeEruption-100) && policies[msg.sender].longitudeInsured <=  (LongitudeEruption+100) , "Must be within 1 long coordinate point." );
-        require(policies[msg.sender].latitudeInsured >=  (LatitudeEruption-100) && policies[msg.sender].latitudeInsured <=  (LatitudeEruption+100) , "Must be within 1 lat coordinate point." );
+        require(dateCompareForm(year, month, day) < dateCompareForm(yearEruption,monthEruption,dayEruption) , "Policy was signed after eruption");
+        require(policies[msg.sender].longitudeInsured >=  (longitudeEruption-100) && policies[msg.sender].longitudeInsured <=  (longitudeEruption+100) , "Must be within 1 long coordinate point." );
+        require(policies[msg.sender].latitudeInsured >=  (latitudeEruption-100) && policies[msg.sender].latitudeInsured <=  (latitudeEruption+100) , "Must be within 1 lat coordinate point." );
         policies[msg.sender] = policy(0, 0, 0, 0);
-        LockedWEItoPolicies -= 1 ether;
+        lockedWeiToPolicies -= 1 ether;
         payable(msg.sender).transfer(1 ether);
-        LatitudeEruption = 0;
-        LongitudeEruption = 0;
-        YearEruption = 0;
-        MonthEruption = 0;
-        DayEruption = 0;
+        latitudeEruption = 0;
+        longitudeEruption = 0;
+        yearEruption = 0;
+        monthEruption = 0;
+        dayEruption = 0;
         emit eventLog();
     }
     
     function ownerSendOneEthToContractFromInsuranceBusiness() public payable onlyOwner {
         require(msg.value == 1 ether, "Value sent must equal 1 ETH");
-        OpenWEItoInsure += 1 ether;
+        openWeiToInsure += 1 ether;
         emit eventLog();
     }
 
@@ -111,15 +113,15 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         require(policies[policyHolder].ethereumAwardTiedToAddress > 0, "Policy does not exist.");
         // 31,536,000 seconds in 1 year.
         require(block.timestamp > policies[msg.sender].unixTimeSigned + 31536000, "Policy not expired. Wait full year for expiration.");
-        LockedWEItoPolicies -= 1 ether;
+        lockedWeiToPolicies -= 1 ether;
         policies[policyHolder] = policy(0, 0, 0, 0);
         payable(owner).transfer(address(this).balance);
         emit eventLog();
     }
     
     function ownerLiquidtoOpenETHToWithdraw() public onlyOwner {
-        require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); 
-        OpenWEItoInsure -= 1 ether;
+        require(openWeiToInsure > 0, 'There is no open ETH in the contract currently.'); 
+        openWeiToInsure -= 1 ether;
         // payable(owner).transfer(1 ether);
         (bool sentOwner, ) = payable(owner).call{value: 1 ether}("");
         if(sentOwner == false) revert EtherNotSent();   
