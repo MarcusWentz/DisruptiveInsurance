@@ -28,9 +28,8 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     uint256 public monthEruption;
     uint256 public dayEruption;
     uint256 public openWeiToInsure;
-    uint256 public lockedWeiToPolicies;
-    
-    
+    uint256 public lockedWeiToPolicies;    // string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
+
     // string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
     string public constant URL_REBUILT_JSON = "https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22Iceland%22&refine=date%3A%221727%2F08%2F03%22";
     // immutable and constants
@@ -120,7 +119,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     }
     
     function ownerLiquidtoOpenETHToWithdraw() public onlyOwner {
-        require(openWeiToInsure > 0, 'There is no open ETH in the contract currently.'); 
+        if(openWeiToInsure == 0) revert NotEnoughCollateralInContract(); 
         openWeiToInsure -= 1 ether;
         // payable(owner).transfer(1 ether);
         (bool sentOwner, ) = payable(owner).call{value: 1 ether}("");
