@@ -9,6 +9,7 @@ interface IVolcanoInsurance {
     error EtherNotSent();
     error NotEnoughCollateralInContract();
     error MsgValueTooSmallForPolicyBuy();
+    error MsgValueNotOneEther();
     error PolicyAlreadyBoughtUser();
     error UnexpectedRequestID(bytes32 requestId);
     // Turn require statements into custom errors to save gas.

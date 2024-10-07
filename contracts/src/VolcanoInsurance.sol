@@ -103,7 +103,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     }
     
     function ownerSendOneEthToContractFromInsuranceBusiness() public payable onlyOwner {
-        require(msg.value == 1 ether, "Value sent must equal 1 ETH");
+        if(msg.value != 1 ether) revert MsgValueNotOneEther();
         openWeiToInsure += 1 ether;
         emit eventLog();
     }
