@@ -154,12 +154,12 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
 
     // State variable to store the returned character information
     // string public wtiPriceOracle; //Estimated value on request: 8476500000. Will get cross chain with Universal Adapter on Mumbai Polygon: https://etherscan.io/address/0xf3584f4dd3b467e73c2339efd008665a70a4185c#readContract latest price
-    uint256 public unixTime; 
+    uint256 public volcanoEruptionUnixTime; 
     // lat and lon range signed is -180 to 180.
     // int16 is within this range:
     // https://mavlevin.com/2023/02/22/Size-Matters-Solidity-Integer-Range-Cheatsheet-From-uint8-To-uint256.html
-    int16 public lat;
-    int16 public lon;
+    int16 public volcanoEruptionLatitude;
+    int16 public volcanoEruptionLongitude;
 
     // // Custom error type
     // error UnexpectedRequestID(bytes32 requestId);
@@ -239,9 +239,9 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         if (response.length > 0) {
             (uint256 unixTimeOracle, int16 latOracle, int16 lonOracle) = abi.decode(response, (uint256, int16, int16));
 
-            unixTime = unixTimeOracle;
-            lat = latOracle;
-            lon = lonOracle;
+            volcanoEruptionUnixTime = unixTimeOracle;
+            volcanoEruptionLatitude = latOracle;
+            volcanoEruptionLongitude = lonOracle;
 
             emit DecodedResponse(
                 requestId,
