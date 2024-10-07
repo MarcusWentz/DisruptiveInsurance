@@ -84,12 +84,17 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
 
         // (uint256 year, uint256 month, uint256 day) = BokkyPooBahsDateTimeLibrary.timestampToDate(signDateUnixTime);
         // require(dateCompareForm(year, month, day) < dateCompareForm(yearEruption,monthEruption,dayEruption) , "Policy was signed after eruption");
-        
+
         if(signDateUnixTime > volcanoEruptionUnixTime) revert PolicySignedAfterEruption();
 
-
-        require(policies[msg.sender].longitudeInsured >=  (volcanoEruptionLatitude-100) && policies[msg.sender].longitudeInsured <=  (volcanoEruptionLatitude+100) , "Must be within 1 long coordinate point." );
-        require(policies[msg.sender].latitudeInsured >=  (volcanoEruptionLatitude-100) && policies[msg.sender].latitudeInsured <=  (volcanoEruptionLatitude+100) , "Must be within 1 lat coordinate point." );
+        //Must be within 1 longitude coordinate point.
+        require(policies[msg.sender].longitudeInsured >= (volcanoEruptionLongitude-100) 
+                && 
+                policies[msg.sender].longitudeInsured <=  (volcanoEruptionLongitude+100) , "Must be within 1 long coordinate point." );
+        //Must be within 1 lat coordinate point.
+        require(policies[msg.sender].latitudeInsured >= (volcanoEruptionLatitude-100) 
+                && 
+                policies[msg.sender].latitudeInsured <=  (volcanoEruptionLatitude+100) , "Must be within 1 lat coordinate point." );
      
         policies[msg.sender] = policy(0, 0, 0, 0);
         lockedWeiToPolicies -= 1 ether;
