@@ -80,21 +80,23 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         if(volcanoEruptionLatitude == 0 && volcanoEruptionLongitude == 0) revert CoordinatesCannotBeTheOrigin();
         // Checks if this address has a policy or not.        
         if(policies[msg.sender].ethereumAwardTiedToAddress == 0) revert PolicyDoesNotExist(); 
-        uint256 signDateUnixTime = policies[msg.sender].unixTimeSigned;        
-
+    
+        // uint256 signDateUnixTime = policies[msg.sender].unixTimeSigned;        
         // (uint256 year, uint256 month, uint256 day) = BokkyPooBahsDateTimeLibrary.timestampToDate(signDateUnixTime);
         // require(dateCompareForm(year, month, day) < dateCompareForm(yearEruption,monthEruption,dayEruption) , "Policy was signed after eruption");
 
-        if(signDateUnixTime > volcanoEruptionUnixTime) revert PolicySignedAfterEruption();
+        if(policies[msg.sender].unixTimeSigned > volcanoEruptionUnixTime) revert PolicySignedAfterEruption();
         
         // Must be within 1 latitude coordinate point.
-        if(policies[msg.sender].latitudeInsured < (volcanoEruptionLatitude - 100) 
+        int256 latitudeInsuredMemory = policies[msg.sender].latitudeInsured;
+        if(latitudeInsuredMemory < (volcanoEruptionLatitude - 100) 
            || 
-           policies[msg.sender].latitudeInsured > (volcanoEruptionLatitude + 100) )  revert NotWithinOneLatitudePoint();        
+           latitudeInsuredMemory > (volcanoEruptionLatitude + 100) )  revert NotWithinOneLatitudePoint();        
         // Must be within 1 longitude coordinate point.
-        if(policies[msg.sender].longitudeInsured < (volcanoEruptionLongitude - 100) 
+        int256 longitudeInsuredMemory = policies[msg.sender].longitudeInsured;
+        if(longitudeInsuredMemory < (volcanoEruptionLongitude - 100) 
            ||
-           policies[msg.sender].longitudeInsured > (volcanoEruptionLongitude + 100) ) revert NotWithinOneLongitudePoint();
+           longitudeInsuredMemory > (volcanoEruptionLongitude + 100) ) revert NotWithinOneLongitudePoint();
      
         policies[msg.sender] = policy(0, 0, 0, 0);
         lockedWeiToPolicies -= 1 ether;
