@@ -5,7 +5,10 @@ interface IVolcanoInsurance {
     
     // Custom Errors
     error PresentTimeNotSet();
+    error OwnerIsMsgSender(); 
     error EtherNotSent();
+    error NotEnoughCollateralInContract();
+    error MsgValueTooSmallForPolicyBuy();
     error UnexpectedRequestID(bytes32 requestId);
     // Turn require statements into custom errors to save gas.
 

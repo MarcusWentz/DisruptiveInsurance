@@ -58,10 +58,14 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     }    
     
     function buyerCreatePolicy(int inputLat, int inputLong) public payable  {
-        require(owner != msg.sender, "Error: Owner cannot self-insure"); // Policy purchaser must not be owner. 
-        require(OpenWEItoInsure > 0, 'There is no open ETH in the contract currently.'); // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
-        require(msg.value == policyFee , 'Error: Please submit your request with insurance contribution of 0.001 Ether'); // Policy purchaser must be sending their share of insurance contract amount.
-        require(policies[msg.sender].ethereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); // Checks if requester has already bought insurance. 
+        // Policy purchaser must not be owner. 
+        if(owner == msg.sender) revert OwnerIsMsgSender(); 
+        // Owner must have funds to cover policy purchase. Made >0 in case multiple policy purchases are made in the same contract for a given address (i.e owner will agree > 1 ETH).
+        if(OpenWEItoInsure == 0) revert NotEnoughCollateralInContract(); 
+        // Policy purchaser must be sending their share of insurance contract amount.
+        if(msg.value != policyFee) revert MsgValueTooSmallForPolicyBuy(); 
+        // Checks if requester has already bought insurance. 
+        require(policies[msg.sender].ethereumAwardTiedToAddress == 0,"Error: You've already purchased insurance"); 
         OpenWEItoInsure -= 1 ether;
         LockedWEItoPolicies += 1 ether;
         policies[msg.sender] = policy(
