@@ -114,7 +114,7 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     function ownerClaimExpiredPolicyETH(address policyHolder) public onlyOwner { 
         if(policies[policyHolder].ethereumAwardTiedToAddress == 0) revert PolicyDoesNotExist();
         // 31,536,000 seconds in 1 year.
-        if(block.timestamp < policies[msg.sender].unixTimeSigned + 31536000) revert PolicyDidNotExpireYet();
+        if(block.timestamp < policies[policyHolder].unixTimeSigned + 31536000) revert PolicyDidNotExpireYet();
         lockedWeiToPolicies -= 1 ether;
         policies[policyHolder] = policy(0, 0, 0, 0);
         payable(owner).transfer(address(this).balance);
