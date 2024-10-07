@@ -13,6 +13,7 @@ interface IVolcanoInsurance {
     error PolicyAlreadyBoughtUser();
     error PolicyDoesNotExist();
     error PolicyDidNotExpireYet();
+    error PolicySignedAfterEruption();
     error VolcanoTimeOracleDataNotSetYet();
     error CoordinatesCannotBeTheOrigin();
     error UnexpectedRequestID(bytes32 requestId);

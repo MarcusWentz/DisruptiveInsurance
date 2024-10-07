@@ -3,9 +3,9 @@ pragma solidity 0.8.26;
 
 contract Convert {
     
-    function dateCompareForm(uint YearInput, uint MonthInput, uint DayInput) public pure returns(uint){
-        return ( (YearInput<<9) + (MonthInput<<5) + DayInput ) ;
-    }
+    // function dateCompareForm(uint YearInput, uint MonthInput, uint DayInput) public pure returns(uint){
+    //     return ( (YearInput<<9) + (MonthInput<<5) + DayInput ) ;
+    // }
     
     function bytes32ToUint(bytes32 oracleBytes32Convert) public pure returns(uint){
         return stringToUint(bytes32ToString(oracleBytes32Convert));

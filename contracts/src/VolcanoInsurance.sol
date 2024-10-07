@@ -22,11 +22,6 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         
     // variables
 
-    int256 public latitudeEruption; 
-    int256 public longitudeEruption;
-    uint256 public yearEruption;
-    uint256 public monthEruption;
-    uint256 public dayEruption;
     uint256 public openWeiToInsure;
     uint256 public lockedWeiToPolicies;    // string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
 
@@ -81,23 +76,27 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
     }
     
     function buyerClaimReward() public {
-        if(dayEruption*monthEruption*yearEruption == 0) revert VolcanoTimeOracleDataNotSetYet();    
-        if(latitudeEruption == 0 && longitudeEruption == 0) revert CoordinatesCannotBeTheOrigin();
+        if(volcanoEruptionUnixTime == 0) revert VolcanoTimeOracleDataNotSetYet();    
+        if(volcanoEruptionLatitude == 0 && volcanoEruptionLongitude == 0) revert CoordinatesCannotBeTheOrigin();
         // Checks if this address has a policy or not.        
         if(policies[msg.sender].ethereumAwardTiedToAddress == 0) revert PolicyDoesNotExist(); 
         uint256 signDateUnixTime = policies[msg.sender].unixTimeSigned;        
-        (uint256 year, uint256 month, uint256 day) = BokkyPooBahsDateTimeLibrary.timestampToDate(signDateUnixTime);
-        require(dateCompareForm(year, month, day) < dateCompareForm(yearEruption,monthEruption,dayEruption) , "Policy was signed after eruption");
-        require(policies[msg.sender].longitudeInsured >=  (longitudeEruption-100) && policies[msg.sender].longitudeInsured <=  (longitudeEruption+100) , "Must be within 1 long coordinate point." );
-        require(policies[msg.sender].latitudeInsured >=  (latitudeEruption-100) && policies[msg.sender].latitudeInsured <=  (latitudeEruption+100) , "Must be within 1 lat coordinate point." );
+
+        // (uint256 year, uint256 month, uint256 day) = BokkyPooBahsDateTimeLibrary.timestampToDate(signDateUnixTime);
+        // require(dateCompareForm(year, month, day) < dateCompareForm(yearEruption,monthEruption,dayEruption) , "Policy was signed after eruption");
+        
+        if(signDateUnixTime > volcanoEruptionUnixTime) revert PolicySignedAfterEruption();
+
+
+        require(policies[msg.sender].longitudeInsured >=  (volcanoEruptionLatitude-100) && policies[msg.sender].longitudeInsured <=  (volcanoEruptionLatitude+100) , "Must be within 1 long coordinate point." );
+        require(policies[msg.sender].latitudeInsured >=  (volcanoEruptionLatitude-100) && policies[msg.sender].latitudeInsured <=  (volcanoEruptionLatitude+100) , "Must be within 1 lat coordinate point." );
+     
         policies[msg.sender] = policy(0, 0, 0, 0);
         lockedWeiToPolicies -= 1 ether;
         payable(msg.sender).transfer(1 ether);
-        latitudeEruption = 0;
-        longitudeEruption = 0;
-        yearEruption = 0;
-        monthEruption = 0;
-        dayEruption = 0;
+        volcanoEruptionLatitude = 0;
+        volcanoEruptionLongitude = 0;
+        volcanoEruptionUnixTime = 0;
         emit eventLog();
     }
     
