@@ -16,8 +16,10 @@ interface IVolcanoInsurance {
     error PolicySignedAfterEruption();
     error VolcanoTimeOracleDataNotSetYet();
     error CoordinatesCannotBeTheOrigin();
-    error NotWithinOneLongitudePoint();
-    error NotWithinOneLatitudePoint();
+    error LessThanLatitudeMin(); 
+    error GreaterThanLatitudeMax();        
+    error LessThanLongitudeMin();
+    error GreaterThanLongitudeMax();
     error UnexpectedRequestID(bytes32 requestId);
     // Turn require statements into custom errors to save gas.
 
