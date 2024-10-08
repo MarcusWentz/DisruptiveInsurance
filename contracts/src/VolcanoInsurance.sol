@@ -89,12 +89,12 @@ contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owne
         
         // Must be within 1 latitude coordinate point.
         int256 latitudeInsuredMemory = policies[msg.sender].latitudeInsured;
-        if(latitudeInsuredMemory < (volcanoEruptionLatitude - 100) )  revert LessThanLatitudeMin(); 
-        if(latitudeInsuredMemory > (volcanoEruptionLatitude + 100) )  revert GreaterThanLatitudeMax();        
+        if(latitudeInsuredMemory < (volcanoEruptionLatitude - 100) )  revert LatitudeLessThanMin(); 
+        if(latitudeInsuredMemory > (volcanoEruptionLatitude + 100) )  revert LatitudeGreaterThanMax();        
         // Must be within 1 longitude coordinate point.
         int256 longitudeInsuredMemory = policies[msg.sender].longitudeInsured;
-        if(longitudeInsuredMemory < (volcanoEruptionLongitude - 100) ) revert LessThanLongitudeMin();
-        if(longitudeInsuredMemory > (volcanoEruptionLongitude + 100) ) revert GreaterThanLongitudeMax();
+        if(longitudeInsuredMemory < (volcanoEruptionLongitude - 100) ) revert LongitudeLessThanMin();
+        if(longitudeInsuredMemory > (volcanoEruptionLongitude + 100) ) revert LongitudeGreaterThanMax();
      
         policies[msg.sender] = policy(0, 0, 0, 0);
         lockedWeiToPolicies -= 1 ether;
