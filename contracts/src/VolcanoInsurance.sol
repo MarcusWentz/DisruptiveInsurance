@@ -107,13 +107,13 @@ contract VolcanoInsurance is FunctionsClient , Owned , IVolcanoInsurance {
         emit eventLog();
     }
     
-    function ownerSendOneEthToContractFromInsuranceBusiness() public payable onlyOwner {
-        if(msg.value != 1 ether) revert MsgValueNotOneEther();
-        openWeiToInsure += 1 ether;
+    function ownerAddCollateral(uint256 collateralAmount) public payable onlyOwner {
+        if(msg.value != collateralAmount) revert MsgValueNotOneEther();
+        openWeiToInsure += collateralAmount;
         emit eventLog();
     }
 
-    function ownerClaimExpiredPolicyETH(address policyHolder) public onlyOwner { 
+    function ownerClaimExpiredPolicy(address policyHolder) public onlyOwner { 
         if(policies[policyHolder].ethereumAwardTiedToAddress == 0) revert PolicyDoesNotExist();
         // 31,536,000 seconds in 1 year.
         if(block.timestamp < policies[policyHolder].unixTimeSigned + 31536000) revert PolicyDidNotExpireYet();
@@ -123,11 +123,11 @@ contract VolcanoInsurance is FunctionsClient , Owned , IVolcanoInsurance {
         emit eventLog();
     }
     
-    function ownerLiquidtoOpenETHToWithdraw() public onlyOwner {
-        if(openWeiToInsure == 0) revert NotEnoughCollateralInContract(); 
-        openWeiToInsure -= 1 ether;
+    function ownerLiquidClaimLiquid(uint256 withdrawAmount) public onlyOwner {
+        if(withdrawAmount > openWeiToInsure) revert NotEnoughCollateralInContract(); 
+        openWeiToInsure -= withdrawAmount;
         // payable(owner).transfer(1 ether);
-        (bool sentOwner, ) = payable(owner).call{value: 1 ether}("");
+        (bool sentOwner, ) = payable(owner).call{value: withdrawAmount}("");
         if(sentOwner == false) revert EtherNotSent();   
         emit eventLog();
     }

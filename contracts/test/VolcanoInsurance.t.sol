@@ -21,7 +21,8 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
 
     function test_OracleEthUsdPrice() public {
         assertEq(0,volcanoInsurance.openWeiToInsure());
-        volcanoInsurance.ownerSendOneEthToContractFromInsuranceBusiness{value: 1 ether}();
+        uint256 collateralAmount = 1 ether;
+        volcanoInsurance.ownerAddCollateral{value: collateralAmount}(collateralAmount);
         assertEq(1 ether,volcanoInsurance.openWeiToInsure());
     }
 
