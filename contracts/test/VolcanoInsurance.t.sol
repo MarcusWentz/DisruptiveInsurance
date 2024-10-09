@@ -19,7 +19,21 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
         assertEq(volcanoInsurance.owner(),address(this));
     }
 
-    function test_OracleEthUsdPrice() public {
+    function test_ownerAddCollateralRevertOnlyOwner() public {
+        vm.prank(address(0));
+        uint256 collateralAmount = 1 ether;
+         // Solmate Owned revert.
+        vm.expectRevert("UNAUTHORIZED");
+        volcanoInsurance.ownerAddCollateral{value: collateralAmount}(collateralAmount);
+    }
+
+    function test_ownerAddCollateralRevertMsgValueDoesNotMatchInputCollateral() public {
+        uint256 collateralAmount = 1 ether;
+        vm.expectRevert(MsgValueDoesNotMatchInputCollateral.selector);    //Revert if not the owner. Custom error from SimpleStorage.
+        volcanoInsurance.ownerAddCollateral{value: 0}(collateralAmount);
+    }
+
+    function test_ownerAddCollateralSuccess() public {
         assertEq(0,volcanoInsurance.openWeiToInsure());
         uint256 collateralAmount = 1 ether;
         volcanoInsurance.ownerAddCollateral{value: collateralAmount}(collateralAmount);

@@ -108,7 +108,7 @@ contract VolcanoInsurance is FunctionsClient , Owned , IVolcanoInsurance {
     }
     
     function ownerAddCollateral(uint256 collateralAmount) public payable onlyOwner {
-        if(msg.value != collateralAmount) revert MsgValueNotOneEther();
+        if(msg.value != collateralAmount) revert MsgValueDoesNotMatchInputCollateral();
         openWeiToInsure += collateralAmount;
         emit eventLog();
     }

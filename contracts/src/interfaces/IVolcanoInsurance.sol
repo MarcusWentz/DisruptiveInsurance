@@ -9,7 +9,7 @@ interface IVolcanoInsurance {
     error EtherNotSent();
     error NotEnoughCollateralInContract();
     error MsgValueTooSmallForPolicyBuy();
-    error MsgValueNotOneEther();
+    error MsgValueDoesNotMatchInputCollateral();
     error PolicyAlreadyBoughtUser();
     error PolicyDoesNotExist();
     error PolicyDidNotExpireYet();
