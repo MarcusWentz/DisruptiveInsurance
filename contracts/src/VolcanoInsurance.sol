@@ -3,23 +3,25 @@ pragma solidity 0.8.26;
 
 import {IERC20} from "./interfaces/IERC20.sol";
 import {IVolcanoInsurance} from "./interfaces/IVolcanoInsurance.sol";
+
 // // For pricefeeds such as ETH/USD.
 // import {AggregatorV3Interface} from "chainlink/v0.8/interfaces/AggregatorV3Interface.sol"; 
+
 // import {FunctionsClient} from "@chainlink/contracts@1.2.0/src/v0.8/functions/v1_0_0/FunctionsClient.sol";
 import {FunctionsClient} from "chainlink/v0.8/functions/v1_0_0/FunctionsClient.sol"; 
 
 // import {FunctionsRequest} from "@chainlink/contracts@1.2.0/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
 import {FunctionsRequest} from "chainlink/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol"; 
 
-
-
-import {Convert} from "./util/Convert.sol";
+// import {Convert} from "./util/Convert.sol";
 import {Owned} from "solmate/auth/Owned.sol";
 // BokkyPooBahsDateTimeLibrary/=lib/BokkyPooBahsDateTimeLibrary/
 // import { BokkyPooBahsDateTimeLibrary } from "BokkyPooBahsDateTimeLibrary/contracts/BokkyPooBahsDateTimeLibrary.sol";
 
-contract VolcanoInsurance is FunctionsClient , Convert, IVolcanoInsurance , Owned {
-        
+// contract VolcanoInsurance is FunctionsClient , Convert , Owned , IVolcanoInsurance {
+
+contract VolcanoInsurance is FunctionsClient , Owned , IVolcanoInsurance {
+
     // variables
 
     uint256 public openWeiToInsure;
