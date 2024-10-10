@@ -50,7 +50,6 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
 
     function test_ownerLiquidClaimSuccess() public {
         uint256 collateralAmount = 1 ether;
-         // Solmate Owned revert.
         assertEq(0,volcanoInsurance.openWeiToInsure());
         test_ownerAddCollateralSuccess();
         assertEq(1 ether,volcanoInsurance.openWeiToInsure());
