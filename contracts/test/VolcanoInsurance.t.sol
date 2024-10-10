@@ -40,6 +40,24 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
         assertEq(1 ether,volcanoInsurance.openWeiToInsure());
     }
 
+    function test_ownerLiquidClaimLiquidRevertOnlyOwner() public {
+        vm.prank(address(0));
+        uint256 collateralAmount = 1 ether;
+         // Solmate Owned revert.
+        vm.expectRevert("UNAUTHORIZED");
+        volcanoInsurance.ownerLiquidClaimLiquid(collateralAmount);
+    }
+
+    function test_ownerLiquidClaimSuccess() public {
+        uint256 collateralAmount = 1 ether;
+         // Solmate Owned revert.
+        assertEq(0,volcanoInsurance.openWeiToInsure());
+        test_ownerAddCollateralSuccess();
+        assertEq(1 ether,volcanoInsurance.openWeiToInsure());
+        volcanoInsurance.ownerLiquidClaimLiquid(collateralAmount);
+        assertEq(0,volcanoInsurance.openWeiToInsure());
+    }
+    
     // function testOracleEthGoldPrice() public {
     //     uint256 priceEthGold = weigold.getLatestWeiGoldPrice();
     //     assertGt(priceEthGold,0);
