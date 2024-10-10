@@ -19,6 +19,11 @@ forge install https://github.com/bokkypoobah/BokkyPooBahsDateTimeLibrary --no-co
 ```shell
 forge coverage --fork-url $baseSepoliaHTTPS --report lcov && genhtml lcov.info -o report --branch-coverage
 ```
+### For Mac OS
+```shell
+forge coverage --fork-url $baseSepoliaHTTPS --report lcov && genhtml lcov.info -o report --branch-coverage --ignore-errors inconsistent,corrupt lcov.info
+```
+
 ### Deploy and Verify on Base Sepolia
 ```shell
 forge create src/VolcanoInsurance.sol:VolcanoInsurance \
