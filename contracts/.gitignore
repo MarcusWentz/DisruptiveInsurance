@@ -16,3 +16,6 @@ docs/
 # Foundry coverage files
 lcov.info
 report/
+
+# Hide DS Store for MacOS
+.DS_Store
