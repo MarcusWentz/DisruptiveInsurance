@@ -56,6 +56,14 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
         volcanoInsurance.ownerLiquidClaimLiquid(collateralAmount);
         assertEq(0,volcanoInsurance.openWeiToInsure());
     }
+
+    function test_ownerLiquidClaimRevertNotEnoughCollateralInContract() public {
+        uint256 collateralAmount = 1 ether;
+        assertEq(0,volcanoInsurance.openWeiToInsure());
+        vm.expectRevert(NotEnoughCollateralInContract.selector);    //Revert if not the owner. Custom error from SimpleStorage.
+        volcanoInsurance.ownerLiquidClaimLiquid(collateralAmount);
+        assertEq(0,volcanoInsurance.openWeiToInsure());
+    }
     
     // function testOracleEthGoldPrice() public {
     //     uint256 priceEthGold = weigold.getLatestWeiGoldPrice();
