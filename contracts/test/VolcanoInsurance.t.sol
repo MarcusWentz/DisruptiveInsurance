@@ -137,6 +137,15 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
         volcanoInsurance.buyerClaimReward();
     }
 
+    function test_buyerClaimRewardRevertPolicySignedAfterEruption() public {
+        test_buyerCreatePolicySuccess();
+        volcanoInsurance.ownerOracleTestVariables((block.timestamp-31536000),1,-1);
+        vm.prank(address(0));
+        vm.expectRevert(PolicySignedAfterEruption.selector);   
+        volcanoInsurance.buyerClaimReward();
+    }
+
+
     // ownerOracleTestVariables
 
 
