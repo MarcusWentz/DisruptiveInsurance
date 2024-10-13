@@ -67,13 +67,13 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
 
     function test_buyerCreatePolicyRevertOwnerIsMsgSender() public {
         vm.expectRevert(OwnerIsMsgSender.selector);    
-        volcanoInsurance.buyerCreatePolicy(1,-1);
+        volcanoInsurance.buyerCreatePolicy(100,-100);
     }
 
     function test_buyerCreatePolicyRevertNotEnoughCollateralInContract() public {
         vm.startPrank(address(0));
         vm.expectRevert(NotEnoughCollateralInContract.selector);    
-        volcanoInsurance.buyerCreatePolicy(1,-1);
+        volcanoInsurance.buyerCreatePolicy(100,-100);
     }
 
     function test_buyerCreatePolicyRevertMsgValueTooSmallForPolicyBuy() public {
@@ -81,14 +81,14 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
         uint256 fee = volcanoInsurance.INSURANCE_POLICY_FEE(); 
         vm.startPrank(address(0));
         vm.expectRevert(MsgValueTooSmallForPolicyBuy.selector);   
-        volcanoInsurance.buyerCreatePolicy{value: (fee-1)}(1,-1);
+        volcanoInsurance.buyerCreatePolicy{value: (fee-1)}(100,-100);
     }
     
     function test_buyerCreatePolicySuccess() public {
         test_ownerAddCollateralSuccess();
         uint256 fee = volcanoInsurance.INSURANCE_POLICY_FEE(); 
         vm.startPrank(address(0));
-        volcanoInsurance.buyerCreatePolicy{value: fee}(1,-1);
+        volcanoInsurance.buyerCreatePolicy{value: fee}(100,-100);
         vm.stopPrank();
     }
 
@@ -98,7 +98,7 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
         uint256 fee = volcanoInsurance.INSURANCE_POLICY_FEE(); 
         vm.startPrank(address(0));
         vm.expectRevert(PolicyAlreadyBoughtUser.selector);   
-        volcanoInsurance.buyerCreatePolicy{value: fee}(1,-1);
+        volcanoInsurance.buyerCreatePolicy{value: fee}(100,-100);
     }
 
     function test_ownerClaimExpiredPolicyRevertPolicyDoesNotExist() public {
@@ -132,14 +132,14 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
     }
 
     function test_buyerClaimRewardRevertPolicyDoesNotExist() public {
-        volcanoInsurance.ownerOracleTestVariables(block.timestamp,1,-1);
+        volcanoInsurance.ownerOracleTestVariables(block.timestamp,100,-100);
         vm.expectRevert(PolicyDoesNotExist.selector);   
         volcanoInsurance.buyerClaimReward();
     }
 
     function test_buyerClaimRewardRevertPolicySignedAfterEruption() public {
         test_buyerCreatePolicySuccess();
-        volcanoInsurance.ownerOracleTestVariables((block.timestamp-31536000),1,-1);
+        volcanoInsurance.ownerOracleTestVariables((block.timestamp-31536000),100,-100);
         vm.prank(address(0));
         vm.expectRevert(PolicySignedAfterEruption.selector);   
         volcanoInsurance.buyerClaimReward();
@@ -147,12 +147,26 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
 
     function test_buyerClaimRewardSuccess() public {
         test_buyerCreatePolicySuccess();
-        volcanoInsurance.ownerOracleTestVariables((block.timestamp+31536000),1,-1);
+        volcanoInsurance.ownerOracleTestVariables((block.timestamp+31536000),100,-100);
         vm.prank(address(0));
-        // vm.expectRevert(PolicySignedAfterEruption.selector);   
         volcanoInsurance.buyerClaimReward();
     }
 
+    function test_buyerClaimRewardRevertLatitudeLessThanMin() public {
+        test_buyerCreatePolicySuccess();
+        volcanoInsurance.ownerOracleTestVariables((block.timestamp+31536000),201,-100);
+        vm.prank(address(0));
+        vm.expectRevert(LatitudeLessThanMin.selector);   
+        volcanoInsurance.buyerClaimReward();
+    }
+
+    function test_buyerClaimRewardRevertLatitudeGreaterThanMax() public {
+        test_buyerCreatePolicySuccess();
+        volcanoInsurance.ownerOracleTestVariables((block.timestamp+31536000),-1,-100);
+        vm.prank(address(0));
+        vm.expectRevert(LatitudeGreaterThanMax.selector);   
+        volcanoInsurance.buyerClaimReward();
+    }
 
     // ownerOracleTestVariables
 
