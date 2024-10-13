@@ -120,6 +120,17 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
         volcanoInsurance.ownerClaimExpiredPolicy(address(0));
     }
 
+    function test_buyerClaimRewardRevertVolcanoTimeOracleDataNotSetYet() public {
+        vm.expectRevert(VolcanoTimeOracleDataNotSetYet.selector);   
+        volcanoInsurance.buyerClaimReward();
+    }
+
+
+    // ownerOracleTestVariables
+
+
+
+
     // function testOracleEthGoldPrice() public {
     //     uint256 priceEthGold = weigold.getLatestWeiGoldPrice();
     //     assertGt(priceEthGold,0);

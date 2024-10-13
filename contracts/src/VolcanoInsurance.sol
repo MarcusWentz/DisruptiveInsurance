@@ -132,6 +132,12 @@ contract VolcanoInsurance is FunctionsClient , Owned , IVolcanoInsurance {
         emit eventLog();
     }
     
+    function ownerOracleTestVariables(uint256 testTime,int16 testLatitude,int16 testLongitude) public onlyOwner {
+        volcanoEruptionUnixTime = testTime;    
+        volcanoEruptionLatitude = testLatitude;
+        volcanoEruptionLongitude = testLongitude;
+    }
+
     // function OwnerSelfDestructClaimETH() public onlyOwner {
     //     require(address(this).balance > (LockedWEItoPolicies+OpenWEItoInsure), 'No self destruct detected (address(this).balance == (AccountsInsured+OpenETHtoEnsure))'); 
     //     payable(owner).transfer((address(this).balance)-(LockedWEItoPolicies+OpenWEItoInsure));
