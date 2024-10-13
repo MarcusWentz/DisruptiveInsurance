@@ -1,5 +1,5 @@
 const { ethers } = await import('npm:ethers@6.10.0');
-const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%2F18%22`});
+const apiResponse = await Functions.makeHttpRequest({url: `https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22United%20States%22&refine=date%3A%221980%2F05%22`});
 if (apiResponse.error) {console.error(apiResponse.error);throw Error('Request failed');}
 const { data } = apiResponse;
 console.log('API response data:');
