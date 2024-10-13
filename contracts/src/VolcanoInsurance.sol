@@ -25,10 +25,8 @@ contract VolcanoInsurance is FunctionsClient , Owned , IVolcanoInsurance {
     // variables
 
     uint256 public openWeiToInsure;
-    uint256 public lockedWeiToPolicies;    // string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
+    // uint256 public lockedWeiToPolicies;    
 
-    // string public urlRebuiltJSON = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=significant-volcanic-eruption-database&q=&refine.year=1727&refine.month=08&refine.day=03&refine.country=Iceland";
-    string public constant URL_REBUILT_JSON = "https://userclub.opendatasoft.com/api/explore/v2.1/catalog/datasets/les-eruptions-volcaniques-dans-le-monde/records?limit=20&refine=country%3A%22Iceland%22&refine=date%3A%221727%2F08%2F03%22";
     // immutable and constants
     
     uint256 public constant INSURANCE_POLICY_FEE = (1 ether)/100;
@@ -65,7 +63,7 @@ contract VolcanoInsurance is FunctionsClient , Owned , IVolcanoInsurance {
         // Checks if requester has already bought insurance. 
         if(policies[msg.sender].ethereumAwardTiedToAddress != 0) revert PolicyAlreadyBoughtUser(); 
         openWeiToInsure -= 1 ether;
-        lockedWeiToPolicies += 1 ether;
+        // lockedWeiToPolicies += 1 ether;
         policies[msg.sender] = policy(
             inputLat,
             inputLong,
@@ -99,7 +97,7 @@ contract VolcanoInsurance is FunctionsClient , Owned , IVolcanoInsurance {
         if(longitudeInsuredMemory > (volcanoEruptionLongitude + 100) ) revert LongitudeGreaterThanMax();
      
         policies[msg.sender] = policy(0, 0, 0, 0);
-        lockedWeiToPolicies -= 1 ether;
+        // lockedWeiToPolicies -= 1 ether;
         payable(msg.sender).transfer(1 ether);
         volcanoEruptionLatitude = 0;
         volcanoEruptionLongitude = 0;
@@ -117,7 +115,7 @@ contract VolcanoInsurance is FunctionsClient , Owned , IVolcanoInsurance {
         if(policies[policyHolder].ethereumAwardTiedToAddress == 0) revert PolicyDoesNotExist();
         // 31,536,000 seconds in 1 year.
         if(block.timestamp < policies[policyHolder].unixTimeSigned + 31536000) revert PolicyDidNotExpireYet();
-        lockedWeiToPolicies -= 1 ether;
+        // lockedWeiToPolicies -= 1 ether;
         policies[policyHolder] = policy(0, 0, 0, 0);
         payable(owner).transfer(address(this).balance);
         emit eventLog();
