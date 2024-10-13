@@ -66,16 +66,31 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
     }
 
     function test_buyerCreatePolicyRevertOwnerIsMsgSender() public {
-        vm.expectRevert(OwnerIsMsgSender.selector);    //Revert if not the owner. Custom error from SimpleStorage.
+        vm.expectRevert(OwnerIsMsgSender.selector);    
         volcanoInsurance.buyerCreatePolicy(1,-1);
     }
 
     function test_buyerCreatePolicyRevertNotEnoughCollateralInContract() public {
         vm.startPrank(address(0));
-        vm.expectRevert(NotEnoughCollateralInContract.selector);    //Revert if not the owner. Custom error from SimpleStorage.
+        vm.expectRevert(NotEnoughCollateralInContract.selector);    
         volcanoInsurance.buyerCreatePolicy(1,-1);
     }
+
+    function test_buyerCreatePolicyRevertMsgValueTooSmallForPolicyBuy() public {
+        test_ownerAddCollateralSuccess();
+        uint256 fee = volcanoInsurance.INSURANCE_POLICY_FEE(); 
+        vm.startPrank(address(0));
+        vm.expectRevert(MsgValueTooSmallForPolicyBuy.selector);   
+        volcanoInsurance.buyerCreatePolicy{value: (fee-1)}(1,-1);
+    }
     
+    function test_buyerCreatePolicySuccess() public {
+        test_ownerAddCollateralSuccess();
+        uint256 fee = volcanoInsurance.INSURANCE_POLICY_FEE(); 
+        vm.startPrank(address(0));
+        volcanoInsurance.buyerCreatePolicy{value: fee}(1,-1);
+    }
+
     // function testOracleEthGoldPrice() public {
     //     uint256 priceEthGold = weigold.getLatestWeiGoldPrice();
     //     assertGt(priceEthGold,0);
