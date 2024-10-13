@@ -91,6 +91,18 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
         volcanoInsurance.buyerCreatePolicy{value: fee}(1,-1);
     }
 
+    function test_buyerCreatePolicyRevertPolicyAlreadyBoughtUser() public {
+        test_buyerCreatePolicySuccess();
+        vm.startPrank(address(this));
+        test_ownerAddCollateralSuccess();
+        vm.stopPrank();
+        uint256 fee = volcanoInsurance.INSURANCE_POLICY_FEE(); 
+        vm.startPrank(address(0));
+        vm.expectRevert(PolicyAlreadyBoughtUser.selector);   
+        volcanoInsurance.buyerCreatePolicy{value: fee}(1,-1);
+    }
+
+
     // function testOracleEthGoldPrice() public {
     //     uint256 priceEthGold = weigold.getLatestWeiGoldPrice();
     //     assertGt(priceEthGold,0);
