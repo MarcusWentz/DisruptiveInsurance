@@ -125,6 +125,17 @@ contract VolcanoInsuranceTest is Test, IVolcanoInsurance {
         volcanoInsurance.buyerClaimReward();
     }
 
+    function test_buyerClaimRewardRevertCoordinatesCannotBeTheOrigin() public {
+        volcanoInsurance.ownerOracleTestVariables(block.timestamp,0,0);
+        vm.expectRevert(CoordinatesCannotBeTheOrigin.selector);   
+        volcanoInsurance.buyerClaimReward();
+    }
+
+    function test_buyerClaimRewardRevertPolicyDoesNotExist() public {
+        volcanoInsurance.ownerOracleTestVariables(block.timestamp,1,-1);
+        vm.expectRevert(PolicyDoesNotExist.selector);   
+        volcanoInsurance.buyerClaimReward();
+    }
 
     // ownerOracleTestVariables
 
