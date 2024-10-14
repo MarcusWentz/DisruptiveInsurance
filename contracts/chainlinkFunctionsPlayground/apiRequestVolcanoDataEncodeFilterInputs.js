@@ -29,7 +29,7 @@ const lonScaled = lonRaw*100;
 console.log(lonScaled);
 console.log('Ethers.js version: ', ethers.version); 
 const abiCoder = ethers.AbiCoder.defaultAbiCoder();
-const encodedAbiString = abiCoder.encode(['uint256', 'int16', 'int16'],[ 327456000 , 4620 , -12218 ]);
+const encodedAbiString = abiCoder.encode(['uint256', 'int16', 'int16'],[ timeUnix , latScaled , lonScaled ]);
 console.log(encodedAbiString);
 console.log(ethers.getBytes(encodedAbiString));
 return ethers.getBytes(encodedAbiString);
